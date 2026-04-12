@@ -123,7 +123,8 @@ EXPLORER_SYSTEM = (
     "explorers must reach the EXIT. One of you must carry the key to unlock the door. "
     "Coordinate by sending messages. You must use exactly one tool per turn. "
     "Move every turn to explore — do not observe from the same position repeatedly. "
-    "Ask the Dungeon Master (DM) for help locating items if you are lost."
+    "The Dungeon Master (DM) has a full map of the dungeon (may be 3 turns outdated). "
+    "Send a message to DM asking for the key or exit location if you cannot find them after a few turns."
 )
 
 DM_SYSTEM = (
