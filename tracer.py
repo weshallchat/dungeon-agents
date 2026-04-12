@@ -1,5 +1,5 @@
 """
-tracer.py — Structured event logging and Langfuse integration.
+tracer.py — Structured event logging and Langfuse v3 integration.
 """
 
 from __future__ import annotations
@@ -8,7 +8,6 @@ import json
 import os
 import time
 from pathlib import Path
-from typing import Any
 
 from dotenv import load_dotenv
 from langfuse import Langfuse
@@ -34,6 +33,13 @@ def flush():
     _langfuse.flush()
 
 
+def get_trace_url() -> str | None:
+    try:
+        return _langfuse.get_trace_url()
+    except Exception:
+        return None
+
+
 # ---------------------------------------------------------------------------
 # Run directory helpers
 # ---------------------------------------------------------------------------
@@ -47,7 +53,7 @@ def run_dir(run_id: str) -> Path:
 def append_event(run_id: str, event: dict) -> None:
     path = run_dir(run_id) / "events.jsonl"
     with open(path, "a") as f:
-        f.write(json.dumps(event) + "\n")
+        f.write(json.dumps(event, default=str) + "\n")
 
 
 def write_summary(
@@ -70,7 +76,13 @@ def write_summary(
     }
     path = run_dir(run_id) / "summary.json"
     with open(path, "w") as f:
-        json.dump(summary, f, indent=2)
+        json.dump(summary, f, indent=2, default=str)
+
+
+def export_traces(run_id: str, trace_urls: list[str]) -> None:
+    path = run_dir(run_id) / "langfuse_export.json"
+    with open(path, "w") as f:
+        json.dump({"run_id": run_id, "traces": trace_urls}, f, indent=2)
 
 
 # ---------------------------------------------------------------------------
@@ -116,117 +128,3 @@ def build_event(
             "raw_response": raw_response,
         },
     }
-
-
-# ---------------------------------------------------------------------------
-# Langfuse trace wrappers
-# ---------------------------------------------------------------------------
-
-def trace_explorer_turn(
-    run_id: str,
-    turn: int,
-    agent_id: str,
-    messages: list[dict],
-    raw_response: str,
-    tool_name: str,
-    tool_args: dict,
-    tool_result: str,
-    anomaly: bool,
-    anomaly_reason: str | None,
-    prompt_tokens: int,
-    completion_tokens: int,
-    latency_ms: float,
-    langfuse_trace_id: str,
-) -> str:
-    """
-    Create a Langfuse trace for one explorer turn.
-    Returns the trace URL.
-    """
-    trace = _langfuse.trace(
-        id=langfuse_trace_id,
-        name="explorer_turn",
-        metadata={
-            "run_id": run_id,
-            "turn": turn,
-            "agent_id": agent_id,
-        },
-    )
-
-    generation = trace.generation(
-        name="llm_call",
-        model="claude-haiku-4-5-20251001",
-        input=messages,
-        output=raw_response,
-        usage={
-            "input": prompt_tokens,
-            "output": completion_tokens,
-        },
-        metadata={
-            "latency_ms": round(latency_ms, 1),
-        },
-    )
-
-    trace.span(
-        name=tool_name,
-        input=tool_args,
-        output={"result": tool_result},
-        metadata={
-            "anomaly": anomaly,
-            "anomaly_reason": anomaly_reason,
-        },
-    )
-
-    host = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
-    return f"{host}/trace/{langfuse_trace_id}"
-
-
-def trace_dm_turn(
-    run_id: str,
-    turn: int,
-    messages: list[dict],
-    raw_response: str,
-    tool_name: str,
-    tool_args: dict,
-    tool_result: str,
-    prompt_tokens: int,
-    completion_tokens: int,
-    latency_ms: float,
-    langfuse_trace_id: str,
-) -> str:
-    trace = _langfuse.trace(
-        id=langfuse_trace_id,
-        name="dm_response",
-        metadata={
-            "run_id": run_id,
-            "turn": turn,
-            "agent_id": "DM",
-        },
-    )
-
-    trace.generation(
-        name="llm_call",
-        model="claude-haiku-4-5-20251001",
-        input=messages,
-        output=raw_response,
-        usage={
-            "input": prompt_tokens,
-            "output": completion_tokens,
-        },
-        metadata={"latency_ms": round(latency_ms, 1)},
-    )
-
-    trace.span(
-        name=tool_name,
-        input=tool_args,
-        output={"result": tool_result},
-    )
-
-    host = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
-    return f"{host}/trace/{langfuse_trace_id}"
-
-
-def export_traces(run_id: str, trace_urls: list[str]) -> None:
-    """Write trace URL list to langfuse_export.json for the run."""
-    path = run_dir(run_id) / "langfuse_export.json"
-    with open(path, "w") as f:
-        json.dump({"run_id": run_id, "traces": trace_urls}, f, indent=2)

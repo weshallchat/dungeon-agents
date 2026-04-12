@@ -241,21 +241,35 @@ function findDivergences(events) {
 
     const belief = ev.agent_belief.visible_cells || {};
     const truth = ev.world_truth.adjacent_cell_contents || {};
-
     const diffs = [];
+
+    // 1. Visible cell content mismatches (DM stale-info divergence)
     for (const dir of ['current','north','south','east','west']) {
       if (belief[dir] !== undefined && truth[dir] !== undefined && belief[dir] !== truth[dir]) {
         diffs.push({ dir, believed: belief[dir], actual: truth[dir] });
       }
     }
 
-    // Check if key_location in truth differs from what agent can see
+    // 2. Key location: agent sees KEY in view but truth says key is gone
     const keyLoc = ev.world_truth.key_location;
     const invHasKey = (ev.agent_belief.inventory || []).includes('key');
-    // If agent sees KEY in visible_cells but truth says key is null (picked up), flag it
     const beliefSeesKey = Object.values(belief).includes('KEY');
     if (beliefSeesKey && keyLoc === null && !invHasKey) {
       diffs.push({ dir: 'key_location', believed: 'KEY visible', actual: 'key already picked up' });
+    }
+
+    // 3. Spurious block — agent expected cell was passable (truth shows EMPTY/passable)
+    //    but tool returned "path blocked unexpectedly". The cell was actually free.
+    //    This is a belief/reality mismatch: the world said "you can't move" but the
+    //    grid says the cell was open.
+    if (ev.action?.anomaly_reason === 'spurious_block') {
+      const direction = ev.action?.args?.direction;
+      const truthCell = direction ? truth[direction] : undefined;
+      diffs.push({
+        dir: `move_${direction || '?'}`,
+        believed: 'passable (move should succeed)',
+        actual: `spurious block — cell was ${truthCell || 'unknown'} but tool rejected move`,
+      });
     }
 
     if (diffs.length > 0) {

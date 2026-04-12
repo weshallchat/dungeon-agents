@@ -1,5 +1,6 @@
 """
 agents.py — LLM agent turns for explorer agents (A, B) and the reactive DM.
+Uses Langfuse v3 context-manager API for tracing.
 """
 
 from __future__ import annotations
@@ -7,16 +8,16 @@ from __future__ import annotations
 import json
 import os
 import time
-import uuid
-from typing import Any
 
 import anthropic
 from dotenv import load_dotenv
 
 from dungeon import (
+    Cell,
     WorldState,
     deliver_messages,
     execute_tool,
+    find_cell,
     get_dm_state,
     get_explorer_state,
     get_world_truth,
@@ -25,9 +26,8 @@ from dungeon import (
 from tracer import (
     append_event,
     build_event,
-    export_traces,
-    trace_dm_turn,
-    trace_explorer_turn,
+    get_langfuse,
+    get_trace_url,
 )
 
 load_dotenv()
@@ -121,7 +121,9 @@ EXPLORER_SYSTEM = (
     "You are an explorer in an 8x8 dungeon grid. You can only see your current cell "
     "and the 4 adjacent cells. Goal: find the key, unlock the locked door, and both "
     "explorers must reach the EXIT. One of you must carry the key to unlock the door. "
-    "Coordinate by sending messages. You must use exactly one tool per turn."
+    "Coordinate by sending messages. You must use exactly one tool per turn. "
+    "Move every turn to explore — do not observe from the same position repeatedly. "
+    "Ask the Dungeon Master (DM) for help locating items if you are lost."
 )
 
 DM_SYSTEM = (
@@ -142,45 +144,67 @@ def run_explorer_turn(
     run_id: str,
     rng,
 ) -> dict:
+    lf = get_langfuse()
+
     # 1. Deliver pending messages
     delivered = deliver_messages(world, agent_id)
 
-    # 2. Build observable state (belief)
+    # 2. Build observable state (belief) and ground truth
     belief = get_explorer_state(world, agent_id, delivered)
     truth = get_world_truth(world, agent_id)
 
     # 3. Build messages for LLM
-    user_content = (
-        f"Turn {world.turn}. Your state:\n"
-        + json.dumps(belief, indent=2)
-    )
+    user_content = f"Turn {world.turn}. Your state:\n" + json.dumps(belief, indent=2, default=str)
     messages = [{"role": "user", "content": user_content}]
+    full_prompt = [{"role": "system", "content": EXPLORER_SYSTEM}] + messages
 
-    # 4. Call LLM
-    t_start = time.time()
-    response = _client.messages.create(
-        model=MODEL,
-        max_tokens=512,
-        system=EXPLORER_SYSTEM,
-        tools=EXPLORER_TOOLS,
-        tool_choice={"type": "any"},
-        messages=messages,
-    )
-    latency_ms = (time.time() - t_start) * 1000
+    trace_url = None
 
-    # 5. Extract tool call and raw text
-    tool_name, tool_args, raw_response = _extract_tool_call(response)
+    with lf.start_as_current_span(
+        name="explorer_turn",
+        input={"turn": world.turn, "agent_id": agent_id, "belief": belief},
+        metadata={"run_id": run_id, "turn": world.turn, "agent_id": agent_id},
+    ):
+        # 4. LLM call inside a generation span
+        t_start = time.time()
+        with lf.start_as_current_generation(
+            name="llm_call",
+            model=MODEL,
+            input=full_prompt,
+        ) as gen:
+            response = _client.messages.create(
+                model=MODEL,
+                max_tokens=512,
+                system=EXPLORER_SYSTEM,
+                tools=EXPLORER_TOOLS,
+                tool_choice={"type": "any"},
+                messages=messages,
+            )
+            latency_ms = (time.time() - t_start) * 1000
+            tool_name, tool_args, raw_response = _extract_tool_call(response)
+            gen.update(
+                output=raw_response or f"[tool: {tool_name}]",
+                usage={"input": response.usage.input_tokens, "output": response.usage.output_tokens},
+                metadata={"latency_ms": round(latency_ms, 1)},
+            )
 
-    # 6. Execute tool
-    tool_result, anomaly, anomaly_reason = execute_tool(world, agent_id, tool_name, tool_args, rng)
+        # 5. Tool execution inside a span
+        with lf.start_as_current_span(
+            name=f"tool:{tool_name}",
+            input=tool_args,
+        ) as tool_span:
+            tool_result, anomaly, anomaly_reason = execute_tool(world, agent_id, tool_name, tool_args, rng)
+            tool_span.update(
+                output={"result": tool_result},
+                metadata={"anomaly": anomaly, "anomaly_reason": anomaly_reason},
+            )
 
-    # 7. Determine event type
+        trace_url = get_trace_url()
+
+    # 6. Determine event type
     event_type = "anomaly" if anomaly else "tool_call"
-    if tool_name == "send_message" and not anomaly:
-        event_type = "tool_call"
 
-    # 8. Build and log event
-    trace_id = str(uuid.uuid4())
+    # 7. Build and log event
     event = build_event(
         run_id=run_id,
         turn=world.turn,
@@ -199,25 +223,6 @@ def run_explorer_turn(
         raw_response=raw_response,
     )
     append_event(run_id, event)
-
-    # 9. Langfuse trace
-    trace_url = trace_explorer_turn(
-        run_id=run_id,
-        turn=world.turn,
-        agent_id=agent_id,
-        messages=[{"role": "system", "content": EXPLORER_SYSTEM}] + messages,
-        raw_response=raw_response,
-        tool_name=tool_name,
-        tool_args=tool_args,
-        tool_result=tool_result,
-        anomaly=anomaly,
-        anomaly_reason=anomaly_reason,
-        prompt_tokens=response.usage.input_tokens,
-        completion_tokens=response.usage.output_tokens,
-        latency_ms=latency_ms,
-        langfuse_trace_id=trace_id,
-    )
-
     event["_trace_url"] = trace_url
     return event
 
@@ -226,57 +231,67 @@ def run_explorer_turn(
 # DM reactive handler
 # ---------------------------------------------------------------------------
 
-def maybe_run_dm(
-    world: WorldState,
-    run_id: str,
-) -> dict | None:
+def maybe_run_dm(world: WorldState, run_id: str) -> dict | None:
     """Call DM only if it has pending messages. Returns event or None."""
     due = deliver_messages(world, "DM")
     if not due:
         return None
 
-    # Build DM state (stale grid)
-    dm_state = get_dm_state(world)
+    lf = get_langfuse()
 
-    # Format pending messages for the LLM
-    incoming = "\n".join(
-        f"  From {m.from_agent}: {m.content}" for m in due
-    )
+    # Build DM stale state
+    dm_state = get_dm_state(world)
+    incoming = "\n".join(f"  From {m.from_agent}: {m.content}" for m in due)
     user_content = (
         f"Turn {world.turn}. Incoming messages:\n{incoming}\n\n"
         f"Your stale board view (as of turn {dm_state['stale_turn']}):\n"
         + json.dumps(dm_state["stale_grid"], indent=2)
     )
     messages = [{"role": "user", "content": user_content}]
+    full_prompt = [{"role": "system", "content": DM_SYSTEM}] + messages
 
-    # Call LLM
-    t_start = time.time()
-    response = _client.messages.create(
-        model=MODEL,
-        max_tokens=512,
-        system=DM_SYSTEM,
-        tools=DM_TOOLS,
-        tool_choice={"type": "any"},
-        messages=messages,
-    )
-    latency_ms = (time.time() - t_start) * 1000
+    trace_url = None
 
-    tool_name, tool_args, raw_response = _extract_tool_call(response)
+    with lf.start_as_current_span(
+        name="dm_response",
+        input={"turn": world.turn, "messages": [{"from": m.from_agent, "content": m.content} for m in due]},
+        metadata={"run_id": run_id, "turn": world.turn, "agent_id": "DM"},
+    ):
+        t_start = time.time()
+        with lf.start_as_current_generation(
+            name="llm_call",
+            model=MODEL,
+            input=full_prompt,
+        ) as gen:
+            response = _client.messages.create(
+                model=MODEL,
+                max_tokens=512,
+                system=DM_SYSTEM,
+                tools=DM_TOOLS,
+                tool_choice={"type": "any"},
+                messages=messages,
+            )
+            latency_ms = (time.time() - t_start) * 1000
+            tool_name, tool_args, raw_response = _extract_tool_call(response)
+            gen.update(
+                output=raw_response or f"[tool: {tool_name}]",
+                usage={"input": response.usage.input_tokens, "output": response.usage.output_tokens},
+                metadata={"latency_ms": round(latency_ms, 1)},
+            )
 
-    # Execute (enqueues DM response into agent queue)
-    tool_result, _, _ = execute_tool(world, "DM", tool_name, tool_args, rng=None)
+        with lf.start_as_current_span(name=f"tool:{tool_name}", input=tool_args) as tool_span:
+            tool_result, _, _ = execute_tool(world, "DM", tool_name, tool_args, rng=None)
+            tool_span.update(output={"result": tool_result})
 
-    # Build event — agent_belief is DM's stale view, world_truth is current
+        trace_url = get_trace_url()
+
+    # Build event — belief is DM's stale view, truth is current full grid
     belief = {
         "stale_turn": dm_state["stale_turn"],
         "current_turn": dm_state["current_turn"],
         "stale_grid": dm_state["stale_grid"],
-        "pending_messages": [
-            {"from": m.from_agent, "content": m.content} for m in due
-        ],
+        "pending_messages": [{"from": m.from_agent, "content": m.content} for m in due],
     }
-    # world_truth for DM: full current grid
-    from dungeon import find_cell, Cell
     truth = {
         "actual_grid_snapshot": snapshot_grid(world.grid),
         "door_state": world.door_state,
@@ -284,7 +299,6 @@ def maybe_run_dm(
         "agent_positions": world.agent_positions,
     }
 
-    trace_id = str(uuid.uuid4())
     event = build_event(
         run_id=run_id,
         turn=world.turn,
@@ -303,21 +317,6 @@ def maybe_run_dm(
         raw_response=raw_response,
     )
     append_event(run_id, event)
-
-    trace_url = trace_dm_turn(
-        run_id=run_id,
-        turn=world.turn,
-        messages=[{"role": "system", "content": DM_SYSTEM}] + messages,
-        raw_response=raw_response,
-        tool_name=tool_name,
-        tool_args=tool_args,
-        tool_result=tool_result,
-        prompt_tokens=response.usage.input_tokens,
-        completion_tokens=response.usage.output_tokens,
-        latency_ms=latency_ms,
-        langfuse_trace_id=trace_id,
-    )
-
     event["_trace_url"] = trace_url
     return event
 
