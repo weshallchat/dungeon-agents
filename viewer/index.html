@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dungeon Agents — Run Viewer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Menlo", "Consolas", "Monaco", monospace;
+      font-size: 13px;
+      background: #0f0f0f;
+      color: #d4d4d4;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    h1 { font-size: 16px; color: #ffffff; margin-bottom: 4px; letter-spacing: 0.5px; }
+    h2 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 28px 0 10px; border-bottom: 1px solid #222; padding-bottom: 6px; }
+    h3 { font-size: 12px; color: #aaa; margin: 16px 0 6px; }
+
+    .subtitle { color: #555; font-size: 12px; margin-bottom: 24px; }
+
+    /* File loader */
+    .loader {
+      display: flex; gap: 16px; align-items: center;
+      background: #181818; border: 1px solid #2a2a2a;
+      padding: 16px 20px; border-radius: 4px; margin-bottom: 28px;
+    }
+    .loader label { color: #888; font-size: 12px; }
+    .loader input[type=file] { color: #ccc; font-size: 12px; cursor: pointer; }
+    .loader input[type=file]::file-selector-button {
+      background: #252525; border: 1px solid #3a3a3a; color: #ccc;
+      padding: 4px 12px; border-radius: 3px; cursor: pointer; font-family: inherit;
+      font-size: 12px; margin-right: 10px;
+    }
+    .loader input[type=file]::file-selector-button:hover { background: #303030; }
+
+    /* Incident summary */
+    .summary-box {
+      background: #141414; border: 1px solid #2a2a2a;
+      border-radius: 4px; padding: 16px 20px; margin-bottom: 8px;
+    }
+    .summary-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 14px; }
+    .summary-meta .stat { display: flex; flex-direction: column; }
+    .summary-meta .stat-label { color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .summary-meta .stat-value { color: #e0e0e0; font-size: 14px; font-weight: bold; }
+    .stat-value.success { color: #4ec94e; }
+    .stat-value.failure { color: #e05555; }
+
+    .issue-list { list-style: none; }
+    .issue-list li {
+      padding: 5px 8px; margin-bottom: 3px; border-radius: 3px;
+      font-size: 12px; display: flex; gap: 10px; align-items: baseline;
+    }
+    .issue-list li.anomaly { background: #1f1010; border-left: 3px solid #e05555; }
+    .issue-list li.divergence { background: #1a1a0e; border-left: 3px solid #c9a227; }
+    .issue-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.6; min-width: 72px; }
+    .issue-turn { color: #666; min-width: 52px; }
+
+    /* Timeline */
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; padding: 6px 10px; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #555;
+      border-bottom: 1px solid #222; position: sticky; top: 0; background: #0f0f0f;
+    }
+    tbody tr { border-bottom: 1px solid #1a1a1a; cursor: pointer; }
+    tbody tr:hover { background: #161616; }
+    tbody tr.row-A { }
+    tbody tr.row-B { }
+    tbody tr.row-DM { opacity: 0.7; }
+    tbody tr.row-anomaly { border-left: 3px solid #e05555; }
+    tbody tr.row-divergence { border-left: 3px solid #c9a227; }
+    tbody tr.row-dm_response { border-left: 3px solid #4a7fa5; }
+
+    td { padding: 6px 10px; vertical-align: top; }
+    td.turn-col { color: #555; width: 48px; }
+    td.agent-col { width: 44px; }
+    .agent-badge {
+      display: inline-block; padding: 1px 7px; border-radius: 2px;
+      font-size: 11px; font-weight: bold;
+    }
+    .badge-A { background: #1a2e1a; color: #4ec94e; }
+    .badge-B { background: #1a1a2e; color: #5585e0; }
+    .badge-DM { background: #1e2a35; color: #4a7fa5; }
+    td.tool-col { color: #c792ea; width: 110px; }
+    td.args-col { color: #888; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.result-col { color: #b5b5b5; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.flags-col { width: 80px; }
+
+    .flag { display: inline-block; font-size: 11px; margin-right: 4px; }
+    .flag-anomaly { color: #e05555; }
+    .flag-divergence { color: #c9a227; }
+    .flag-delay { color: #e08855; }
+
+    /* Expanded detail row */
+    .detail-row td {
+      padding: 0; border-bottom: 1px solid #222;
+    }
+    .detail-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+      background: #1a1a1a; font-size: 11px;
+    }
+    .detail-panel {
+      background: #111; padding: 12px 16px;
+    }
+    .detail-panel h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 8px; }
+    pre {
+      white-space: pre-wrap; word-break: break-all;
+      color: #b0b0b0; font-size: 11px; line-height: 1.6;
+    }
+    .diff-added { color: #e05555; background: #2a1010; }
+
+    /* Message trace */
+    .msg-trace {
+      display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0;
+      border: 1px solid #222; border-radius: 4px; overflow: hidden;
+    }
+    .msg-col-header {
+      background: #141414; padding: 8px 12px; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.5px; color: #555;
+      border-bottom: 1px solid #222; text-align: center;
+    }
+    .msg-timeline { position: relative; min-height: 60px; }
+    .msg-row {
+      display: grid; grid-template-columns: 1fr 80px 1fr;
+      border-bottom: 1px solid #1a1a1a; min-height: 40px; align-items: center;
+    }
+    .msg-cell { padding: 8px 12px; font-size: 12px; }
+    .msg-cell.center { text-align: center; }
+    .msg-bubble {
+      background: #181818; border: 1px solid #2a2a2a; border-radius: 3px;
+      padding: 4px 8px; font-size: 11px; color: #c0c0c0;
+    }
+    .msg-bubble.delayed { border-color: #e05555; }
+    .msg-arrow {
+      font-size: 11px; color: #555; display: flex;
+      align-items: center; justify-content: center; flex-direction: column; gap: 2px;
+    }
+    .msg-arrow.delayed { color: #e05555; }
+    .msg-turn { font-size: 10px; color: #444; }
+    .msg-delay-label { font-size: 10px; color: #e05555; }
+
+    /* Empty / loading states */
+    .empty { color: #444; padding: 32px; text-align: center; }
+
+    /* Section wrapper */
+    .section { margin-bottom: 40px; }
+
+    /* Run list (multi-run picker) */
+    .run-list { display: flex; flex-direction: column; gap: 4px; }
+    .run-item {
+      background: #141414; border: 1px solid #222; border-radius: 3px;
+      padding: 8px 14px; cursor: pointer; display: flex; gap: 20px; align-items: center;
+    }
+    .run-item:hover { background: #1a1a1a; border-color: #333; }
+    .run-item.active { border-color: #3a3a3a; }
+    .run-id { color: #888; font-size: 11px; }
+    .run-outcome.success { color: #4ec94e; }
+    .run-outcome.failure { color: #e05555; }
+    .run-turns { color: #555; font-size: 11px; }
+  </style>
+</head>
+<body>
+
+<h1>Dungeon Agents — Run Viewer</h1>
+<p class="subtitle">Load an events.jsonl file to inspect a run.</p>
+
+<div class="loader">
+  <label>events.jsonl</label>
+  <input type="file" id="file-input" accept=".jsonl,.json">
+  <span id="load-status" style="color:#555; font-size:11px;"></span>
+</div>
+
+<div id="app" style="display:none;">
+
+  <div class="section">
+    <h2>Incident Summary</h2>
+    <div class="summary-box">
+      <div class="summary-meta" id="summary-meta"></div>
+      <div id="summary-issues"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Timeline</h2>
+    <table id="timeline-table">
+      <thead>
+        <tr>
+          <th>Turn</th>
+          <th>Agent</th>
+          <th>Tool</th>
+          <th>Args</th>
+          <th>Result</th>
+          <th>Flags</th>
+        </tr>
+      </thead>
+      <tbody id="timeline-body"></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Message Trace</h2>
+    <div id="message-trace"></div>
+  </div>
+
+</div>
+
+<script>
+// ─── Data ───────────────────────────────────────────────────────────────────
+
+let events = [];
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const lines = ev.target.result.trim().split('\n').filter(l => l.trim());
+    try {
+      events = lines.map(l => JSON.parse(l));
+      document.getElementById('load-status').textContent = `${events.length} events loaded`;
+      document.getElementById('app').style.display = 'block';
+      render();
+    } catch (err) {
+      document.getElementById('load-status').textContent = 'Parse error: ' + err.message;
+    }
+  };
+  reader.readAsText(file);
+});
+
+// ─── Divergence detection ────────────────────────────────────────────────────
+
+function findDivergences(events) {
+  const divs = [];
+  for (const ev of events) {
+    if (!ev.agent_belief || !ev.world_truth) continue;
+    if (ev.agent_id === 'DM') continue;
+
+    const belief = ev.agent_belief.visible_cells || {};
+    const truth = ev.world_truth.adjacent_cell_contents || {};
+
+    const diffs = [];
+    for (const dir of ['current','north','south','east','west']) {
+      if (belief[dir] !== undefined && truth[dir] !== undefined && belief[dir] !== truth[dir]) {
+        diffs.push({ dir, believed: belief[dir], actual: truth[dir] });
+      }
+    }
+
+    // Check if key_location in truth differs from what agent can see
+    const keyLoc = ev.world_truth.key_location;
+    const invHasKey = (ev.agent_belief.inventory || []).includes('key');
+    // If agent sees KEY in visible_cells but truth says key is null (picked up), flag it
+    const beliefSeesKey = Object.values(belief).includes('KEY');
+    if (beliefSeesKey && keyLoc === null && !invHasKey) {
+      diffs.push({ dir: 'key_location', believed: 'KEY visible', actual: 'key already picked up' });
+    }
+
+    if (diffs.length > 0) {
+      divs.push({ turn: ev.turn, agent_id: ev.agent_id, diffs });
+    }
+  }
+  return divs;
+}
+
+function getAnomalies(events) {
+  return events.filter(ev => ev.action && ev.action.anomaly);
+}
+
+// ─── Render ──────────────────────────────────────────────────────────────────
+
+function render() {
+  const anomalies = getAnomalies(events);
+  const divergences = findDivergences(events);
+  renderSummary(anomalies, divergences);
+  renderTimeline(anomalies, divergences);
+  renderMessageTrace();
+}
+
+function renderSummary(anomalies, divergences) {
+  // Derive outcome from last event's run summary if available, else infer
+  const lastEv = events[events.length - 1];
+  const runId = lastEv?.run_id || '—';
+  const totalTurns = Math.max(...events.map(e => e.turn));
+
+  // Try to guess outcome from events (look for success pattern)
+  let outcome = 'unknown';
+  let reason = '';
+
+  const metaEl = document.getElementById('summary-meta');
+  metaEl.innerHTML = `
+    <div class="stat"><span class="stat-label">Run ID</span><span class="stat-value" style="font-size:11px;color:#888;">${runId}</span></div>
+    <div class="stat"><span class="stat-label">Turns</span><span class="stat-value">${totalTurns}</span></div>
+    <div class="stat"><span class="stat-label">Anomalies</span><span class="stat-value ${anomalies.length > 0 ? 'failure' : ''}">${anomalies.length}</span></div>
+    <div class="stat"><span class="stat-label">Belief Divergences</span><span class="stat-value ${divergences.length > 0 ? 'failure' : ''}">${divergences.length}</span></div>
+    <div class="stat"><span class="stat-label">DM Responses</span><span class="stat-value">${events.filter(e=>e.event_type==='dm_response').length}</span></div>
+  `;
+
+  const issuesEl = document.getElementById('summary-issues');
+  if (anomalies.length === 0 && divergences.length === 0) {
+    issuesEl.innerHTML = '<p style="color:#444;font-size:12px;margin-top:8px;">No anomalies or belief divergences detected.</p>';
+    return;
+  }
+
+  let html = '<ul class="issue-list" style="margin-top:12px;">';
+  for (const ev of anomalies) {
+    html += `<li class="anomaly">
+      <span class="issue-tag">anomaly</span>
+      <span class="issue-turn">turn ${ev.turn}</span>
+      <span>Agent ${ev.agent_id} · <strong>${ev.action.tool}</strong> · ${ev.action.anomaly_reason}</span>
+    </li>`;
+  }
+  for (const div of divergences) {
+    const desc = div.diffs.map(d => `${d.dir}: believed ${d.believed}, actual ${d.actual}`).join('; ');
+    html += `<li class="divergence">
+      <span class="issue-tag">divergence</span>
+      <span class="issue-turn">turn ${div.turn}</span>
+      <span>Agent ${div.agent_id} · ${desc}</span>
+    </li>`;
+  }
+  html += '</ul>';
+  issuesEl.innerHTML = html;
+}
+
+function renderTimeline(anomalies, divergences) {
+  const anomalyTurns = new Set(anomalies.map(e => `${e.turn}-${e.agent_id}`));
+  const divTurns = new Set(divergences.map(d => `${d.turn}-${d.agent_id}`));
+
+  const tbody = document.getElementById('timeline-body');
+  tbody.innerHTML = '';
+
+  for (const ev of events) {
+    const key = `${ev.turn}-${ev.agent_id}`;
+    const isAnomaly = ev.action?.anomaly;
+    const isDivergence = divTurns.has(key);
+    const isDM = ev.agent_id === 'DM';
+    const isDelay = ev.action?.anomaly_reason === 'message_delayed';
+
+    let rowClass = `row-${ev.agent_id}`;
+    if (isDM) rowClass += ' row-dm_response';
+    if (isAnomaly) rowClass += ' row-anomaly';
+    else if (isDivergence) rowClass += ' row-divergence';
+
+    const flags = [
+      isAnomaly ? '<span class="flag flag-anomaly" title="anomaly">⚠</span>' : '',
+      isDivergence ? '<span class="flag flag-divergence" title="belief divergence">◆</span>' : '',
+      isDelay ? '<span class="flag flag-delay" title="message delayed">⧗</span>' : '',
+    ].join('');
+
+    const argsStr = ev.action?.args ? JSON.stringify(ev.action.args).slice(0, 40) : '';
+    const resultStr = (ev.action?.result || '').slice(0, 60);
+
+    const badgeClass = `badge-${ev.agent_id}`;
+    const tr = document.createElement('tr');
+    tr.className = rowClass;
+    tr.dataset.idx = events.indexOf(ev);
+    tr.innerHTML = `
+      <td class="turn-col">${ev.turn}</td>
+      <td class="agent-col"><span class="agent-badge ${badgeClass}">${ev.agent_id}</span></td>
+      <td class="tool-col">${ev.action?.tool || ev.event_type}</td>
+      <td class="args-col" title="${escHtml(JSON.stringify(ev.action?.args||{}))}">${escHtml(argsStr)}</td>
+      <td class="result-col" title="${escHtml(ev.action?.result||'')}">${escHtml(resultStr)}</td>
+      <td class="flags-col">${flags}</td>
+    `;
+
+    tr.addEventListener('click', () => toggleDetail(tr, ev, isDivergence));
+    tbody.appendChild(tr);
+  }
+}
+
+function toggleDetail(tr, ev, isDivergence) {
+  const existing = tr.nextSibling;
+  if (existing && existing.classList && existing.classList.contains('detail-row')) {
+    existing.remove();
+    return;
+  }
+
+  const belief = JSON.stringify(ev.agent_belief || {}, null, 2);
+  const truth = JSON.stringify(ev.world_truth || {}, null, 2);
+
+  // Diff: highlight lines in truth that differ from belief
+  const beliefLines = belief.split('\n');
+  const truthLines = truth.split('\n');
+
+  // Simple line-level diff highlight for truth panel
+  function diffHighlight(truthStr, beliefStr) {
+    const tLines = truthStr.split('\n');
+    const bSet = new Set(beliefStr.split('\n').map(l => l.trim()));
+    return tLines.map(line => {
+      const trimmed = line.trim();
+      // Flag lines with values that look like they differ
+      const inBelief = bSet.has(trimmed);
+      return inBelief ? escHtml(line) : `<span class="diff-added">${escHtml(line)}</span>`;
+    }).join('\n');
+  }
+
+  const detailRow = document.createElement('tr');
+  detailRow.className = 'detail-row';
+  detailRow.innerHTML = `<td colspan="6">
+    <div class="detail-inner">
+      <div class="detail-panel">
+        <h4>Agent Belief</h4>
+        <pre>${escHtml(belief)}</pre>
+      </div>
+      <div class="detail-panel">
+        <h4>World Truth ${isDivergence ? '<span style="color:#c9a227">◆ diverges</span>' : ''}</h4>
+        <pre>${isDivergence ? diffHighlight(truth, belief) : escHtml(truth)}</pre>
+      </div>
+    </div>
+    <div class="detail-panel" style="border-top:1px solid #1a1a1a;">
+      <h4>LLM</h4>
+      <pre>tokens: ${ev.llm?.prompt_tokens}↑ ${ev.llm?.completion_tokens}↓  latency: ${ev.llm?.latency_ms}ms
+${escHtml(ev.llm?.raw_response || '(no text output)')}</pre>
+    </div>
+  </td>`;
+  tr.after(detailRow);
+}
+
+function renderMessageTrace() {
+  const msgEvents = events.filter(ev =>
+    (ev.action?.tool === 'send_message') ||
+    ev.event_type === 'dm_response' ||
+    ev.event_type === 'message_received'
+  );
+
+  const container = document.getElementById('message-trace');
+
+  if (msgEvents.length === 0) {
+    container.innerHTML = '<p class="empty">No messages exchanged.</p>';
+    return;
+  }
+
+  // Build message rows from send_message tool calls
+  const rows = [];
+  for (const ev of events) {
+    if (ev.action?.tool === 'send_message' && ev.action?.args) {
+      const from = ev.agent_id;
+      const to = ev.action.args.to;
+      const content = ev.action.args.content || '';
+      const delayed = ev.action.anomaly_reason === 'message_delayed';
+      rows.push({ turn: ev.turn, from, to, content, delayed, type: 'send' });
+    }
+    if (ev.event_type === 'dm_response' && ev.action?.args) {
+      const to = ev.action.args.to;
+      const content = ev.action.args.content || '';
+      rows.push({ turn: ev.turn, from: 'DM', to, content, delayed: false, type: 'dm_send' });
+    }
+  }
+
+  if (rows.length === 0) {
+    container.innerHTML = '<p class="empty">No messages sent.</p>';
+    return;
+  }
+
+  let html = `<div class="msg-trace">
+    <div class="msg-col-header">Agent A</div>
+    <div class="msg-col-header">DM</div>
+    <div class="msg-col-header">Agent B</div>
+  `;
+
+  for (const row of rows) {
+    const delayedClass = row.delayed ? 'delayed' : '';
+    const arrowLabel = row.delayed ? '→ delayed' : '→';
+
+    // Determine layout: who's in left/center/right columns
+    let leftCell = '', centerCell = '', rightCell = '';
+    const bubble = `<div class="msg-bubble ${delayedClass}" title="${escHtml(row.content)}">${escHtml(row.content.slice(0, 60))}${row.content.length > 60 ? '…' : ''}</div><div class="msg-turn">turn ${row.turn}</div>`;
+    const arrow = `<div class="msg-arrow ${delayedClass}">${arrowLabel}${row.delayed ? '<span class="msg-delay-label">+1 extra</span>' : ''}</div>`;
+
+    if (row.from === 'A' && row.to === 'B') {
+      leftCell = bubble; centerCell = arrow; rightCell = '';
+    } else if (row.from === 'B' && row.to === 'A') {
+      leftCell = ''; centerCell = arrow; rightCell = bubble;
+    } else if (row.from === 'A' && row.to === 'DM') {
+      leftCell = bubble; centerCell = arrow; rightCell = '';
+    } else if (row.from === 'B' && row.to === 'DM') {
+      leftCell = ''; centerCell = arrow; rightCell = bubble;
+    } else if (row.from === 'DM' && row.to === 'A') {
+      leftCell = ''; centerCell = bubble + arrow; rightCell = '';
+    } else if (row.from === 'DM' && row.to === 'B') {
+      leftCell = ''; centerCell = bubble + arrow; rightCell = '';
+    } else {
+      leftCell = bubble; centerCell = arrow; rightCell = '';
+    }
+
+    html += `<div class="msg-row">
+      <div class="msg-cell">${leftCell}</div>
+      <div class="msg-cell center">${centerCell}</div>
+      <div class="msg-cell">${rightCell}</div>
+    </div>`;
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ─── Utils ───────────────────────────────────────────────────────────────────
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
