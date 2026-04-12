@@ -31,87 +31,112 @@ There are three agents:
 - If no explorer sent a message to DM on a given turn, the DM is not called at all.
 - The DM's stale view is the primary source of belief divergence: it may tell agents where items are based on outdated information.
 
+**Open issue:** In runs to date, agents never message the DM even when instructed to. Before running the 50-sim batch, decide whether to strengthen the DM mention in the explorer system prompt. Without DM interactions, the "stale data decisions" metric (see analysis.json) cannot be computed.
+
 ### Game Loop
 
-- Global turn counter starts at 1 and increments after each full round (A + B + DM = one round).
-- Each turn within a round: build the agent's context, deliver pending messages, call the LLM, execute the tool call, record the event.
-- Message delivery: a message sent on turn N is delivered to the recipient at the start of turn N+1 (their next turn).
+- Global turn counter starts at 1 and increments after each full round (A + B = one round).
+- Each turn: build the agent's context, deliver pending messages, call the LLM, execute the tool call, record the event.
+- Message delivery: a message sent on turn N is delivered to the recipient at the start of turn N+1.
 - The game ends when:
   - Both explorer agents reach the exit (success), OR
   - A turn limit is hit (50 turns) (failure — `turn_limit`), OR
-  - Standard stuck: both explorer agents have had the same position, performed no successful actions, for 3 consecutive turns each (failure — `stuck`), OR
-  - Key-blocked stuck: the key-holder is stuck AND the other agent has been unable to pass the locked door for 3 consecutive turns (failure — `key_blocked`). This catches the case where progress is impossible but neither agent individually triggers the stuck condition.
-- The shared objective: Agent A or B picks up the key, unlocks the door, and both agents reach the exit. Once the door is unlocked it stays open permanently.
+  - Standard stuck: both agents have same position and no successful actions for 3 consecutive turns each (failure — `stuck`), OR
+  - Key-blocked stuck: key-holder is stuck AND other agent has been unable to pass the locked door for 3 consecutive turns (failure — `key_blocked`).
+- The door stays open permanently once unlocked.
 
 ### Tool Failure Simulation
 
-- Introduce occasional realistic tool failures to make traces interesting:
-  - `move` has a ~10% chance of returning "path blocked unexpectedly" even if the cell is valid. `anomaly_reason: "spurious_block"`.
-  - `send_message` has a ~15% chance of being delayed an extra turn. `anomaly_reason: "message_delayed"`.
+- `move` has a ~10% chance of returning "path blocked unexpectedly" even if the cell is valid. `anomaly_reason: "spurious_block"`.
+- `send_message` has a ~15% chance of being delayed an extra turn. `anomaly_reason: "message_delayed"`.
 - Failures must be seeded (pass `seed` into the RNG at run start) for reproducibility.
-- Log all anomalies explicitly in the event — do not silently swallow them.
+- Log all anomalies explicitly — do not silently swallow them.
 
 ---
 
 ## Part 2: The Traces
 
-### Observability Integration
+### Observability Integration (Langfuse)
 
-- Integrate Langfuse to capture agent traces.
-- Every LLM call must be a Langfuse **generation** with:
+- Integrate Langfuse v3 (context manager API) to capture agent traces.
+- **Session grouping**: every turn within a run belongs to the same Langfuse session, identified by `run_id`. This allows viewing a full run end-to-end in one Langfuse session view.
+- Every LLM call must be a Langfuse **generation** within the session with:
   - Full prompt (messages array) as input
-  - Full raw LLM text response as output (log the raw response even when the model only returns a tool call — capture whatever text content the model produced)
+  - Full raw LLM text response as output
   - Model name, prompt tokens, completion tokens, latency
-  - Metadata: `run_id`, `turn`, `agent_id`
+  - Metadata: `run_id`, `turn`, `agent_id`, `outcome` (added at run end via session update)
 - Every tool execution must be a Langfuse **span** (child of the generation) with:
-  - Tool name and input args
-  - Tool result string
+  - Tool name, structured input args, structured result object
   - `anomaly: bool`, `anomaly_reason: str | null`
-- At the end of each run, export all traces for that run to `runs/<run_id>/langfuse_export.json` using the Langfuse SDK's export API. Also print the Langfuse trace URL to stdout.
-- Flush the Langfuse client at the end of every run (`langfuse.flush()`).
+- **Progress score**: attach a Langfuse score to each turn's trace:
+  - `0.0` = start state
+  - `0.33` = key picked up by either agent
+  - `0.66` = door unlocked
+  - `1.0` = both agents at exit
+  - Score name: `"progress"`, value: float, comment: current milestone label
+- At run end, export all trace URLs to `runs/<run_id>/langfuse_export.json`.
 
 ### Structured Event Log
 
-Write a structured JSON event record for every agent step (including DM turns). The schema must support diagnosing failures across runs, not just replaying one. Every event captures:
+Write a structured JSON event record for every agent step. Schema must support diagnosis after the fact and aggregation across runs.
+
+**Tool results must be structured objects, not raw strings.** Each tool has a defined result schema:
+
+```json
+// move result
+{"status": "success" | "failed" | "anomaly", "new_position": [r, c] | null, "reason": "wall" | "out_of_bounds" | "locked_door" | "spurious_block" | null}
+
+// observe result
+{"status": "success", "cells": {"current": "EMPTY", "north": "WALL", ...}}
+
+// pick_up result
+{"status": "success" | "failed", "item": "key", "reason": null | "no_item_here"}
+
+// send_message result
+{"status": "sent" | "delayed", "to": "B", "deliver_on_turn": 5}
+
+// unlock_door result
+{"status": "success" | "failed", "reason": null | "no_key" | "not_on_door"}
+
+// respond_to_agent result (DM)
+{"status": "sent", "to": "A", "deliver_on_turn": 5}
+```
+
+**Full event schema:**
 
 ```json
 {
   "run_id": "...",
   "turn": 4,
   "agent_id": "A" | "B" | "DM",
-  "event_type": "tool_call" | "message_received" | "dm_response" | "anomaly",
+  "event_type": "tool_call" | "anomaly" | "dm_response",
   "timestamp_ms": 1712345678901,
+  "game_state_summary": {
+    "turn": 4,
+    "key_held_by": "B" | null,
+    "door_state": "locked" | "unlocked",
+    "agent_positions": {"A": [r, c], "B": [r, c]},
+    "both_at_exit": false,
+    "progress_score": 0.33
+  },
   "agent_belief": {
-    "position": [row, col],
+    "position": [r, c],
     "inventory": [],
-    "visible_cells": {
-      "current": "EMPTY",
-      "north": "WALL",
-      "south": "KEY",
-      "east": "EMPTY",
-      "west": "LOCKED_DOOR"
-    },
-    "pending_messages": [],
-    "known_map": {}
+    "visible_cells": {"current": "EMPTY", "north": "WALL", ...},
+    "pending_messages": []
   },
   "world_truth": {
-    "actual_position": [row, col],
-    "adjacent_cell_contents": {
-      "current": "EMPTY",
-      "north": "WALL",
-      "south": "EMPTY",
-      "east": "EMPTY",
-      "west": "LOCKED_DOOR"
-    },
+    "actual_position": [r, c],
+    "adjacent_cell_contents": {"current": "EMPTY", "north": "WALL", ...},
     "door_state": "locked" | "unlocked",
-    "key_location": [row, col] | null
+    "key_location": [r, c] | null
   },
   "action": {
     "tool": "move",
     "args": {"direction": "north"},
-    "result": "...",
-    "anomaly": false,
-    "anomaly_reason": null
+    "result": {"status": "anomaly", "new_position": null, "reason": "spurious_block"},
+    "anomaly": true,
+    "anomaly_reason": "spurious_block"
   },
   "llm": {
     "prompt_tokens": 300,
@@ -122,80 +147,162 @@ Write a structured JSON event record for every agent step (including DM turns). 
 }
 ```
 
-Key design intent:
-- `agent_belief.visible_cells` is what the agent was told. `world_truth.adjacent_cell_contents` is ground truth. These diverge when a DM gives stale advice that caused the agent to update its belief incorrectly, or when an anomaly occurs.
-- `world_truth.key_location` lets a post-run tool immediately see if an agent believed the key was somewhere it wasn't.
-- `agent_belief.known_map` is a running map the agent builds from its observations — compare against ground truth to surface stale beliefs.
+Key design goals:
+- `game_state_summary` provides macro context on every event — no need to reconstruct from the stream.
+- Structured `action.result` objects make aggregation across runs trivial (count failures by `reason`, etc.).
+- `agent_belief` vs `world_truth` divergences surface stale-information failures.
 
 Append all events to: `runs/<run_id>/events.jsonl` (one JSON object per line).
 
 ---
 
-## Part 3: The Legibility Layer
+## Part 3: The Legibility Layer (`viewer/index.html`)
 
-Build a tool that lets a human answer three questions about any completed run:
+A single HTML file, no server, no build step. Opens directly in a browser. Loads a local `events.jsonl` via `<input type="file">` and optionally an `analysis.json` for cross-run aggregate views.
 
-1. **What happened?** — a turn-by-turn timeline
-2. **Why did it happen?** — belief state at each decision point vs. what was actually true
-3. **What should change next?** — anomalies, divergences, and failure causes surfaced clearly
+### View 1: Incident Summary (top of page)
 
-### What to Build
+**LLM-generated narrative** (produced by post-processing script `analyze.py`, stored in `summary.json` as `incident_report` field):
+- A 3-5 sentence plain-English account of what happened, why it failed, and what the most notable decision points were.
+- Should reference specific turn numbers and agent IDs.
+- Example: "Agent B picked up the key on turn 3 but spent 47 turns oscillating in the north-east quadrant. Agent A never left the top-left corner. The run ended at the turn limit with the door never reached. The 12 spurious blocks on Agent A's movements likely contributed to its failure to explore."
 
-A single `viewer/index.html` file. It must work by opening the file directly in a browser (no server required). Use a `<input type="file">` to load a local `events.jsonl` file, parse it client-side with JavaScript, and render the views below.
+**Computed stats block:**
+- Outcome, total turns, anomaly count, belief divergence count, key milestone turns (when key picked up, when door unlocked)
+- Bullet list: each anomaly with turn, agent, tool, reason
+- Bullet list: each belief divergence with turn, agent, what was believed vs. what was true
 
-**Incident Summary (top of page)**
-- Outcome (success / failure reason), total turns, anomaly count, belief divergence count
-- Bullet list of each anomaly: turn, agent, tool, reason
-- Bullet list of each belief divergence: turn, agent, what it believed vs. what was true
+### View 2: Key-Moment Grid Visualization
 
-**Timeline View**
-- Table: `Turn | Agent | Tool | Args summary | Result | Flags`
-- Flags column shows icons/labels for: anomaly, belief divergence, message delay
-- Clicking a row expands it inline to show the full `agent_belief` and `world_truth` JSON side-by-side
+Show a small dungeon grid for each "notable" turn. A turn is notable if:
+- It is turn 1 (initial state)
+- An anomaly occurred (spurious_block, message_delayed)
+- The key was picked up
+- The door was encountered (agent tried to move into locked door)
+- The door was unlocked
+- A message was sent or received
 
-**Message Trace**
-- Two-column layout: Agent A on left, DM in center, Agent B on right
-- Each message rendered as a labeled arrow from sender to receiver
-- Delayed messages (anomaly) rendered in a different color with a "delayed" label
-- Show the turn number at send and receive
+Each grid is:
+- An 8×8 (or NxN) CSS grid rendered in HTML/CSS — no canvas, no SVG
+- Cells colour-coded: WALL=dark, EMPTY=mid-grey, KEY=yellow, LOCKED_DOOR=red, OPEN_DOOR=green, EXIT=bright green
+- Agent positions shown as coloured circles overlaid on cells (A=green, B=blue)
+- A label below each grid: `"Turn N — [what happened]"`
+- Grids laid out horizontally in a scrollable row
 
-Keep the visual design minimal and intentional. No CSS frameworks (no Tailwind, no Bootstrap). Write all styles by hand. Every design choice should be deliberate — the goal is clarity, not completeness.
+### View 3: Timeline Table
+
+Table: `Turn | Agent | Tool | Args | Result | Flags`
+- Flag icons: ⚠ anomaly, ◆ belief divergence, ⧗ message delay
+- Anomaly rows: red left border. Divergence rows: yellow left border. DM rows: blue left border.
+- Clicking a row expands it inline to show `agent_belief` and `world_truth` JSON side-by-side, with diverging fields highlighted.
+
+### View 4: Charts
+
+Three small charts rendered with plain `<canvas>` (no chart library):
+1. **Anomaly rate over turns** — bar chart, one bar per turn, height = number of anomalies that turn (0 or 1 per agent). Colour bars by anomaly type.
+2. **Latency per turn** — line chart, one point per turn, y = LLM latency in ms, colour-coded by agent (A=green, B=blue).
+3. **Token usage per turn** — stacked bar chart, prompt tokens vs. completion tokens per turn.
+
+All three charts are the same width, stacked vertically, with shared x-axis (turn number).
+
+### View 5: Message Trace
+
+- Two-column layout: Agent A (left), DM (centre), Agent B (right).
+- Each message as a labelled arrow from sender to receiver with turn number.
+- Delayed messages in red with "+1 delay" label.
+- If no messages: show "No messages exchanged in this run."
+
+### View 6: Cross-Run Aggregate (loads analysis.json)
+
+Second file input: `analysis.json`. When loaded, renders:
+- **Anomaly distribution** — bar chart: anomaly count per run, sorted descending. Colour by outcome type.
+- **Turns per outcome type** — box plot or grouped bar chart: distribution of total turns by outcome (success / turn_limit / stuck / key_blocked).
+- **Stale data decisions** — once DM interactions exist: per-run count of turns where agent acted on DM info that was contradicted by world_truth. Deferred until DM interactions are present in runs.
+- **Distinct event types per run** — table showing which "interesting" events each run had (key_pickup, door_encounter, message_sent, spurious_block, etc.) — used to show selection criteria for the best 10.
+
+Keep visual design minimal and intentional. No CSS frameworks. Plain CSS, hand-written. Every layout choice deliberate.
 
 ---
 
-## Part 4: Running and Output
+## Part 4: Post-Processing (`analyze.py`)
 
-- Run with: `python run.py` (optional: `python run.py --seed 42`)
-- Each run generates a unique `run_id` (timestamp + short UUID).
-- Output written to `runs/<run_id>/`:
-  - `events.jsonl` — structured event log, one JSON object per line
-  - `summary.json` — outcome, total turns, final positions, failure reason, seed used
-  - `langfuse_export.json` — exported Langfuse traces for this run
-- Run the simulation at least 3 times, aiming for a mix of outcomes (success, turn_limit, stuck/key_blocked). Commit the full `runs/` directory — the reviewer should be able to load any run in the viewer without re-running.
+A standalone script that reads all runs in `runs/` and produces:
+
+1. **`analysis.json`** at repo root:
+```json
+{
+  "generated_at": "...",
+  "total_runs": 50,
+  "runs": [
+    {
+      "run_id": "...",
+      "seed": 42,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": ["spurious_block", "key_pickup", "door_encounter"],
+      "key_pickup_turn": 3,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true
+    }
+  ],
+  "aggregate": {
+    "outcome_distribution": {"turn_limit": 48, "success": 1, "stuck": 1},
+    "anomaly_rate_by_run": [...],
+    "avg_turns_by_outcome": {...},
+    "stale_data_decisions": "deferred — no DM interactions in current runs"
+  }
+}
+```
+
+2. **LLM-generated `incident_report`** for each run: a 3-5 sentence narrative generated by one Claude call per run that reads the run's `events.jsonl` and `summary.json`. The report is written back into the run's `summary.json` as `"incident_report": "..."`.
+
+3. **Selection of best 10 runs**: ranked by number of distinct event types (key_pickup, door_encounter, message_sent, spurious_block, dm_response, door_unlocked). Ties broken by anomaly count. Mark `"selected_for_repo": true` in `analysis.json`. Only these 10 runs' full `events.jsonl` files are committed to the repo.
+
+---
+
+## Part 5: Running and Output
+
+- Run a single sim: `python run.py [--seed N]`
+- Run 50 sims: `python run.py --batch 50` (generates seeds 1–50)
+- Post-process all runs: `python analyze.py` (reads `runs/`, writes `analysis.json`, generates incident reports)
+- View: open `viewer/index.html`, load `events.jsonl` from any committed run, optionally load `analysis.json`
+
+Output structure per run (`runs/<run_id>/`):
+- `events.jsonl` — structured event log
+- `summary.json` — outcome, reason, seed, Langfuse URL, `incident_report` (added by analyze.py)
+- `langfuse_export.json` — trace URLs
+
+Commit to repo:
+- `analysis.json` — always (all 50 runs)
+- `runs/<id>/` — only the 10 selected runs' full directories
 
 ---
 
 ## Implementation Notes
 
-- Use `claude-haiku-4-5-20251001` for all three agents.
-- Keep all system prompts short (< 100 words each). Do not prompt-engineer agents to play well.
-- Use the Anthropic Python SDK (`anthropic`) directly for all LLM calls.
-- Use LangChain or LangGraph only if there is a specific, concrete reason — not by default.
-- Game loop is a plain Python `while` loop. No graph framework needed.
-- Load Langfuse credentials from `.env` using `python-dotenv`. Required vars: `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST`, `ANTHROPIC_API_KEY`. Add `.env` to `.gitignore`. Commit `.env.example` with placeholder values.
-- Refer to `agents.md` for agent design details and `skills.md` for tool schemas and failure rules.
+- Use `claude-haiku-4-5-20251001` for explorer and DM agents.
+- Use `claude-haiku-4-5-20251001` for incident report generation in `analyze.py` (cheap per call).
+- Langfuse v3 context manager API throughout — no `.trace()` method.
+- Game loop is a plain Python `while` loop. No graph framework.
+- Load credentials from `.env` via `python-dotenv`.
+- Refer to `agents.md` for agent design and `skills.md` for tool schemas.
 
 ```
 /
-├── dungeon.py          # world state, grid generation, item logic
-├── agents.py           # LLM agent turns (explorer + DM)
+├── dungeon.py          # world state, grid, tool execution
+├── agents.py           # LLM agent turns, DM handler
 ├── tracer.py           # event logging, Langfuse integration
-├── run.py              # entry point, game loop
-├── viewer/
-│   └── index.html      # legibility layer, runs entirely in browser
-├── runs/               # committed run outputs (3+ runs)
-├── agents.md           # agent design reference
-├── skills.md           # tool schemas and failure rules
+├── run.py              # game loop, CLI (--seed, --batch)
+├── analyze.py          # post-processing: analysis.json, incident reports, run selection
+├── viewer/index.html   # legibility layer — all 6 views
+├── runs/               # only 10 selected runs committed
+├── analysis.json       # aggregate data across all 50 runs
+├── agents.md
+├── skills.md
 ├── .env.example
 └── requirements.txt
 ```
@@ -204,7 +311,9 @@ Keep the visual design minimal and intentional. No CSS frameworks (no Tailwind, 
 
 ## What Success Looks Like
 
-- `python run.py` completes end-to-end. `runs/<run_id>/events.jsonl` has a complete event for every turn including DM turns.
-- At least one run has a visible belief divergence: the DM gave stale information, an agent acted on it, and the viewer shows the mismatch between `agent_belief` and `world_truth`.
-- The viewer loads any `events.jsonl` and clearly answers: what happened, why, and what went wrong.
-- The trace schema feels like something you would use to debug a real production multi-agent system.
+- `python run.py --batch 50` runs 50 simulations end-to-end.
+- `python analyze.py` produces `analysis.json` with all 50 runs summarised and selects the best 10.
+- `viewer/index.html` loads any committed run and shows: incident report, key-moment grids, timeline, charts, and message trace.
+- Loading `analysis.json` into the viewer renders cross-run aggregate charts.
+- At least one committed run has a DM interaction (once DM prompt issue is resolved).
+- The trace schema is clean enough that `analysis.py` can aggregate across 50 runs with simple JSON field reads — no string parsing.

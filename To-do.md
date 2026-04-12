@@ -1,251 +1,223 @@
-# Dungeon Agents — Implementation To-Do
+# Dungeon Agents — Implementation To-Do (v2)
 
-Work through these phases in order. Do not move to the next phase until the current one is verifiably working. Each task has a clear done condition.
-
----
-
-## Phase 0: Project Setup
-
-- [ ] Initialize git repo and make first commit (empty skeleton)
-- [ ] Create directory structure:
-  ```
-  dungeon.py / agents.py / tracer.py / run.py
-  viewer/index.html
-  runs/
-  .env / .env.example / .gitignore
-  requirements.txt / agents.md / skills.md
-  ```
-- [ ] Add to `.gitignore`: `.env` (add `runs/` temporarily during dev; remove before Phase 5)
-- [ ] Create `.env.example`:
-  ```
-  LANGFUSE_PUBLIC_KEY=pk-...
-  LANGFUSE_SECRET_KEY=sk-...
-  LANGFUSE_HOST=https://cloud.langfuse.com
-  ANTHROPIC_API_KEY=sk-ant-...
-  ```
-- [ ] `requirements.txt`: `anthropic`, `langfuse`, `python-dotenv`
-- [ ] Verify env loading: quick `python -c "from dotenv import load_dotenv; load_dotenv(); import os; print(os.getenv('ANTHROPIC_API_KEY')[:8])"`
-- [ ] Commit: `chore: project skeleton and dependencies`
+Phases 0–4 are complete. This document tracks the remaining work for the v2 improvements.
 
 ---
 
-## Phase 1: The Dungeon World (`dungeon.py`)
+## Phase 6: Structured Tool Results + game_state_summary (`dungeon.py`, `tracer.py`)
 
-### 1.1 Cell Types and Grid
+### 6.1 Structured tool result objects
 
-- [ ] Define cell types (enum or constants): `EMPTY`, `WALL`, `KEY`, `LOCKED_DOOR`, `OPEN_DOOR`, `EXIT`
-- [ ] Implement `generate_grid(size=8, seed=None) -> Grid`:
-  - Place walls randomly (~15% of cells)
-  - Place exactly one KEY, one LOCKED_DOOR, one EXIT
-  - Ensure EXIT is not adjacent to LOCKED_DOOR
-  - Validate full connectivity (BFS from a random empty cell — all non-wall cells reachable). Re-generate if not.
-- [ ] Implement `place_agents(grid) -> (pos_A, pos_B)`: random empty cells, not on items, not on each other
+Replace all raw string returns from `execute_tool` with typed dicts:
 
-### 1.2 World State
+- [ ] `move` → `{"status": "success"|"failed"|"anomaly", "new_position": [r,c]|null, "reason": null|"wall"|"out_of_bounds"|"locked_door"|"spurious_block"}`
+- [ ] `observe` → `{"status": "success", "cells": {"current":..., "north":..., ...}}`
+- [ ] `pick_up` → `{"status": "success"|"failed", "item": "key", "reason": null|"no_item_here"}`
+- [ ] `send_message` → `{"status": "sent"|"delayed", "to": "B", "deliver_on_turn": N}`
+- [ ] `unlock_door` → `{"status": "success"|"failed", "reason": null|"no_key"|"not_on_door"}`
+- [ ] `respond_to_agent` → `{"status": "sent", "to": "A", "deliver_on_turn": N}`
+- [ ] Update `agents.py` to read structured result objects instead of string matching (e.g. `result["status"] == "success"` not `"cannot" not in result`)
+- [ ] Update `run.py` stdout logging to read from `result["status"]` and `result.get("reason")`
 
-- [ ] Implement `WorldState` dataclass:
-  - `grid` — 2D cell array
-  - `agent_positions` — `{"A": [r,c], "B": [r,c]}`
-  - `inventories` — `{"A": [], "B": []}`
-  - `door_state` — `"locked"` | `"unlocked"`
-  - `message_queues` — `{"A": [], "B": [], "DM": []}` — each message is `{"from": str, "content": str, "deliver_on_turn": int}`
-  - `turn` — global int counter, starts at 1
-  - `seed` — stored for summary.json
-  - `history` — list of last N grid snapshots for DM stale view (keep last 5)
+### 6.2 Progress score helper
 
-### 1.3 Observable State Builders
+- [ ] Implement `compute_progress_score(world) -> float` in `dungeon.py`:
+  - `0.0` = neither agent has key, door locked
+  - `0.33` = key held by either agent
+  - `0.66` = door unlocked
+  - `1.0` = both agents at EXIT cell
+- [ ] Add `compute_milestone_label(score) -> str` → `"start" | "key_acquired" | "door_unlocked" | "complete"`
 
-- [ ] `get_explorer_state(world, agent_id) -> dict`: returns position, inventory, visible 5-cell fog-of-war view, pending messages for this agent on this turn
-- [ ] `get_dm_state(world) -> dict`: returns the full grid as it was 3 turns ago (from `world.history`). If fewer than 3 turns have passed, returns current state. DM also receives its pending messages.
+### 6.3 game_state_summary on every event
 
-### 1.4 Tool Execution
-
-Implement `execute_tool(world, agent_id, tool_name, args, rng) -> (result_str, anomaly: bool, anomaly_reason: str | None)`:
-
-- [ ] `move(direction)`: validate direction ∈ {north, south, east, west}. Check in-bounds and not wall/locked_door. Apply ~10% spurious block (seeded RNG) → `anomaly_reason: "spurious_block"`. On success, update position.
-- [ ] `observe()`: return current + 4 adjacent cells. Always succeeds.
-- [ ] `pick_up(item)`: item must be in agent's current cell. Add to inventory, remove from grid. Error if not present.
-- [ ] `send_message(to, content)`: `to` ∈ {"A", "B", "DM"}. Enqueue with `deliver_on_turn = world.turn + 1`. Apply ~15% extra delay (deliver on turn + 2 instead) → `anomaly_reason: "message_delayed"`.
-- [ ] `unlock_door()`: agent must be on LOCKED_DOOR cell and hold the key. Set `door_state = "unlocked"`, change cell to `OPEN_DOOR`.
-
-### 1.5 Termination Checks
-
-- [ ] `check_termination(world, stuck_tracker) -> (done: bool, outcome: str, reason: str)`:
-  - `success`: both A and B are on EXIT cell
-  - `turn_limit`: `world.turn > 50`
-  - `stuck`: both A and B have same position for 3 consecutive turns with no successful actions
-  - `key_blocked`: key-holder's position unchanged for 3 turns AND other agent has failed to pass LOCKED_DOOR for 3 turns
-- [ ] Implement `StuckTracker` to track per-agent position history and action success history
-
-- [ ] **Done condition**: `python -c "from dungeon import generate_grid, WorldState, place_agents; w = WorldState(generate_grid()); print(w.grid)"` runs cleanly.
-
----
-
-## Phase 2: The Agent Loop (`agents.py`)
-
-Refer to `agents.md` and `skills.md` for agent context design and tool schemas.
-
-### 2.1 Tool Schemas
-
-- [ ] Define all 5 explorer tools as Anthropic SDK tool dicts (see `skills.md` for exact schemas)
-- [ ] Define 1 DM tool: `respond_to_agent(to, content)` — the only action DM can take
-
-### 2.2 Explorer Agent Turn
-
-- [ ] Implement `run_explorer_turn(world, agent_id, tracer, rng) -> dict` (returns the event):
-  1. Deliver pending messages from queue (where `deliver_on_turn <= world.turn`)
-  2. Call `get_explorer_state()` to build context
-  3. Build messages array: system prompt + user message with state as JSON
-  4. Record `t_start = time.time()`
-  5. Call `anthropic.messages.create(model=..., tools=EXPLORER_TOOLS, tool_choice={"type": "any"}, messages=...)`
-  6. Capture raw text content from response (may be empty string if model only returns tool use)
-  7. Extract tool name and args from `response.content`
-  8. Call `execute_tool(world, agent_id, tool_name, args, rng)`
-  9. Build and return event dict (see tracer.py)
-
-### 2.3 DM Reactive Handler
-
-- [ ] Implement `maybe_run_dm(world, tracer) -> dict | None`:
-  1. Check if DM has pending messages with `deliver_on_turn <= world.turn`. If none, return None immediately (no LLM call, no event).
-  2. Deliver all pending DM messages (mark as delivered)
-  3. Call `get_dm_state()` for the N=3 stale board view
-  4. Build messages array: system prompt + delivered messages + stale board state
-  5. Call Anthropic API with DM tool (`respond_to_agent`)
-  6. Enqueue DM's response into target agent's message queue with `deliver_on_turn = world.turn + 1`
-  7. Build and return a `dm_response` event
-
-### 2.4 Game Loop (`run.py`)
-
-- [ ] Implement `run_game(seed=None) -> (list[Event], summary)`:
+- [ ] Implement `build_game_state_summary(world) -> dict` in `dungeon.py`:
   ```python
-  world = WorldState(generate_grid(seed=seed), seed=seed)
-  rng = random.Random(seed)
-  events = []
-  stuck_tracker = StuckTracker()
-
-  while True:
-      events.append(run_explorer_turn(world, "A", tracer, rng))
-      dm_event = maybe_run_dm(world, tracer)   # fires only if A messaged DM
-      if dm_event: events.append(dm_event)
-      done, outcome, reason = check_termination(world, stuck_tracker)
-      if done: break
-
-      events.append(run_explorer_turn(world, "B", tracer, rng))
-      dm_event = maybe_run_dm(world, tracer)   # fires only if B messaged DM
-      if dm_event: events.append(dm_event)
-      done, outcome, reason = check_termination(world, stuck_tracker)
-      if done: break
-
-      world.history.append(snapshot(world.grid))
-      world.turn += 1
+  {
+    "turn": world.turn,
+    "key_held_by": agent_id_holding_key | None,
+    "door_state": world.door_state,
+    "agent_positions": dict(world.agent_positions),
+    "both_at_exit": bool,
+    "progress_score": float
+  }
   ```
-- [ ] `run.py` entry point: parse optional `--seed` arg, call `run_game`, print summary to stdout
+- [ ] Add `game_state_summary` parameter to `build_event()` in `tracer.py` and include it in the event dict
+- [ ] Pass `game_state_summary` from `agents.py` when calling `build_event()`
 
-- [ ] **Done condition**: `python run.py` completes without error. Agents take turns. Game ends. DM only fires when messaged — verify by checking that DM events in `events.jsonl` only appear on turns where a `send_message` to "DM" was logged.
-
----
-
-## Phase 3: Tracing (`tracer.py`)
-
-### 3.1 Structured Event Log
-
-- [ ] Implement `build_event(...)  -> dict` using the schema from `prompt.md`:
-  - `agent_belief` — what the agent was told (from `get_explorer_state()` output before action)
-  - `world_truth.adjacent_cell_contents` — ground truth for the same 5 cells at that moment
-  - `world_truth.key_location` — actual key position from `world.grid` (None if picked up)
-  - `world_truth.door_state`
-  - `llm.raw_response` — the raw text content from the API response
-- [ ] Implement `append_event(run_id, event)`: serialize to JSON, append line to `runs/<run_id>/events.jsonl`
-- [ ] Implement `write_summary(run_id, outcome, reason, total_turns, final_positions, seed)`: write `runs/<run_id>/summary.json`
-
-### 3.2 Langfuse Integration
-
-- [ ] Initialize Langfuse client from env vars at module load
-- [ ] In `run_explorer_turn`: wrap each turn in a Langfuse **trace** (`name="explorer_turn"`)
-  - Inside: one **generation** for the LLM call (input=messages, output=raw_response, model, usage, latency)
-  - Inside: one **span** for tool execution (name=tool_name, input=args, output=result, metadata={anomaly, anomaly_reason})
-- [ ] In `maybe_run_dm`: wrap in a Langfuse **trace** (`name="dm_response"`) with same generation + span structure — only when the DM is actually called
-- [ ] After `run_game` completes: call `langfuse.flush()`
-- [ ] Export traces: call Langfuse SDK export for the run's trace IDs → write to `runs/<run_id>/langfuse_export.json`
-- [ ] Print Langfuse trace URL to stdout after each run
-
-- [ ] **Done condition**: After `python run.py`: `runs/<run_id>/events.jsonl` exists with complete events. Open Langfuse URL — every turn is a trace with generation + tool span nested inside. `langfuse_export.json` exists and is non-empty.
+- [ ] **Done condition**: Run one sim. Open `events.jsonl` — every event has `game_state_summary` with all 5 fields, and every `action.result` is a dict not a string.
 
 ---
 
-## Phase 4: The Legibility Viewer (`viewer/index.html`)
+## Phase 7: Langfuse Session Grouping + Progress Scores (`tracer.py`, `agents.py`)
 
-Single HTML file. No server. No build step. Works by opening directly in a browser.
+### 7.1 Session grouping
 
-### 4.1 File Loading
+- [ ] In `tracer.py`, initialise a Langfuse session at the start of each run:
+  ```python
+  session_id = run_id  # one session per run
+  ```
+- [ ] Pass `session_id=run_id` to every `lf.start_as_current_span()` call in `agents.py`
+- [ ] This groups all turns of a run into one Langfuse session view
 
-- [ ] Add `<input type="file" accept=".jsonl">` at the top of the page
-- [ ] On file select: read with `FileReader`, split by newline, parse each line as JSON, store as `events[]` array
-- [ ] Also accept a `summary` (optionally load `summary.json` via a second file input)
-- [ ] Once loaded, render all three views
+### 7.2 Progress score as Langfuse score
 
-### 4.2 Incident Summary
+- [ ] After each explorer turn, call `lf.score_current_trace(...)` with:
+  - `name="progress"`
+  - `value=progress_score` (float 0.0–1.0)
+  - `comment=milestone_label`
+- [ ] After each run completes, update the session metadata with final outcome and reason
 
-- [ ] Compute from `events[]`:
-  - Total turns, outcome, failure reason
-  - Anomaly count and list: `{turn, agent_id, tool, anomaly_reason}`
-  - Belief divergence count and list: turns where `agent_belief.visible_cells[dir] != world_truth.adjacent_cell_contents[dir]` for any direction, OR where `world_truth.key_location` differs from what agent expected
-- [ ] Render as a compact header block at the top of the page
-
-### 4.3 Timeline View
-
-- [ ] Render a `<table>` with columns: `Turn | Agent | Tool | Args | Result | Flags`
-- [ ] Flag icons: 🔴 anomaly, 🟡 belief divergence, 📬 message delay
-- [ ] Clicking a row expands it (toggle) to show `agent_belief` and `world_truth` as two side-by-side `<pre>` blocks
-- [ ] Highlight diverging fields in the expanded view (red text for fields that differ)
-- [ ] DM `dm_response` events should be shown as a distinct row with a different background color (e.g., muted blue) to distinguish them from explorer turns
-
-### 4.4 Message Trace
-
-- [ ] Filter events to `send_message` tool calls and `message_received` / `dm_response` event types
-- [ ] Render as a vertical timeline: Agent A column (left), DM column (center), Agent B column (right)
-- [ ] Each message is a labeled row with an arrow SVG showing direction
-- [ ] Normal messages: black arrow. Delayed messages: red arrow with "delayed +1" label
-- [ ] Show turn number at send and receive points
-
-### 4.5 Belief Divergence Utility
-
-- [ ] Implement `findDivergences(events)` in JavaScript:
-  - For each event, compare `agent_belief.visible_cells` to `world_truth.adjacent_cell_contents`
-  - Also flag any turn where DM gave information that contradicts `world_truth` (cross-reference DM `dm_response` events with ground truth at that turn)
-  - Return array of `{turn, agent_id, field, believed, actual}`
-- [ ] Use this in both the Incident Summary and to highlight timeline rows
-
-- [ ] **Done condition**: Open `viewer/index.html` in a browser. Load a real `events.jsonl`. Incident summary is populated. Timeline shows all turns. At least one row is highlighted for anomaly or belief divergence. Message trace renders correctly.
+- [ ] **Done condition**: Open Langfuse. Find a run's session. All turns grouped under one session. Each turn has a `progress` score attached. Score increases monotonically when key is picked up or door is unlocked.
 
 ---
 
-## Phase 5: Runs and Cleanup
+## Phase 8: DM Interaction Fix (`agents.py`)
 
-- [ ] Run at least 3 simulations: `python run.py`, varying seeds
-- [ ] Target variety: at least one success, one turn_limit failure, one stuck/key_blocked failure
-- [ ] If agents always succeed trivially, temporarily set turn limit to 20 to force failures
-- [ ] Verify the DM gives at least one piece of stale information that a viewer user can spot
-- [ ] Remove `runs/` from `.gitignore` so outputs are committed
-- [ ] Verify `viewer/index.html` loads all 3 runs correctly
-- [ ] Write `README.md`:
-  - Setup: `pip install -r requirements.txt`, copy `.env.example` to `.env`
-  - Run simulation: `python run.py` or `python run.py --seed 42`
-  - Open viewer: open `viewer/index.html` in a browser, load a file from `runs/<id>/events.jsonl`
-  - Model used and why
-- [ ] Final commit: `feat: dungeon agents simulation with traces and legibility viewer`
+**Blocker for stale data decisions metric.**
+
+- [ ] Add one explicit line to `EXPLORER_SYSTEM` prompt: `"If you cannot find the key or exit, send a message to DM — they have a map of the dungeon (may be 3 turns outdated)."`
+- [ ] Run 3 test sims and verify at least 1 DM interaction appears in `events.jsonl` (event_type: `dm_response`)
+- [ ] If still no DM interactions after prompt fix, escalate to user for decision
+
+---
+
+## Phase 9: Batch Run + `analyze.py`
+
+### 9.1 Batch mode in `run.py`
+
+- [ ] Add `--batch N` CLI argument: runs N simulations with seeds 1 through N sequentially
+- [ ] Print a summary table at the end of batch mode: seed | outcome | turns | anomalies
+- [ ] Each run still writes its own `runs/<run_id>/` directory
+
+### 9.2 `analyze.py` — aggregate analysis
+
+- [ ] Read all run directories from `runs/`
+- [ ] For each run, load `summary.json` and `events.jsonl`
+- [ ] Compute per-run stats:
+  - `anomaly_count` — count of events where `action.anomaly == true`
+  - `distinct_event_types` — set of notable events: `spurious_block`, `message_delayed`, `key_pickup`, `door_encounter`, `door_unlocked`, `message_sent`, `dm_response`
+  - `key_pickup_turn` — turn where `action.tool == "pick_up"` and `action.result.status == "success"`
+  - `door_encounter_turn` — first turn where `action.result.reason == "locked_door"`
+  - `door_unlocked_turn` — turn where `action.tool == "unlock_door"` and `action.result.status == "success"`
+  - `messages_sent` — count of `send_message` tool calls
+  - `dm_interactions` — count of `dm_response` events
+  - `progress_score_final` — `game_state_summary.progress_score` from the last event
+- [ ] Compute aggregate stats:
+  - `outcome_distribution` — count per outcome type
+  - `avg_turns_by_outcome` — mean total_turns grouped by outcome
+  - `anomaly_rate_by_run` — list of `{run_id, anomaly_count}` sorted descending
+  - `stale_data_decisions` — if `dm_interactions > 0` across any run: count turns where DM response contradicts `world_truth`; otherwise `"deferred — no DM interactions"`
+
+### 9.3 Run selection
+
+- [ ] Rank all runs by `len(distinct_event_types)` descending, break ties by `anomaly_count` descending
+- [ ] Mark top 10 as `"selected_for_repo": true` in the per-run records
+- [ ] Write `analysis.json` to repo root
+
+### 9.4 LLM-generated incident reports
+
+- [ ] For each run, call `claude-haiku-4-5-20251001` once with:
+  - System: "You are a technical analyst. Write a 3-5 sentence plain-English incident report about this dungeon agent run. Reference specific turn numbers and agent IDs. Explain what happened, why it failed (if it did), and what the most notable decision points were."
+  - User: condensed event summary (key events only — anomalies, pickups, door encounters, messages, final state — not all 101 events)
+- [ ] Write the report back into `runs/<run_id>/summary.json` as `"incident_report": "..."`
+- [ ] Include `incident_report` in `analysis.json` per-run record
+
+- [ ] **Done condition**: `python analyze.py` runs on 50 runs. `analysis.json` exists at repo root with all fields. Each `summary.json` has an `incident_report`. Top 10 runs are marked.
+
+### 9.5 Run the 50 simulations
+
+- [ ] `python run.py --batch 50` with seeds 1–50
+- [ ] Verify output: 50 run directories in `runs/`
+- [ ] Run `python analyze.py`
+- [ ] Delete the `events.jsonl` from the 40 non-selected runs (keep their `summary.json` for reference)
+- [ ] Commit: selected 10 full run dirs + all 50 `summary.json` files + `analysis.json`
+
+---
+
+## Phase 10: Viewer v2 (`viewer/index.html`)
+
+Rewrite the viewer to support all 6 views. Keep it a single HTML file with no build step.
+
+### 10.1 File loading
+
+- [ ] Two file inputs: `events.jsonl` (required) and `analysis.json` (optional, enables View 6)
+- [ ] On events load: parse JSONL, derive grid size from events, render all single-run views
+- [ ] On analysis load: render View 6 (cross-run aggregate)
+
+### 10.2 View 1 — Incident Summary
+
+- [ ] Display `summary.incident_report` if loaded (from a third optional `summary.json` input), else show "Load summary.json to see incident report"
+- [ ] Computed stats block: outcome, turns, anomaly count, divergence count, milestone turns (key_pickup_turn, door_unlocked_turn)
+- [ ] Issue lists: anomalies (red), divergences (yellow)
+
+### 10.3 View 2 — Key-Moment Grid
+
+- [ ] Implement `findKeyMoments(events) -> Event[]`: filter events where:
+  - `ev.turn === 1` (initial state — use `game_state_summary` for positions)
+  - `ev.action.anomaly === true` (spurious_block or message_delayed)
+  - `ev.action.result.status === "success" && ev.action.tool === "pick_up"`
+  - `ev.action.result.reason === "locked_door"` (door encounter)
+  - `ev.action.tool === "unlock_door" && ev.action.result.status === "success"`
+  - `ev.action.tool === "send_message"`
+- [ ] Implement `renderGrid(event, label)`: returns an HTML element — 8×8 CSS grid
+  - Read grid state from `world_truth.adjacent_cell_contents` for the 5 known cells; render rest as fog
+  - Overlay agent positions from `game_state_summary.agent_positions`
+  - Cell colours: WALL=`#1a1a1a`, EMPTY=`#2a2a2a`, KEY=`#c9a227`, LOCKED_DOOR=`#8b0000`, OPEN_DOOR=`#2d6a2d`, EXIT=`#4ec94e`, FOG=`#111`
+  - Agent A: green circle `●`, Agent B: blue circle `●`
+  - Label below: `"Turn N — what happened"`
+- [ ] Render grids in a horizontally scrollable row
+- [ ] Cap at 12 key moments to prevent overflow
+
+### 10.4 View 3 — Timeline (existing, update for structured results)
+
+- [ ] Update args/result display to read from structured `action.result` object
+- [ ] Update divergence detection to use `action.result.status === "anomaly"` for spurious blocks
+- [ ] Keep expand-on-click with belief/truth side-by-side
+
+### 10.5 View 4 — Charts (plain canvas, no library)
+
+Implement three `<canvas>` charts sharing the same x-axis (turn number):
+
+- [ ] **Anomaly rate bar chart**: one bar per turn (height 0 or 1 per agent). Two series: Agent A (green) and Agent B (blue). Red fill for anomaly bars.
+- [ ] **Latency line chart**: one point per turn per agent. Y-axis: ms. Two lines, colour-coded by agent.
+- [ ] **Token usage stacked bar**: one bar per turn. Bottom segment = prompt tokens, top = completion tokens. Two series (A, B) side by side per turn.
+- [ ] Shared: x-axis labels every 5 turns, y-axis with 4–5 tick marks, legend, chart title
+- [ ] Utility function `drawAxis(ctx, x, y, w, h, minV, maxV, nTicks)` to reuse across charts
+
+### 10.6 View 5 — Message Trace (existing, minor updates)
+
+- [ ] Show "No messages exchanged." if none — already done
+- [ ] Show DM response events as distinct arrow style (dashed border)
+
+### 10.7 View 6 — Cross-Run Aggregate (loads analysis.json)
+
+- [ ] Second file input triggers this view
+- [ ] **Anomaly distribution bar chart** (canvas): one bar per run (x), height = anomaly_count, colour by outcome
+- [ ] **Turns per outcome grouped bars** (canvas): group bars by outcome type, show distribution
+- [ ] **Stale data decisions**: if `aggregate.stale_data_decisions` is a string, show as a note; if it's a number, show as a stat
+- [ ] **Run selection table**: list all 50 runs with columns: seed, outcome, anomalies, distinct_event_types (as badges), selected (✓/—)
+
+- [ ] **Done condition**: Open `viewer/index.html`. Load seed-999 `events.jsonl` — see incident report (or placeholder), key-moment grids, timeline, all 3 charts populated with real data. Load `analysis.json` — see cross-run charts and selection table.
+
+---
+
+## Phase 11: Final Commit
+
+- [ ] Verify all 10 selected runs load correctly in the viewer
+- [ ] Verify `analysis.json` has all 50 runs summarised
+- [ ] `git add` selected run dirs + `analysis.json` + all changed source files
+- [ ] Update `README.md` with new scripts (`analyze.py`), new viewer views, and run selection criteria
+- [ ] Final commit and push
 
 ---
 
 ## Validation Checklist
 
-- [ ] `python run.py` runs end-to-end without errors
-- [ ] `events.jsonl` has a complete event for every turn (A, B, DM) with all schema fields populated
-- [ ] `summary.json` has outcome, reason, seed, total turns
-- [ ] `langfuse_export.json` is non-empty and Langfuse URL is printed to stdout
-- [ ] Viewer loads `events.jsonl` and renders all three views
-- [ ] At least one anomaly event is visible in the viewer
-- [ ] At least one belief divergence is visible in the viewer (DM gave stale info that differs from ground truth)
-- [ ] `.env` is not committed; `.env.example` is committed
-- [ ] 3+ run directories are committed under `runs/`
-- [ ] Commit history shows incremental progress across all phases
+- [ ] Every event in `events.jsonl` has `game_state_summary` with all 5 fields
+- [ ] Every `action.result` is a structured dict (no raw strings)
+- [ ] Langfuse: each run is one session; each turn has a `progress` score
+- [ ] `analysis.json` has all 50 runs; top 10 marked `selected_for_repo: true`
+- [ ] Each `summary.json` has an `incident_report` string
+- [ ] Viewer: all 6 views render with real data
+- [ ] At least 1 DM interaction in the committed runs (pending Phase 8 fix)
+- [ ] Commit history shows incremental progress
