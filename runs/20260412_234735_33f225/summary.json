@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_234735_33f225",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      3,
+      4
+    ],
+    "B": [
+      1,
+      6
+    ]
+  },
+  "seed": 36,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/1e00a5337eb8e9ea682af0cf3d6a0e9f",
+  "incident_report": "# Incident Report: Seed 36 Dungeon Run\n\nThis run failed to complete the objective within the 50-turn limit, terminating at turn 51 with zero progress score. Agent B became trapped in a repeated loop of locked door encounters (turns 13, 22, 30, 33, 34, 37, 47), suggesting it reached a critical choke point early and lacked the means or coordination to proceed. Agent A encountered multiple spurious block anomalies (turns 4, 26, 28, 34) that appear to have disrupted navigation patterns, and Agent B later experienced the same anomaly type (turns 39, 41, 44), indicating environmental instability rather than isolated agent malfunction. The critical failure point occurred when neither agent acquired the key pickup or unlocked any doors\u2014since no DM interactions or messages were sent between agents, there was no mechanism for sharing information about obstacles or alternative routes. The run demonstrates that without inter-agent communication or a key acquisition early enough to unblock progression, spurious anomalies combined with locked-door barriers can render a dungeon unnavigable within the turn budget."
+}

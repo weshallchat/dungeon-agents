@@ -6,12 +6,9 @@ Usage: python run.py [--seed SEED] [--turn-limit N] [--size N]
 from __future__ import annotations
 
 import argparse
-import json
 import random
-import sys
-import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from dungeon import (
     WorldState,
@@ -23,11 +20,11 @@ from dungeon import (
     StuckTracker,
 )
 from agents import run_explorer_turn, maybe_run_dm
-from tracer import export_traces, flush, write_summary, run_dir
+from tracer import export_traces, flush, write_summary
 
 
 def run_game(seed: int | None = None, turn_limit: int = 50, size: int = 8) -> dict:
-    run_id = datetime.utcnow().strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+    run_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
     print(f"\n=== Run {run_id} | seed={seed} ===")
 
     world = build_world(size=size, seed=seed)
@@ -52,12 +49,12 @@ def run_game(seed: int | None = None, turn_limit: int = 50, size: int = 8) -> di
         old_pos_a = list(world.agent_positions["A"])
         event_a = run_explorer_turn(world, "A", run_id, rng)
         new_pos_a = world.agent_positions["A"]
-        success_a = "cannot" not in event_a["action"]["result"] and not event_a["action"]["anomaly"]
+        success_a = event_a["action"]["result"].get("status") == "success" and not event_a["action"]["anomaly"]
         stuck_tracker.record("A", old_pos_a, new_pos_a, success_a)
         _track_door_block(world, stuck_tracker, "A", event_a)
-        if "_trace_url" in event_a:
+        if "_trace_url" in event_a and event_a["_trace_url"]:
             trace_urls.append(event_a["_trace_url"])
-        print(f"  A: {event_a['action']['tool']}({event_a['action']['args']}) → {event_a['action']['result'][:60]}")
+        _print_event("A", event_a)
 
         # DM reactive — fires if A sent it a message
         dm_event = maybe_run_dm(world, run_id)
@@ -74,12 +71,12 @@ def run_game(seed: int | None = None, turn_limit: int = 50, size: int = 8) -> di
         old_pos_b = list(world.agent_positions["B"])
         event_b = run_explorer_turn(world, "B", run_id, rng)
         new_pos_b = world.agent_positions["B"]
-        success_b = "cannot" not in event_b["action"]["result"] and not event_b["action"]["anomaly"]
+        success_b = event_b["action"]["result"].get("status") == "success" and not event_b["action"]["anomaly"]
         stuck_tracker.record("B", old_pos_b, new_pos_b, success_b)
         _track_door_block(world, stuck_tracker, "B", event_b)
-        if "_trace_url" in event_b:
+        if "_trace_url" in event_b and event_b["_trace_url"]:
             trace_urls.append(event_b["_trace_url"])
-        print(f"  B: {event_b['action']['tool']}({event_b['action']['args']}) → {event_b['action']['result'][:60]}")
+        _print_event("B", event_b)
 
         # DM reactive — fires if B sent it a message
         dm_event = maybe_run_dm(world, run_id)
@@ -118,14 +115,24 @@ def run_game(seed: int | None = None, turn_limit: int = 50, size: int = 8) -> di
     print(f"Events: runs/{run_id}/events.jsonl")
     print(f"Summary: runs/{run_id}/summary.json")
 
-    return {"run_id": run_id, "outcome": outcome, "reason": reason, "turns": world.turn}
+    return {"run_id": run_id, "outcome": outcome, "reason": reason, "turns": world.turn, "seed": seed}
+
+
+def _print_event(agent_id: str, event: dict) -> None:
+    tool = event["action"]["tool"]
+    args = event["action"]["args"]
+    result = event["action"]["result"]
+    status = result.get("status", "?")
+    reason = result.get("reason") or result.get("to") or ""
+    suffix = f" ({reason})" if reason else ""
+    print(f"  {agent_id}: {tool}({args}) → {status}{suffix}")
 
 
 def _track_door_block(world: WorldState, tracker: StuckTracker, agent_id: str, event: dict):
     """Update door-blocked counter: True if agent tried to move into locked door."""
     tool = event["action"]["tool"]
     result = event["action"]["result"]
-    blocked_at_door = tool == "move" and "locked door" in result
+    blocked_at_door = tool == "move" and result.get("reason") == "locked_door"
     tracker.record_door_blocked(agent_id, blocked_at_door)
 
 
@@ -134,10 +141,28 @@ def main():
     parser.add_argument("--seed", type=int, default=None, help="Random seed for reproducibility")
     parser.add_argument("--turn-limit", type=int, default=50, help="Max turns before failure")
     parser.add_argument("--size", type=int, default=8, help="Grid size (NxN)")
+    parser.add_argument("--batch", type=int, default=None, help="Run N simulations with seeds 1..N")
+    parser.add_argument("--batch-from", type=int, default=1, help="Starting seed for --batch (default 1)")
     args = parser.parse_args()
 
-    seed = args.seed if args.seed is not None else random.randint(0, 99999)
-    run_game(seed=seed, turn_limit=args.turn_limit, size=args.size)
+    if args.batch:
+        results = []
+        for seed in range(args.batch_from, args.batch_from + args.batch):
+            try:
+                result = run_game(seed=seed, turn_limit=args.turn_limit, size=args.size)
+                results.append(result)
+            except Exception as exc:
+                print(f"\n[BATCH] seed={seed} FAILED: {exc} — skipping\n")
+                results.append({"seed": seed, "outcome": "error", "reason": str(exc), "turns": 0})
+
+        print("\n=== Batch Summary ===")
+        print(f"{'Seed':>6}  {'Outcome':<12}  {'Turns':>5}  {'Anomalies':>9}")
+        print("-" * 40)
+        for r in results:
+            print(f"{r['seed']:>6}  {r['outcome']:<12}  {r['turns']:>5}")
+    else:
+        seed = args.seed if args.seed is not None else random.randint(0, 99999)
+        run_game(seed=seed, turn_limit=args.turn_limit, size=args.size)
 
 
 if __name__ == "__main__":

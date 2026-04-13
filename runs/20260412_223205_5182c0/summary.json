@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_223205_5182c0",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      5,
+      0
+    ],
+    "B": [
+      0,
+      7
+    ]
+  },
+  "seed": 20,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/77221c3c4f61e63db10f6e179c1ee5e3",
+  "incident_report": "# Incident Report: Dungeon Agent Run (Seed 20)\n\n**Summary:** This run failed to complete the dungeon objective within the 50-turn limit, reaching only 0.33 progress before timeout on turn 51. Agent B successfully retrieved the key at turn 5, but Agent A became stuck at a locked door starting at turn 6 and was never able to progress beyond it. The critical failure point was the lack of communication between agents\u2014Agent B never delivered the key to Agent A, leaving the door permanently locked.\n\n**Root Causes:** The primary issue was insufficient inter-agent coordination; no messages were sent and there were zero DM interactions despite Agent A's repeated blocking attempts at turns 6, 19, and 23. Additionally, the run was plagued by 14 spurious_block anomalies scattered throughout (particularly dense at turns 14-15, 35, 39-43, and 45-47), which may have further hindered navigation and decision-making.\n\n**Key Decision Points:** The most critical moment was turn 5, when Agent B successfully picked up the key but apparently did not navigate toward Agent A's position at the locked door. A secondary failure occurred at turn 6 when Agent A first encountered the locked door\u2014at this juncture, explicitly messaging Agent B to coordinate key delivery would have been the optimal action, yet no such communication was attempted"
+}

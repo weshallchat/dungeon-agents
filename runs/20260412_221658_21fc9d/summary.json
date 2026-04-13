@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_221658_21fc9d",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      0,
+      7
+    ],
+    "B": [
+      0,
+      7
+    ]
+  },
+  "seed": 13,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/54d8c21d8960a788e8d209e8ef1d2121",
+  "incident_report": "# Incident Report: Seed 13 Run\n\nAgent B successfully acquired the key on turn 8, achieving 33% progress toward the dungeon objective. However, the run exceeded the 50-turn limit without unlocking the target door, ultimately failing to complete the mission. Agent B encountered five spurious_block anomalies during movement attempts (turns 9, 30, 33, 48, and 50), which appear to have significantly disrupted pathfinding and navigation efficiency. The critical decision point occurred after the key pickup on turn 8\u2014Agent B's subsequent movement strategy was immediately compromised by the anomaly on turn 9, and despite having the necessary key, the agent could not establish a viable route to the door before turn exhaustion. The clustering of anomalies in the latter half of the run (turns 48-50) suggests either a pathfinding loop or repeated collisions with environmental obstacles that prevented progress toward the unlock objective."
+}

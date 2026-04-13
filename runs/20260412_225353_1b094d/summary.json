@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_225353_1b094d",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      0,
+      6
+    ],
+    "B": [
+      0,
+      5
+    ]
+  },
+  "seed": 30,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/2c7c8537d77c515cca153a50d06b93a5",
+  "incident_report": "# Incident Report: Dungeon Run Seed 30\n\nAgent A encountered persistent pathfinding failures throughout the run, triggering spurious_block anomalies on turns 2, 9, 17, 18, and 32 despite no actual obstacles being present. Agent B operated more successfully, reaching the key pickup on turn 37, but the run ultimately failed due to exceeding the 50-turn limit (finishing at turn 51) without unlocking the target door. The critical decision point occurred around turn 37 when Agent B obtained the key, but subsequent movement (turn 41) was again blocked by a spurious_block anomaly, preventing door unlock. The root cause appears to be a combination of pathfinding instability in Agent A and insufficient time allocation\u2014the agents needed at least one additional turn to utilize the key and reach the exit, but systematic movement anomalies consumed available turns before this could occur."
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_230350_6ccbec",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      0,
+      6
+    ],
+    "B": [
+      0,
+      7
+    ]
+  },
+  "seed": 34,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/8f4f4f48dd1bd63cc26574691cbcb27c",
+  "incident_report": "# Incident Report: Dungeon Run Seed 34\n\n**Summary:** Agent B successfully retrieved the key on turn 5, but the team failed to progress beyond 33% completion within the 50-turn limit, ultimately hitting the turn cap on turn 51. The run was severely hampered by seven spurious_block anomalies that struck both agents during movement actions across turns 6\u201343, creating persistent navigation obstacles that prevented the team from reaching the locked door.\n\n**Critical Failure Point:** Agent B's early key acquisition on turn 5 was the only major success; however, the subsequent anomaly on turn 6 (immediately after pickup) appeared to trigger a pattern of repeated blocking events. With no DM interactions recorded and zero messages sent between agents, there was no evidence of coordination attempts or requests for guidance when the team encountered these obstacles.\n\n**Notable Decision Gap:** The most striking absence was the complete lack of communication or escalation\u2014neither agent attempted to send a message to request assistance or clarify strategy after the first anomaly, despite seven total movement failures. The team's failure to unlock any doors suggests they never recovered positionally from the early movement disruptions, leaving significant unexplored dungeon areas and ultimately running out of turns while still far from the objective."
+}

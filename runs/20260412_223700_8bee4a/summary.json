@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_223700_8bee4a",
+  "outcome": "stuck",
+  "reason": "both agents stuck for 3+ consecutive turns",
+  "total_turns": 14,
+  "final_positions": {
+    "A": [
+      4,
+      1
+    ],
+    "B": [
+      5,
+      7
+    ]
+  },
+  "seed": 22,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/5b569d46358c10fe8b5ca12b0bf1e419",
+  "incident_report": "# Incident Report: Dungeon Agent Run (Seed 22)\n\n**Summary:** Agents A and B became stuck in a deadlock situation despite successfully locating critical objectives. Agent B retrieved the key on turn 5 and identified the exit at [5,7], but the agents failed to coordinate effective door-unlocking procedures, resulting in zero progress toward the ultimate goal by turn 14.\n\n**Root Cause:** The primary failure was a critical miscommunication loop. Agent B discovered both the key and exit but remained at the exit location rather than moving to the locked door at [5,1] where Agent A was positioned. Agent A reached the locked door by turn 13 but lacked the key, while Agent B\u2014who held the key\u2014never navigated back to unlock it. Messages were sent frequently (9 total) but conveyed location information without clear action directives, creating confusion about whose responsibility it was to move where.\n\n**Notable Decision Points:** Turn 5 marked the key pickup, establishing the prerequisite for progression. Turn 8-11 represented critical coordination moments where Agent B had the key but chose to remain at the exit rather than backtrack to meet Agent A at the locked door. The anomalies on turns 2 (spurious block) and 12 (message delay) added friction but were not the primary blockers\u2014the agents' failure to execute a coherent spatial"
+}

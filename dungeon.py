@@ -1,5 +1,6 @@
 """
 dungeon.py — World state, grid generation, observable state builders, tool execution.
+All tool results are structured dicts for clean aggregation across runs.
 """
 
 from __future__ import annotations
@@ -40,7 +41,6 @@ PASSABLE = {Cell.EMPTY, Cell.OPEN_DOOR, Cell.EXIT, Cell.KEY}
 # ---------------------------------------------------------------------------
 
 def generate_grid(size: int = 8, seed: int | None = None) -> list[list[Cell]]:
-    """Generate a connected, playable grid. Retries until connectivity is satisfied."""
     rng = random.Random(seed)
     while True:
         grid = _attempt_grid(size, rng)
@@ -51,23 +51,20 @@ def generate_grid(size: int = 8, seed: int | None = None) -> list[list[Cell]]:
 def _attempt_grid(size: int, rng: random.Random) -> list[list[Cell]] | None:
     grid = [[Cell.EMPTY] * size for _ in range(size)]
 
-    # Place walls (~15% of cells)
     for r in range(size):
         for c in range(size):
             if rng.random() < 0.15:
                 grid[r][c] = Cell.WALL
 
-    # Place special cells — pick from empty cells only
     empty_cells = [(r, c) for r in range(size) for c in range(size) if grid[r][c] == Cell.EMPTY]
     if len(empty_cells) < 6:
         return None
 
     rng.shuffle(empty_cells)
-    key_pos   = empty_cells[0]
-    door_pos  = empty_cells[1]
-    exit_pos  = empty_cells[2]
+    key_pos  = empty_cells[0]
+    door_pos = empty_cells[1]
+    exit_pos = empty_cells[2]
 
-    # Exit must not be adjacent to door
     if _adjacent(exit_pos, door_pos):
         return None
 
@@ -75,7 +72,6 @@ def _attempt_grid(size: int, rng: random.Random) -> list[list[Cell]] | None:
     grid[door_pos[0]][door_pos[1]] = Cell.LOCKED_DOOR
     grid[exit_pos[0]][exit_pos[1]] = Cell.EXIT
 
-    # Validate full connectivity of all non-wall cells
     if not _is_connected(grid, size):
         return None
 
@@ -87,15 +83,12 @@ def _adjacent(a: tuple, b: tuple) -> bool:
 
 
 def _is_connected(grid: list[list[Cell]], size: int) -> bool:
-    """BFS from first non-wall cell; check all non-wall cells are reachable."""
     non_wall = [(r, c) for r in range(size) for c in range(size) if grid[r][c] != Cell.WALL]
     if not non_wall:
         return False
-
     visited = set()
     queue = deque([non_wall[0]])
     visited.add(non_wall[0])
-
     while queue:
         r, c = queue.popleft()
         for dr, dc in DIRECTION_DELTAS.values():
@@ -104,7 +97,6 @@ def _is_connected(grid: list[list[Cell]], size: int) -> bool:
                 if grid[nr][nc] != Cell.WALL:
                     visited.add((nr, nc))
                     queue.append((nr, nc))
-
     return len(visited) == len(non_wall)
 
 
@@ -117,7 +109,6 @@ def find_cell(grid: list[list[Cell]], cell_type: Cell) -> tuple[int, int] | None
 
 
 def snapshot_grid(grid: list[list[Cell]]) -> list[list[str]]:
-    """Return a serialisable copy of the grid."""
     return [[cell.value for cell in row] for row in grid]
 
 
@@ -137,12 +128,12 @@ class WorldState:
     grid: list[list[Cell]]
     size: int
     seed: int | None
-    agent_positions: dict[str, list[int]]   # {"A": [r,c], "B": [r,c]}
-    inventories: dict[str, list[str]]       # {"A": [], "B": []}
-    door_state: str                         # "locked" | "unlocked"
+    agent_positions: dict[str, list[int]]
+    inventories: dict[str, list[str]]
+    door_state: str
     message_queues: dict[str, list[Message]]
     turn: int
-    history: list[list[list[str]]]          # grid snapshots for DM stale view
+    history: list[list[list[str]]]
 
 
 def build_world(size: int = 8, seed: int | None = None) -> WorldState:
@@ -157,7 +148,7 @@ def build_world(size: int = 8, seed: int | None = None) -> WorldState:
         door_state="locked",
         message_queues={"A": [], "B": [], "DM": []},
         turn=1,
-        history=[snapshot_grid(grid)],  # turn-0 snapshot
+        history=[snapshot_grid(grid)],
     )
 
 
@@ -203,7 +194,6 @@ def get_explorer_state(world: WorldState, agent_id: str, delivered_messages: lis
 
 
 def get_dm_state(world: WorldState) -> dict:
-    """Return full grid as it was N=3 turns ago (stale), plus pending DM messages."""
     stale_idx = max(0, len(world.history) - 3 - 1)
     stale_grid = world.history[stale_idx]
     stale_turn = max(1, world.turn - 3)
@@ -215,7 +205,6 @@ def get_dm_state(world: WorldState) -> dict:
 
 
 def get_world_truth(world: WorldState, agent_id: str) -> dict:
-    """Ground truth snapshot for event logging — what is actually true this turn."""
     pos = world.agent_positions[agent_id]
     return {
         "actual_position": pos,
@@ -226,11 +215,60 @@ def get_world_truth(world: WorldState, agent_id: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Progress score + game state summary
+# ---------------------------------------------------------------------------
+
+def compute_progress_score(world: WorldState) -> float:
+    exit_pos = find_cell(world.grid, Cell.EXIT)
+    pos_a = tuple(world.agent_positions["A"])
+    pos_b = tuple(world.agent_positions["B"])
+
+    if exit_pos and pos_a == tuple(exit_pos) and pos_b == tuple(exit_pos):
+        return 1.0
+    if world.door_state == "unlocked":
+        return 0.66
+    if any("key" in world.inventories[a] for a in ["A", "B"]):
+        return 0.33
+    return 0.0
+
+
+def compute_milestone_label(score: float) -> str:
+    if score >= 1.0:
+        return "complete"
+    if score >= 0.66:
+        return "door_unlocked"
+    if score >= 0.33:
+        return "key_acquired"
+    return "start"
+
+
+def build_game_state_summary(world: WorldState) -> dict:
+    key_holder = next(
+        (a for a in ["A", "B"] if "key" in world.inventories[a]), None
+    )
+    exit_pos = find_cell(world.grid, Cell.EXIT)
+    pos_a = tuple(world.agent_positions["A"])
+    pos_b = tuple(world.agent_positions["B"])
+    both_at_exit = bool(
+        exit_pos and pos_a == tuple(exit_pos) and pos_b == tuple(exit_pos)
+    )
+    score = compute_progress_score(world)
+    return {
+        "turn": world.turn,
+        "key_held_by": key_holder,
+        "door_state": world.door_state,
+        "agent_positions": {k: list(v) for k, v in world.agent_positions.items()},
+        "both_at_exit": both_at_exit,
+        "progress_score": score,
+        "milestone": compute_milestone_label(score),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Message delivery
 # ---------------------------------------------------------------------------
 
 def deliver_messages(world: WorldState, agent_id: str) -> list[Message]:
-    """Pop and return all messages due for delivery to agent_id this turn."""
     due = [m for m in world.message_queues[agent_id] if m.deliver_on_turn <= world.turn]
     world.message_queues[agent_id] = [
         m for m in world.message_queues[agent_id] if m.deliver_on_turn > world.turn
@@ -239,7 +277,7 @@ def deliver_messages(world: WorldState, agent_id: str) -> list[Message]:
 
 
 # ---------------------------------------------------------------------------
-# Tool execution
+# Tool execution — all results are structured dicts
 # ---------------------------------------------------------------------------
 
 def execute_tool(
@@ -247,10 +285,12 @@ def execute_tool(
     agent_id: str,
     tool_name: str,
     tool_args: dict,
-    rng: random.Random,
-) -> tuple[str, bool, str | None]:
+    rng: random.Random | None,
+) -> tuple[dict, bool, str | None]:
     """
-    Execute a tool call. Returns (result_str, anomaly, anomaly_reason).
+    Execute a tool call.
+    Returns (result_dict, anomaly, anomaly_reason).
+    result_dict is always a structured dict — never a raw string.
     """
     if tool_name == "move":
         return _tool_move(world, agent_id, tool_args, rng)
@@ -265,39 +305,37 @@ def execute_tool(
     elif tool_name == "respond_to_agent":
         return _tool_respond_to_agent(world, agent_id, tool_args)
     else:
-        return f"unknown tool: {tool_name}", False, None
+        return {"status": "failed", "reason": f"unknown_tool:{tool_name}"}, False, None
 
 
-def _tool_move(world: WorldState, agent_id: str, args: dict, rng: random.Random):
+def _tool_move(world: WorldState, agent_id: str, args: dict, rng: random.Random | None):
     direction = args.get("direction", "")
     if direction not in DIRECTION_DELTAS:
-        return f"invalid direction: {direction}", False, None
+        return {"status": "failed", "new_position": None, "reason": "invalid_direction"}, False, None
 
     dr, dc = DIRECTION_DELTAS[direction]
     r, c = world.agent_positions[agent_id]
     nr, nc = r + dr, c + dc
 
     if not (0 <= nr < world.size and 0 <= nc < world.size):
-        return f"cannot move {direction}: out of bounds", False, None
+        return {"status": "failed", "new_position": None, "reason": "out_of_bounds"}, False, None
 
     target_cell = world.grid[nr][nc]
     if target_cell == Cell.WALL:
-        return f"cannot move {direction}: wall", False, None
+        return {"status": "failed", "new_position": None, "reason": "wall"}, False, None
     if target_cell == Cell.LOCKED_DOOR:
-        return f"cannot move {direction}: locked door", False, None
+        return {"status": "failed", "new_position": None, "reason": "locked_door"}, False, None
 
-    # Spurious block injection (~10%)
-    if rng.random() < 0.10:
-        return f"path blocked unexpectedly", True, "spurious_block"
+    if rng and rng.random() < 0.10:
+        return {"status": "anomaly", "new_position": None, "reason": "spurious_block"}, True, "spurious_block"
 
     world.agent_positions[agent_id] = [nr, nc]
-    return f"moved {direction} to {[nr, nc]}", False, None
+    return {"status": "success", "new_position": [nr, nc], "reason": None}, False, None
 
 
 def _tool_observe(world: WorldState, agent_id: str):
     cells = _get_adjacent_cells(world, world.agent_positions[agent_id])
-    lines = [f"  {k}: {v}" for k, v in cells.items()]
-    return "observed:\n" + "\n".join(lines), False, None
+    return {"status": "success", "cells": cells}, False, None
 
 
 def _tool_pick_up(world: WorldState, agent_id: str, args: dict):
@@ -308,24 +346,23 @@ def _tool_pick_up(world: WorldState, agent_id: str, args: dict):
     if item == "key" and cell == Cell.KEY:
         world.grid[r][c] = Cell.EMPTY
         world.inventories[agent_id].append("key")
-        return "picked up key", False, None
-    return f"no {item} here", False, None
+        return {"status": "success", "item": "key", "reason": None}, False, None
+    return {"status": "failed", "item": item, "reason": "no_item_here"}, False, None
 
 
-def _tool_send_message(world: WorldState, agent_id: str, args: dict, rng: random.Random):
+def _tool_send_message(world: WorldState, agent_id: str, args: dict, rng: random.Random | None):
     to = args.get("to", "")
     content = args.get("content", "")
 
     if to not in ("A", "B", "DM"):
-        return f"invalid recipient: {to}", False, None
+        return {"status": "failed", "to": to, "deliver_on_turn": None, "reason": "invalid_recipient"}, False, None
     if to == agent_id:
-        return "cannot message yourself", False, None
+        return {"status": "failed", "to": to, "deliver_on_turn": None, "reason": "cannot_message_self"}, False, None
 
-    # Message delay injection (~15%)
     anomaly = False
     anomaly_reason = None
     deliver_on = world.turn + 1
-    if rng.random() < 0.15:
+    if rng and rng.random() < 0.15:
         deliver_on = world.turn + 2
         anomaly = True
         anomaly_reason = "message_delayed"
@@ -335,34 +372,35 @@ def _tool_send_message(world: WorldState, agent_id: str, args: dict, rng: random
         content=content,
         deliver_on_turn=deliver_on,
     ))
-    suffix = " (delayed)" if anomaly else ""
-    return f"message sent to {to}{suffix}", anomaly, anomaly_reason
+    status = "delayed" if anomaly else "sent"
+    return {"status": status, "to": to, "deliver_on_turn": deliver_on}, anomaly, anomaly_reason
 
 
 def _tool_unlock_door(world: WorldState, agent_id: str):
     r, c = world.agent_positions[agent_id]
     if world.grid[r][c] != Cell.LOCKED_DOOR:
-        return "you are not standing on the door", False, None
+        return {"status": "failed", "reason": "not_on_door"}, False, None
     if "key" not in world.inventories[agent_id]:
-        return "you do not have the key", False, None
+        return {"status": "failed", "reason": "no_key"}, False, None
 
     world.grid[r][c] = Cell.OPEN_DOOR
     world.door_state = "unlocked"
-    return "door unlocked", False, None
+    return {"status": "success", "reason": None}, False, None
 
 
 def _tool_respond_to_agent(world: WorldState, _agent_id: str, args: dict):
     to = args.get("to", "")
     content = args.get("content", "")
     if to not in ("A", "B"):
-        return f"invalid recipient: {to}", False, None
+        return {"status": "failed", "to": to, "deliver_on_turn": None, "reason": "invalid_recipient"}, False, None
 
+    deliver_on = world.turn + 1
     world.message_queues[to].append(Message(
         from_agent="DM",
         content=content,
-        deliver_on_turn=world.turn + 1,
+        deliver_on_turn=deliver_on,
     ))
-    return f"response sent to {to}", False, None
+    return {"status": "sent", "to": to, "deliver_on_turn": deliver_on}, False, None
 
 
 # ---------------------------------------------------------------------------
@@ -380,7 +418,6 @@ class StuckTracker:
     def record(self, agent_id: str, old_pos: list[int], new_pos: list[int], success: bool):
         self.position_history[agent_id].append(tuple(old_pos))
         self.action_success[agent_id].append(success)
-        # Keep only last WINDOW entries
         if len(self.position_history[agent_id]) > self.WINDOW:
             self.position_history[agent_id].pop(0)
         if len(self.action_success[agent_id]) > self.WINDOW:
@@ -397,9 +434,7 @@ class StuckTracker:
         succ = self.action_success[agent_id]
         if len(hist) < self.WINDOW:
             return False
-        same_pos = len(set(hist)) == 1
-        no_success = not any(succ)
-        return same_pos and no_success
+        return len(set(hist)) == 1 and not any(succ)
 
 
 def check_termination(
@@ -407,27 +442,19 @@ def check_termination(
     stuck_tracker: StuckTracker,
     turn_limit: int = 50,
 ) -> tuple[bool, str, str]:
-    """
-    Returns (done, outcome, reason).
-    outcome ∈ {"success", "turn_limit", "stuck", "key_blocked"}
-    """
     pos_a = tuple(world.agent_positions["A"])
     pos_b = tuple(world.agent_positions["B"])
     exit_pos = find_cell(world.grid, Cell.EXIT)
 
-    # Success
     if exit_pos and pos_a == tuple(exit_pos) and pos_b == tuple(exit_pos):
         return True, "success", "both agents reached the exit"
 
-    # Turn limit
     if world.turn > turn_limit:
         return True, "turn_limit", f"turn limit of {turn_limit} reached"
 
-    # Standard stuck
     if stuck_tracker.is_stuck("A") and stuck_tracker.is_stuck("B"):
         return True, "stuck", "both agents stuck for 3+ consecutive turns"
 
-    # Key-blocked: key-holder stuck AND other agent can't get through door
     for holder, other in [("A", "B"), ("B", "A")]:
         if "key" in world.inventories[holder]:
             if stuck_tracker.is_stuck(holder):

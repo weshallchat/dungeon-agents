@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_215704_ee36c4",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      0,
+      7
+    ],
+    "B": [
+      1,
+      4
+    ]
+  },
+  "seed": 5,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/7180e32e974a6b85fb21c22dfe915efa",
+  "incident_report": "# Incident Report: Seed 5 Dungeon Run\n\n**Summary:** Agents A and B failed to complete the dungeon within the 50-turn limit, reaching turn 51 with only 33% progress. Agent B successfully located and picked up the key at turn 12, but the agents never managed to unlock the door or reach the exit together, ultimately timing out.\n\n**Critical Failure Points:** The run was severely hampered by 13 spurious_block anomalies scattered throughout the execution (turns 4, 9, 14, 24, 25, 30-31, 32, 34-35, 43-44, 49), which repeatedly blocked agent movement and consumed valuable turns. Agent A identified the exit location at position [1,5] by turn 22 and re-confirmed it at turn 40, but these discoveries came too late in the run and didn't translate into coordinated progress toward the goal.\n\n**Notable Decision Points:** The key pickup at turn 12 (Agent B) should have been a catalyst for immediate door unlocking, but no subsequent unlock event was recorded, suggesting either the agents failed to navigate to the door or the coordination between agents broke down. The DM interactions at turns 23 and 41, while providing location confirmation, operated on stale board views and consumed turns without accelerating problem-solving. The persistent movement failures"
+}

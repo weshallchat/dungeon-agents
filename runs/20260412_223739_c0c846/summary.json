@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_223739_c0c846",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      6,
+      6
+    ],
+    "B": [
+      2,
+      7
+    ]
+  },
+  "seed": 23,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/69f67da34ef1959faf0eaff6b0854051",
+  "incident_report": "# Incident Report: Dungeon Agent Run (Seed 23)\n\n**Summary:**\nAgent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with a progress score of only 0.33. Agent A successfully acquired the key on turn 2 and located the EXIT at [6,6] by turn 26, but the agents never unlocked the door or reached the exit together, ultimately timing out.\n\n**Critical Failure Points:**\nThe primary issue was that Agent A discovered the EXIT location early but appeared confused about the actual objective\u2014it repeatedly messaged Agent B about reaching \"the EXIT\" when the true goal required finding and unlocking a locked door (at position [4,3], mentioned only once in turn 31). Agent A never attempted to navigate toward or unlock the door despite holding the key, instead fixating on the EXIT location and waiting for Agent B to arrive there. Additionally, both agents encountered 10 spurious_block anomalies throughout the run (turns 3, 7, 8, 11, 17, 23, 35, 36, 43), which impeded navigation but shouldn't have prevented progress had objectives been clearer.\n\n**Key Decision Points:**\nThe most notable failure occurred between turns 26-31: Agent A had the key and door location but never attempted to move toward the locked door"
+}

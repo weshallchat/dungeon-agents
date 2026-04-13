@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_211410_82096a",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      0,
+      0
+    ],
+    "B": [
+      2,
+      6
+    ]
+  },
+  "seed": 42,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/d9185bc4880eabd2e87f113fbba46c42",
+  "incident_report": "# Incident Report: Seed 42 Dungeon Run\n\n**Summary:** Agents A and B failed to complete the dungeon objective, reaching the turn limit of 50 without acquiring the required pickup or unlocking any doors. The run was entirely derailed by repeated spurious_block anomalies that prevented meaningful progress.\n\n**Critical Failure Mode:** Fourteen anomalies occurred across 51 turns, with both agents consistently encountering spurious_block errors during movement attempts. The anomalies were distributed throughout the run (turns 1, 4, 5, 7, 10, 14, 21, 23, 34, 45, 48, 51), indicating a systemic pathfinding or collision-detection issue rather than a localized problem. Neither agent successfully executed any productive action\u2014no messages were sent and zero DM interactions occurred.\n\n**Key Decision Points & Outcome:** The first anomaly appeared immediately on turn 1 (Agent B), setting a negative trajectory. By turn 14, both agents had already encountered multiple blocks, yet the run continued with no apparent strategic pivot or coordination attempt. The lack of any message-sending or DM interaction suggests the agents may not have attempted communication or sought assistance to bypass the environmental obstacles. With 14 anomalies consuming turns and zero progress toward objectives, this run represents a complete failure due to environmental/system constraints rather"
+}

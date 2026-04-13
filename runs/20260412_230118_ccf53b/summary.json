@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_230118_ccf53b",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      4,
+      5
+    ],
+    "B": [
+      0,
+      7
+    ]
+  },
+  "seed": 33,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/47d13a7afad520ba7eb866eedc0bd0f9",
+  "incident_report": "# Incident Report: Seed 33 Dungeon Run\n\n**Summary:**\nAgents A and B failed to complete the dungeon objective within the 50-turn limit, achieving only 0.33 progress despite successfully locating the exit at [4,5] by turn 6 and identifying the key's location. Agent B retrieved the key on turn 6, and both agents communicated their discoveries, but the run ultimately stalled due to movement anomalies and coordination failures.\n\n**Critical Failure Points:**\nThe primary issue was a cascade of spurious_block anomalies beginning at turn 12 and recurring frequently (turns 12, 27, 31, 37, 40, 44, 45, 50), which prevented agents from reaching their objectives despite clear communication about positions and goals. Additionally, message_delayed anomalies on turns 17, 21, and 24 fragmented the agents' real-time coordination, causing duplicate and partially-truncated messages that may have obscured actionable information.\n\n**Notable Decision Points:**\nAgent A's early strategy (turn 6) to position itself at the exit while waiting for Agent B was sound, but the lack of a concrete rendezvous plan for the locked door proved costly\u2014the agents never confirmed the door's location or synchronized a meeting point. The DM interaction on turn 26 acknowledged stale information"
+}

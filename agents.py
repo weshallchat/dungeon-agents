@@ -15,6 +15,9 @@ from dotenv import load_dotenv
 from dungeon import (
     Cell,
     WorldState,
+    build_game_state_summary,
+    compute_milestone_label,
+    compute_progress_score,
     deliver_messages,
     execute_tool,
     find_cell,
@@ -164,23 +167,31 @@ def run_explorer_turn(
     with lf.start_as_current_span(
         name="explorer_turn",
         input={"turn": world.turn, "agent_id": agent_id, "belief": belief},
-        metadata={"run_id": run_id, "turn": world.turn, "agent_id": agent_id},
+        metadata={"run_id": run_id, "turn": world.turn, "agent_id": agent_id, "session_id": run_id},
     ):
-        # 4. LLM call inside a generation span
+        # 4. LLM call inside a generation span (with retry on transient errors)
         t_start = time.time()
         with lf.start_as_current_generation(
             name="llm_call",
             model=MODEL,
             input=full_prompt,
         ) as gen:
-            response = _client.messages.create(
-                model=MODEL,
-                max_tokens=512,
-                system=EXPLORER_SYSTEM,
-                tools=EXPLORER_TOOLS,
-                tool_choice={"type": "any"},
-                messages=messages,
-            )
+            for _attempt in range(3):
+                try:
+                    response = _client.messages.create(
+                        model=MODEL,
+                        max_tokens=512,
+                        system=EXPLORER_SYSTEM,
+                        tools=EXPLORER_TOOLS,
+                        tool_choice={"type": "any"},
+                        messages=messages,
+                    )
+                    break
+                except Exception:
+                    if _attempt < 2:
+                        time.sleep(10 * (_attempt + 1))
+                    else:
+                        raise
             latency_ms = (time.time() - t_start) * 1000
             tool_name, tool_args, raw_response = _extract_tool_call(response)
             gen.update(
@@ -200,12 +211,25 @@ def run_explorer_turn(
                 metadata={"anomaly": anomaly, "anomaly_reason": anomaly_reason},
             )
 
+        # 6. Attach progress score to the current trace
+        progress_score = compute_progress_score(world)
+        milestone = compute_milestone_label(progress_score)
+        try:
+            lf.score_current_trace(
+                name="progress",
+                value=progress_score,
+                comment=milestone,
+            )
+        except Exception:
+            pass
+
         trace_url = get_trace_url()
 
-    # 6. Determine event type
+    # 7. Determine event type
     event_type = "anomaly" if anomaly else "tool_call"
 
-    # 7. Build and log event
+    # 8. Build and log event
+    game_state_summary = build_game_state_summary(world)
     event = build_event(
         run_id=run_id,
         turn=world.turn,
@@ -222,6 +246,7 @@ def run_explorer_turn(
         completion_tokens=response.usage.output_tokens,
         latency_ms=latency_ms,
         raw_response=raw_response,
+        game_state_summary=game_state_summary,
     )
     append_event(run_id, event)
     event["_trace_url"] = trace_url
@@ -256,7 +281,7 @@ def maybe_run_dm(world: WorldState, run_id: str) -> dict | None:
     with lf.start_as_current_span(
         name="dm_response",
         input={"turn": world.turn, "messages": [{"from": m.from_agent, "content": m.content} for m in due]},
-        metadata={"run_id": run_id, "turn": world.turn, "agent_id": "DM"},
+        metadata={"run_id": run_id, "turn": world.turn, "agent_id": "DM", "session_id": run_id},
     ):
         t_start = time.time()
         with lf.start_as_current_generation(
@@ -264,14 +289,22 @@ def maybe_run_dm(world: WorldState, run_id: str) -> dict | None:
             model=MODEL,
             input=full_prompt,
         ) as gen:
-            response = _client.messages.create(
-                model=MODEL,
-                max_tokens=512,
-                system=DM_SYSTEM,
-                tools=DM_TOOLS,
-                tool_choice={"type": "any"},
-                messages=messages,
-            )
+            for _attempt in range(3):
+                try:
+                    response = _client.messages.create(
+                        model=MODEL,
+                        max_tokens=512,
+                        system=DM_SYSTEM,
+                        tools=DM_TOOLS,
+                        tool_choice={"type": "any"},
+                        messages=messages,
+                    )
+                    break
+                except Exception:
+                    if _attempt < 2:
+                        time.sleep(10 * (_attempt + 1))
+                    else:
+                        raise
             latency_ms = (time.time() - t_start) * 1000
             tool_name, tool_args, raw_response = _extract_tool_call(response)
             gen.update(
@@ -300,6 +333,7 @@ def maybe_run_dm(world: WorldState, run_id: str) -> dict | None:
         "agent_positions": world.agent_positions,
     }
 
+    game_state_summary = build_game_state_summary(world)
     event = build_event(
         run_id=run_id,
         turn=world.turn,
@@ -316,6 +350,7 @@ def maybe_run_dm(world: WorldState, run_id: str) -> dict | None:
         completion_tokens=response.usage.output_tokens,
         latency_ms=latency_ms,
         raw_response=raw_response,
+        game_state_summary=game_state_summary,
     )
     append_event(run_id, event)
     event["_trace_url"] = trace_url

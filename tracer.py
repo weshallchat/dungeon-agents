@@ -98,13 +98,14 @@ def build_event(
     world_truth: dict,
     tool_name: str,
     tool_args: dict,
-    tool_result: str,
+    tool_result: dict,
     anomaly: bool,
     anomaly_reason: str | None,
     prompt_tokens: int,
     completion_tokens: int,
     latency_ms: float,
     raw_response: str,
+    game_state_summary: dict | None = None,
 ) -> dict:
     return {
         "run_id": run_id,
@@ -112,6 +113,7 @@ def build_event(
         "agent_id": agent_id,
         "event_type": event_type,
         "timestamp_ms": int(time.time() * 1000),
+        "game_state_summary": game_state_summary or {},
         "agent_belief": agent_belief,
         "world_truth": world_truth,
         "action": {

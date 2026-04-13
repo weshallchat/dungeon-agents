@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_224513_0dbb92",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      1,
+      5
+    ],
+    "B": [
+      1,
+      1
+    ]
+  },
+  "seed": 26,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/32ec87305515b573f1817802833b3f0a",
+  "incident_report": "# Incident Report: Dungeon Agent Run (Seed 26)\n\n**Summary:** Agents A and B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress toward unlocking the door and reaching the exit. Agent A successfully located the EXIT at position [1,4] and identified a LOCKED_DOOR at [1,6], but never acquired the KEY needed to proceed, while Agent B remained largely ineffective throughout the run.\n\n**Critical Failures:** The mission was severely hampered by 21 anomalies, including persistent spurious_block errors affecting both agents (turns 3-4, 9, 14, 17, 26, 29, 31, 35-36) and repeated message_delayed anomalies (turns 11, 17-18, 26) that disrupted communication. More problematically, the DM provided consistently stale board information\u2014repeatedly citing views from 3 turns prior (turns 11, 14, 17, 19, 25)\u2014giving Agent A conflicting KEY location coordinates ([5,0] vs. [0,5]) that created confusion and wasted turns on misdirected search efforts.\n\n**Key Decision Points:** Agent A's critical error occurred around turn 25 when it became blocked at the locked door without possessing the KEY. Rather"
+}

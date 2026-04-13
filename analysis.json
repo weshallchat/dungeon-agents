@@ -1,0 +1,1406 @@
+{
+  "generated_at": "2026-04-13T02:04:15.775966+00:00",
+  "total_runs": 57,
+  "runs": [
+    {
+      "run_id": "20260412_184206_eef061",
+      "seed": 42,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 42)\n\n**Summary:** This run terminated at turn 51 after hitting the 50-turn limit with zero progress toward the objective. Agents A and B encountered 13 spurious_block anomalies distributed across their movement attempts, with no successful pickups, door unlocks, or dungeon master interactions recorded.\n\n**Failure Analysis:** The agents were unable to make meaningful progress due to persistent movement blockages. The anomalies were concentrated on movement actions rather than other action types, suggesting either a pathfinding issue, environmental obstruction pattern, or anomaly generation bias toward movement operations. Notably, no messages were sent and no DM interactions occurred, indicating the agents either didn't attempt communication strategies or weren't configured to use them as fallback tactics when blocked.\n\n**Critical Decision Points:** The most significant missed opportunity was around turns 1-7, where early anomalies (Agent B at turns 1, 4, 5 and Agent A at turn 7) should have triggered a strategic pivot away from repeated movement attempts toward the same locations. The lack of adaptive behavior\u2014such as attempting communication, waiting, or changing approach vectors\u2014across the entire 51-turn sequence indicates the agents defaulted to a rigid movement-only strategy despite mounting evidence of environmental interference."
+    },
+    {
+      "run_id": "20260412_184710_d4be6c",
+      "seed": 7,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 7)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The run was undermined by persistent spurious_block anomalies that prevented meaningful movement throughout the mission.\n\n**Critical Failure Points:** Agent A encountered spurious blocks on turns 4, 5, 6, 18, 29, 36, 40, 42, and 45\u2014nine separate instances that systematically blocked its pathfinding. Agent B faced similar obstructions on turns 2, 6, 11, and 17. The anomalies began immediately (turn 2) and recurred at increasing intervals, suggesting either a faulty map state or anomaly generation issue rather than agent error.\n\n**Key Observations:** No key pickup or door unlock was achieved at any point, and neither agent attempted to send messages or request DM interaction, indicating they may have been unable to reach decision points requiring such actions. The agents appear to have spent their entire turn budget struggling against environmental obstacles rather than executing a coherent strategy. The concentration of anomalies on Agent A (9 of 13 total) suggests possible asymmetric pathfinding problems between the two agents."
+    },
+    {
+      "run_id": "20260412_185253_d161f1",
+      "seed": 999,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 999)\n\n**Summary:** This run failed to achieve any progress toward the objective, reaching the 50-turn limit without unlocking any doors or collecting key pickups. Both Agent A and Agent B encountered a systematic problem: repeated spurious_block anomalies that prevented normal movement throughout the dungeon.\n\n**Root Cause:** The dungeon environment generated persistent blocking anomalies affecting movement actions. Agent B was particularly affected, triggering spurious_block errors on turns 1, 6, 24, 39, 42, 43, and 46\u2014seven times total\u2014while Agent A encountered the anomaly five times (turns 12, 33, 36, 38, and 43). These anomalies appear to have created impassable terrain or erroneous collision detection rather than legitimate obstacles.\n\n**Critical Decision Points:** The agents had no meaningful decision points because they could not progress through basic movement. The early anomalies on turns 1 and 6 (Agent B) should have triggered protocol escalation, but the agents instead continued attempting movement-based solutions. By turn 12, when both agents simultaneously hit spurious blocks, the pattern should have been recognized as environmental corruption rather than strategic challenge.\n\n**Outcome:** With 12 anomalies across 51 turns and zero progress toward any objective, this run"
+    },
+    {
+      "run_id": "20260412_211410_82096a",
+      "seed": 42,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 42 Dungeon Run\n\n**Summary:** Agents A and B failed to complete the dungeon objective, reaching the turn limit of 50 without acquiring the required pickup or unlocking any doors. The run was entirely derailed by repeated spurious_block anomalies that prevented meaningful progress.\n\n**Critical Failure Mode:** Fourteen anomalies occurred across 51 turns, with both agents consistently encountering spurious_block errors during movement attempts. The anomalies were distributed throughout the run (turns 1, 4, 5, 7, 10, 14, 21, 23, 34, 45, 48, 51), indicating a systemic pathfinding or collision-detection issue rather than a localized problem. Neither agent successfully executed any productive action\u2014no messages were sent and zero DM interactions occurred.\n\n**Key Decision Points & Outcome:** The first anomaly appeared immediately on turn 1 (Agent B), setting a negative trajectory. By turn 14, both agents had already encountered multiple blocks, yet the run continued with no apparent strategic pivot or coordination attempt. The lack of any message-sending or DM interaction suggests the agents may not have attempted communication or sought assistance to bypass the environmental obstacles. With 14 anomalies consuming turns and zero progress toward objectives, this run represents a complete failure due to environmental/system constraints rather"
+    },
+    {
+      "run_id": "20260412_211601_35ff53",
+      "seed": 3,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 11,
+      "distinct_event_types": [
+        "dm_response",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 24,
+      "dm_interactions": 7,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 3)\n\n**Summary:** Agents A and B failed to complete the dungeon objective within the 50-turn limit, achieving 0.0 progress despite locating the EXIT early. Agent A identified the EXIT location by turn 3 (positions reported as [3,0], [3,1], and [2,0] across turns), but the team never recovered the key or unlocked the door required for progression. The mission was severely hampered by 11 anomalies\u2014primarily spurious movement blocks affecting both agents (turns 3, 4, 12, 14, 21, 39, 43, 44, 49) and message delays (turns 38, 50)\u2014which consumed critical turns and disrupted coordination.\n\n**Critical Failure Points:** The Dungeon Master's information became increasingly stale, with guidance provided at turns 4, 16, 17, 20, 21, 34, and 43 based on board states 1-3+ turns old, introducing directional confusion and unreliable key/door location data. Agent A spent excessive turns (5-51) repeatedly messaging about the EXIT location without advancing toward the key at the DM-suggested position [7,4], while Agent B remained largely isolated and ineffective, with no productive exploration after turn 31."
+    },
+    {
+      "run_id": "20260412_211823_e423e5",
+      "seed": 15,
+      "outcome": "success",
+      "total_turns": 31,
+      "anomaly_count": 6,
+      "distinct_event_types": [
+        "dm_response",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 1,
+      "dm_interactions": 1,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Run Seed 15\n\n**Summary:** Both agents successfully reached the exit after 31 turns despite encountering 6 spurious block anomalies that disrupted pathfinding. Agent B located the exit at position [1,7] and communicated this discovery to the DM on turn 30, though the DM's response on turn 31 indicated outdated board state information (3 turns stale). The run achieved its primary objective (both agents exiting) but with a final progress score of 0.0, suggesting no secondary objectives (key pickup or door unlock) were completed before exit.\n\n**Critical Decision Points:** The most significant moment occurred on turn 30 when Agent B proactively messaged the DM about finding the exit\u2014this was the only inter-agent communication attempt and indicated Agent B had mapped enough of the dungeon to locate the goal. The repeated anomalies (turns 1, 3, 14, 19, 24, 25) consumed resources and likely prevented the agents from locating the key or locked door required for a higher progress score before making the exit.\n\n**Root Cause of Incomplete Objectives:** The 6 anomalies scattered across the 31-turn timeline created navigation friction that forced agents to prioritize reaching the known exit over exploring for secondary objectives, making the zero progress score unavoidable despite successful"
+    },
+    {
+      "run_id": "20260412_211954_145a80",
+      "seed": 23,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 10,
+      "distinct_event_types": [
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 3,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 23)\n\n**Summary:** This run exceeded the 50-turn limit without achieving any mission objectives, with Agent A and Agent B encountering persistent spurious block anomalies throughout the dungeon. The agents faced a critical pathfinding or navigation issue, with 10 anomalies triggered across 51 turns\u2014primarily affecting Agent A (7 anomalies) starting as early as turn 3. Most notably, Agent A appeared to locate the exit and key at position [6,6] by turn 49, but despite sending three messages to Agent B attempting to coordinate a final convergence (turns 49-51), the agents failed to reach the locked door together before time expired.\n\n**Key Decision Points:** The failure to unlock any doors or recover pickups suggests either (1) the agents were unable to navigate effectively through the spurious block anomalies despite repeated attempts, or (2) Agent A's late discovery of the exit position came too close to the turn limit to allow for successful rendezvous and exit execution. The agents did demonstrate basic communication capability (3 messages sent), but communication alone proved insufficient without adequate remaining turns for physical execution."
+    },
+    {
+      "run_id": "20260412_212223_b00a7f",
+      "seed": 77,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 18,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 77)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The run was severely hampered by repeated spurious_block anomalies that prevented normal movement, occurring 18 times across both agents.\n\n**Root Cause:** The agents encountered an unusually high frequency of movement-blocking anomalies starting early in the run (Turn 7 for Agent A). These spurious blocks appeared randomly throughout the attempt, with Agent B particularly affected in the mid-to-late game (Turns 24-49). Neither agent acquired a key pickup or unlocked any doors, suggesting they were unable to advance past initial obstacles.\n\n**Critical Decision Points:** The most notable failure occurred around Turn 7-20, where Agent A encountered 5 anomalies in just 14 turns, effectively preventing sustained progress. Agent B's performance degraded significantly from Turn 24 onward, hitting anomalies in 7 of the final 26 turns. The lack of any DM interactions or inter-agent communication (0 messages sent) suggests the agents did not attempt to coordinate strategy or seek guidance when movement became impossible.\n\n**Conclusion:** This run appears to have been compromised by environmental RNG rather than agent logic failure\u2014the sheer volume"
+    },
+    {
+      "run_id": "20260412_212617_16aaa9",
+      "seed": 3,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "dm_response",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 14,
+      "dm_interactions": 4,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 3)\n\n**Summary:** Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. Agent A successfully located the EXIT at position [3, -1] by turn 6 and communicated this discovery repeatedly (turns 6-7, 24-26, 31-33, 36-39), but both agents encountered persistent spurious_block anomalies (12 total) that prevented meaningful movement and objective completion. The run was critically hampered by stale information from the DM (turns 7-8 and 26, 33), whose board view lagged by 1-5 turns, and the agents never located the KEY or LOCKED_DOOR, which were prerequisites for reaching the exit.\n\n**Key Decision Points:** The most notable failure occurred around turns 6-7 when Agent A should have consolidated its EXIT discovery into a focused search strategy for the KEY and LOCKED_DOOR, rather than entering a repetitive messaging cycle that continued through turn 49. Agent B's limited exploration scope (positions around [2, 6] and [1, 6]) suggests insufficient coordination between agents on search area division. The anomaly spike affecting Agent B starting at turn 34 effectively removed half the team's mobility during the final 16 turns"
+    },
+    {
+      "run_id": "20260412_214232_47783d",
+      "seed": 42,
+      "outcome": "turn_limit",
+      "total_turns": 16,
+      "anomaly_count": 7,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 42)\n\n**Summary:** This run terminated at the turn limit (turn 16 of 15 allowed) with zero progress toward objectives. Agent B encountered spurious block anomalies on turns 1, 4, 5, and 10 during movement commands, while Agent A hit the same anomaly type on turns 7 and 14. A critical cascading failure occurred on turn 14 when both agents simultaneously triggered spurious blocks, suggesting either environmental corruption or a pathfinding algorithm malfunction.\n\n**Root Cause:** The high frequency of spurious_block anomalies (7 total across 16 turns) indicates either faulty movement validation logic or an environmental hazard that was never cleared. Neither agent managed to send messages, unlock doors, or reach key pickups, suggesting they became trapped or unable to progress from their starting positions.\n\n**Decision Point Analysis:** The most notable failure occurred at turn 14 when both agents hit anomalies simultaneously, consuming the final viable turns before timeout. Earlier intervention after Agent B's third spurious block (turn 5) might have allowed strategy revision, but the lack of any DM interactions suggests the agents did not attempt to communicate the problem or request guidance."
+    },
+    {
+      "run_id": "20260412_214800_dce28a",
+      "seed": 1,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 1)\n\nAgent A and Agent B failed to complete the dungeon objective, reaching the turn limit of 50 turns (finishing on turn 51) with zero progress toward the goal. Both agents encountered repeated spurious_block anomalies during movement attempts across 12 separate incidents, beginning as early as turn 5 for both agents and continuing throughout the run. The agents never obtained a key pickup, unlocked any doors, or sent messages to coordinate strategy, suggesting they were unable to establish effective navigation or communication patterns despite having 51 turns to operate. The critical failure point appears to be the consistent collision with environmental anomalies rather than pathfinding errors\u2014the sheer frequency of spurious blocks (one every 4-5 turns on average) prevented sustained forward progress. Without evidence of DM interaction or adaptive behavior after encountering the anomalies, the agents appear to have lacked either a recovery mechanism for blocked movement or sufficient coordination to explore alternate routes."
+    },
+    {
+      "run_id": "20260412_214929_b43bda",
+      "seed": 2,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 8,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 2)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress score and no key pickup or door unlock achieved.\n\n**Root Cause:** The agents encountered eight spurious_block anomalies across multiple turns (2, 11, 15, 41, 44, 51), which systematically blocked their movement attempts and prevented navigation through the dungeon environment. These anomalies were distributed across both agents fairly evenly, suggesting either a faulty dungeon layout or persistent environmental collision detection issues rather than agent logic failures.\n\n**Critical Decision Points:** The most notable failure occurred at turns 2 and 11 when both agents immediately hit movement obstacles early in their exploration, which may have caused them to adopt suboptimal pathfinding strategies. By turn 41-44, Agent B continued encountering blocks despite 40+ turns of potential learning, indicating the agents could not adapt to or circumvent the anomalies.\n\n**Outcome:** The run was terminated at the turn limit without any meaningful progress, suggesting the dungeon seed 2 may be procedurally malformed or the anomaly rate is too high for successful completion under normal conditions."
+    },
+    {
+      "run_id": "20260412_215157_eb6647",
+      "seed": 3,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "dm_response",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 14,
+      "dm_interactions": 6,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 3)\n\n**Summary:**\nAgents A and B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The run was severely hampered by frequent spurious_block anomalies (10 movement failures across both agents) and pervasive communication delays that prevented coordinated action.\n\n**Root Cause of Failure:**\nThe mission collapsed due to a combination of environmental obstruction and information decay. Agent A successfully located the EXIT by turn 10, communicating its position to the DM multiple times (turns 10, 11, 16, 20, 27), yet never acquired the KEY or unlocked the LOCKED_DOOR. Agent B received inconsistent intel about the KEY's location (initially [7, 4] per turn 23, later [4, 4] per turn 32) but made no documented progress toward retrieving it. The stale DM board information (always 3-5 turns behind current state) proved insufficient for coordinating the two-objective solution.\n\n**Critical Decision Points:**\nThe first major failure was turns 3-4, when both agents encountered spurious_block anomalies during initial exploration, immediately degrading movement reliability. The pivotal communication window occurred at turn 23, where Agent B acknowledged the EXIT location but committed to"
+    },
+    {
+      "run_id": "20260412_215436_6e5882",
+      "seed": 4,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 10,
+      "distinct_event_types": [
+        "door_encounter",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 1,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 4)\n\n**Summary:** Both Agent A and Agent B failed to progress through the dungeon, reaching the 50-turn limit without unlocking any doors or collecting key pickups. Agent B encountered an immediate blocker at Turn 1 when confronted with a locked door, while both agents subsequently experienced repeated spurious_block anomalies throughout the run (10 total across turns 3\u201349), suggesting environmental or pathfinding glitches rather than strategic failures.\n\n**Critical Failure Points:** The most notable decision point was Turn 1, when Agent B's initial locked door encounter should have triggered inter-agent coordination or alternative routing, yet no messages were sent and no DM interactions occurred. The escalating frequency of spurious_block anomalies\u2014particularly the clustered failures at Turns 25, 34, 38, 41, and 49\u2014indicates a systematic issue with movement validation rather than agent logic.\n\n**Conclusion:** This run demonstrates a fundamental environmental degradation rather than agent incompetence; with zero progress score and zero successful door unlocks despite 51 turns of execution, the anomaly pattern suggests the dungeon itself may be generating false collision/blocking states that prevented any meaningful advancement."
+    },
+    {
+      "run_id": "20260412_215704_ee36c4",
+      "seed": 5,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 12,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 2,
+      "dm_interactions": 2,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Seed 5 Dungeon Run\n\n**Summary:** Agents A and B failed to complete the dungeon within the 50-turn limit, reaching turn 51 with only 33% progress. Agent B successfully located and picked up the key at turn 12, but the agents never managed to unlock the door or reach the exit together, ultimately timing out.\n\n**Critical Failure Points:** The run was severely hampered by 13 spurious_block anomalies scattered throughout the execution (turns 4, 9, 14, 24, 25, 30-31, 32, 34-35, 43-44, 49), which repeatedly blocked agent movement and consumed valuable turns. Agent A identified the exit location at position [1,5] by turn 22 and re-confirmed it at turn 40, but these discoveries came too late in the run and didn't translate into coordinated progress toward the goal.\n\n**Notable Decision Points:** The key pickup at turn 12 (Agent B) should have been a catalyst for immediate door unlocking, but no subsequent unlock event was recorded, suggesting either the agents failed to navigate to the door or the coordination between agents broke down. The DM interactions at turns 23 and 41, while providing location confirmation, operated on stale board views and consumed turns without accelerating problem-solving. The persistent movement failures"
+    },
+    {
+      "run_id": "20260412_215937_b28da9",
+      "seed": 6,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 10,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 6 Dungeon Run\n\n**Summary:**\nThis dungeon expedition failed due to repeated spurious_block anomalies that prevented meaningful progress. Over 51 turns, Agent A and Agent B encountered 10 blocking anomalies\u2014approximately one every 5 turns\u2014without recovering a key pickup or unlocking any doors. The run terminated at the turn limit with a progress score of 0.0, indicating the agents never advanced beyond the starting area.\n\n**Root Cause:**\nThe agents were trapped in a pattern of movement failures caused by spurious_block anomalies (turns 3, 13, 15, 23, 25, 31, 32, 37, 45, 48). These anomalies appeared to prevent navigation regardless of agent or attempted direction, suggesting either an environmental obstruction issue or a failure in the anomaly detection/recovery system itself. The absence of any DM interactions or messages sent indicates the agents never communicated a problem or adapted their strategy.\n\n**Critical Decision Point:**\nThe most notable failure was between turns 23\u201325, when Agent A hit its fourth anomaly (turn 23) immediately followed by Agent B encountering a block (turn 25). At this juncture, the agents should have either (1) attempted communication to coordinate around the obstruction, or (2) signaled for DM intervention"
+    },
+    {
+      "run_id": "20260412_220204_b6e763",
+      "seed": 7,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 7)\n\n**Summary:** This run failed to achieve any objectives, reaching the turn limit of 50 at turn 51 with zero progress score. The mission was crippled by persistent anomalies classified as spurious_block events that repeatedly prevented agent movement.\n\n**Root Cause:** Both Agent A and Agent B encountered 13 spurious_block anomalies distributed across the run, with Agent A being disproportionately affected (9 incidents vs. Agent B's 4). These anomalies began early (Turn 2 for Agent B, Turn 4 for Agent A) and continued throughout the run, creating what appears to be a hostile or malfunctioning dungeon environment that prevented normal pathfinding and movement.\n\n**Critical Failure Points:** The agents never managed to pick up a key item, unlock any doors, or send messages to coordinate efforts\u2014all zero values indicate complete inability to progress through standard objectives. The clustering of anomalies on Agent A (Turns 4-6, 18, 29, 36, 40, 42, 45) suggests this agent may have been pursuing a necessary path that was repeatedly blocked by environmental failures rather than tactical errors.\n\n**Conclusion:** This run represents an environmental or simulation failure rather than poor agent decision-making; the anomaly rate was too high for"
+    },
+    {
+      "run_id": "20260412_220433_63edc0",
+      "seed": 8,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 6,
+      "distinct_event_types": [
+        "door_encounter",
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": 5,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 8)\n\n**Summary:**\nAgent A successfully acquired the key on turn 2, but the run terminated at turn 51 after reaching the maximum turn limit with only 33% progress achieved. Agent A became stuck repeatedly attempting to traverse a locked door from turn 5 onward, while Agent B encountered six spurious_block anomalies during movement attempts (turns 3, 12, 14, 22, 33, and others).\n\n**Critical Failure Point:**\nThe decisive failure occurred between turn 2 and turn 5: despite Agent A obtaining the key, no unlock action was ever executed at the locked door. Agent A then entered a loop of repeated blocked attempts at the same location for 35+ consecutive turns, suggesting either a pathfinding failure or a missing unlock mechanic invocation.\n\n**Key Decision Gaps:**\nThe most notable absence was the complete lack of inter-agent communication (0 messages sent) and no Dungeon Master interaction attempts (0 DM interactions). Agent A never transitioned from holding the key to actively unlocking the door, and neither agent attempted to coordinate or request assistance when anomalies and blockages persisted. The run should have either prioritized the unlock action immediately after key acquisition or sought clarification through DM interaction when the standard pathfinding failed."
+    },
+    {
+      "run_id": "20260412_220702_cbcaec",
+      "seed": 9,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 17,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 9)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress toward the goal. The run was entirely derailed by persistent spurious_block anomalies that prevented meaningful movement throughout the dungeon.\n\n**Root Cause:** A critical environmental defect generated 17 spurious_block anomalies across 51 turns, with anomalies occurring at turns 3, 4, 6, 15, 19, 21, 25, 26, 27, 30, 33, 39, 41, 45, 49, and 51. These false blocking events trapped both agents in ineffective movement patterns, preventing either agent from progressing to key objectives like unlocking doors or retrieving pickups.\n\n**Decision Point Analysis:** The agents never reached meaningful decision points\u2014no messages were sent between agents, no DM interactions occurred, and critically, no door was unlocked and no key pickup was obtained. The inability to execute even basic exploration moves suggests the anomalies occurred during foundational pathfinding or movement validation, occurring with increasing frequency in the second half of the run (turns 25 onward).\n\n**Conclusion:** This failure was environmental rather than tactical. The agents were unable to demonstrate competence because"
+    },
+    {
+      "run_id": "20260412_220930_86d6ed",
+      "seed": 10,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 9,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 10)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress toward the goal. The run was severely hampered by repeated spurious_block anomalies that blocked agent movement throughout the session, with 9 total anomalies occurring at turns 7, 14, 15, 19, 22, 28, 38, 40, and 45.\n\n**Root Cause:** Agent B encountered the majority of blocking anomalies (6 out of 9), particularly in the early-to-mid game phase (turns 7-28), which appears to have disrupted its primary pathfinding strategy. Neither agent successfully acquired the key pickup or unlocked any doors, suggesting the anomalies prevented forward progress toward critical objectives. No messages were sent between agents and no dungeon master interactions occurred, indicating the agents may have been unable to coordinate or request assistance.\n\n**Critical Decision Points:** The most notable failure occurred between turns 7-22, when Agent B encountered 5 spurious_block anomalies in rapid succession, potentially forcing suboptimal route recalculations. Agent A's later anomalies at turns 38 and 40 suggest the agents were still attempting movement despite the pattern of blockages, without apparent"
+    },
+    {
+      "run_id": "20260412_221157_f66a89",
+      "seed": 11,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 21,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 26,
+      "dm_interactions": 2,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Seed 11 Dungeon Agent Run\n\n**Summary:** This run failed to achieve mission completion within the 50-turn limit, reaching only 0.33 progress despite Agent A successfully locating and collecting the key by turn 21. The critical failure was the inability to locate and unlock the locked door\u2014Agent A found the EXIT at position [1,3] early but never discovered the locked door's location, which appears to have been the actual blocking objective preventing mission completion.\n\n**Key Issues:** Agent A encountered repeated spurious_block anomalies during movement (turns 6, 7, 13, 28, 37), and both agents were hampered by extensive communication overhead. While Agent A invested 26 messages attempting to coordinate with Agent B and report findings to the DM (turns 14-51), these communications did not translate into progress toward the locked door. The DM provided only two interactions (turns 15, 17) based on stale board state information, limiting usefulness. A message_delayed anomaly also struck on turn 31 and 48.\n\n**Decision Point Analysis:** The critical decision point was around turns 14-17 when Agent A first reported finding the EXIT and should have immediately pivoted to systematically searching for the locked door instead of repeatedly messaging Agent B about EXIT coordinates. Instead, the run devolved into excessive inter-agent coordination messaging without"
+    },
+    {
+      "run_id": "20260412_221431_349f5a",
+      "seed": 12,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 12)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress toward the goal. The run was terminated by the turn limit constraint.\n\n**Root Cause:** The agents encountered persistent spurious_block anomalies during movement attempts, with 14 anomalies distributed across the run (Agent A: 9 anomalies; Agent B: 5 anomalies). These anomalies prevented normal pathfinding and prevented either agent from acquiring the critical key pickup or unlocking any doors, leaving the dungeon inaccessible.\n\n**Critical Decision Points:** The agents made no attempts to communicate via messages or interact with the Dungeon Master despite encountering repeated environmental failures starting as early as Turn 3, which suggests they lacked adaptive recovery logic when standard movement failed. The clustering of anomalies for Agent A (particularly turns 31, 37, 39, 46, and 49) indicates the agent was stuck in a repetitive movement loop rather than pivoting to alternative strategies or requesting assistance.\n\n**Outcome:** The run failed due to environmental obstruction rather than agent logic failure\u2014the agents could not progress because the dungeon state was corrupted or hostile, not because they made poor decisions within normal operating conditions."
+    },
+    {
+      "run_id": "20260412_221658_21fc9d",
+      "seed": 13,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 5,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 8,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 13 Run\n\nAgent B successfully acquired the key on turn 8, achieving 33% progress toward the dungeon objective. However, the run exceeded the 50-turn limit without unlocking the target door, ultimately failing to complete the mission. Agent B encountered five spurious_block anomalies during movement attempts (turns 9, 30, 33, 48, and 50), which appear to have significantly disrupted pathfinding and navigation efficiency. The critical decision point occurred after the key pickup on turn 8\u2014Agent B's subsequent movement strategy was immediately compromised by the anomaly on turn 9, and despite having the necessary key, the agent could not establish a viable route to the door before turn exhaustion. The clustering of anomalies in the latter half of the run (turns 48-50) suggests either a pathfinding loop or repeated collisions with environmental obstacles that prevented progress toward the unlock objective."
+    },
+    {
+      "run_id": "20260412_221927_f519f9",
+      "seed": 14,
+      "outcome": "stuck",
+      "total_turns": 21,
+      "anomaly_count": 3,
+      "distinct_event_types": [
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 23,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 14)\n\n**Summary:** Agent A successfully located the EXIT at [2,6] and acquired the key by turn 2, but the run stalled at turn 21 with both agents stuck in a communication loop and unable to complete the objective. Agent A remained stationary at the EXIT location while Agent B conducted exploratory movement, but neither agent ever located or unlocked a required locked door.\n\n**Failure Analysis:** The core failure stems from incomplete objective decomposition\u2014Agent A correctly prioritized finding the key and EXIT but failed to develop a systematic strategy for locating the locked door that gates progression. Agent B's response was reactive rather than proactive; instead of Agent A providing specific coordinate guidance or search instructions, both agents relied on vague messaging about \"continuing to search.\" The three anomalies (two message delays at turns 13 and 21, and a spurious movement block at turn 16) compounded coordination difficulties, but the fundamental issue was Agent A's inability to pivot from individual objective completion to collaborative problem-solving.\n\n**Critical Decision Points:** Turn 4 was the pivotal moment when Agent A should have either (1) systematically searched the remaining dungeon for the locked door before settling at the EXIT, or (2) provided Agent B with specific exploration coordinates and search patterns rather than generic status updates. Instead, Agent A entered a repetitive messaging"
+    },
+    {
+      "run_id": "20260412_222029_37217a",
+      "seed": 15,
+      "outcome": "success",
+      "total_turns": 30,
+      "anomaly_count": 7,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 13,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 2,
+      "dm_interactions": 1,
+      "progress_score_final": 1.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 15)\n\n**Summary:** Both agents successfully reached the exit within 30 turns despite encountering 7 anomalies, primarily spurious block detections. Agent B located and retrieved the key on turn 13, while Agent A engaged the Dungeon Master on turn 27 to clarify exit location coordinates. The critical decision point occurred at turn 13 when Agent B secured the key\u2014this enabled the final objective completion despite no explicit door-unlock event being recorded.\n\n**Anomaly Impact:** Agent B experienced spurious block anomalies on turns 1, 3, 19, 24, and 25, suggesting either environmental instability or pathfinding issues in certain dungeon sectors. Agent A encountered one spurious block on turn 14 and a message delay anomaly on turn 25. These seven anomalies collectively added overhead but did not prevent task completion, indicating the agents' movement strategies were robust enough to work around false obstruction reports.\n\n**Key Decision Points:** The turn 13 key pickup was foundational to success. The turn 27 DM interaction proved valuable, as Agent A proactively sought clarification on exit coordinates from the Dungeon Master, which likely informed Agent B's subsequent navigation to [1,7]. Agent B's turn 29 message confirmed final positioning and key possession, demonstrating effective"
+    },
+    {
+      "run_id": "20260412_222157_74e5a1",
+      "seed": 16,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 16)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The run was severely hampered by systematic movement failures, with 12 spurious_block anomalies occurring across both agents at irregular intervals (turns 5, 11, 17, 22\u201323, 28, 36\u201337, 42, 45, 47\u201348).\n\n**Critical Failure Points:** Neither agent successfully picked up required items or unlocked doors, suggesting they were unable to advance past initial exploration phases. The high frequency of spurious_block anomalies\u2014particularly the cluster around turns 36\u201337 and 42\u201348\u2014indicates either environmental corruption or pathfinding algorithm breakdown. No messages were sent and no DM interactions occurred, meaning agents made no attempt to request assistance or clarify objectives when encountering repeated obstacles.\n\n**Notable Decision Gap:** The most significant issue was the agents' apparent inability to adapt or communicate after encountering blockages. Agent A dominated early anomalies but Agent B's late-run failures (turns 42, 45, 47) suggest a cascading failure pattern rather than random environmental issues. A pivot to alternative strategies or DM escalation around turn 25\u201330 (after 6 anomal"
+    },
+    {
+      "run_id": "20260412_222426_094802",
+      "seed": 17,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 8,
+      "distinct_event_types": [
+        "door_encounter",
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": 38,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 17)\n\n**Summary:**\nAgent B successfully retrieved the key on turn 2 but the run terminated at turn 51 after hitting the 50-turn limit with a final progress score of only 0.33. The critical failure was the agents' inability to locate and unlock the door despite possessing the key, resulting in Agent B becoming stuck at a locked door from turn 38 onward.\n\n**Root Cause:**\nAgent B encountered six spurious block anomalies during navigation (turns 5, 10, 16, 20, 21, and 34), which likely corrupted its pathfinding or spatial awareness. Even after acquiring the key on turn 2, the agents never successfully unlocked any door\u2014the \"Door unlocked turn: None\" field confirms this. Agent B spent the final 13 turns (38-50) repeatedly attempting to pass through a locked door without using the key, suggesting either a coordination failure between agents or a logic error preventing key deployment.\n\n**Notable Decision Points:**\nThe most significant decision point came around turn 38 when Agent B first encountered the locked door but failed to transition into an unlock sequence despite holding the key. No inter-agent messages were sent (Messages sent: 0), indicating the agents operated without communication, which may have prevented Agent A from assisting or validating Agent B's"
+    },
+    {
+      "run_id": "20260412_222655_b9ecde",
+      "seed": 18,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 4,
+      "distinct_event_types": [
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 4,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 18)\n\n**Summary:** Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress score. Agent A successfully located the EXIT at position [1,4] by turn 49, but the agents never acquired the required key to unlock it, resulting in mission failure.\n\n**Critical Failure Points:** The run encountered four anomalies (turns 14, 29, 30, and 44) that involved spurious_block errors during movement commands, which likely disrupted navigation efficiency and contributed to wasted turns. More critically, Agent B never located or retrieved the key item despite having 51 turns to search the dungeon\u2014this was the fundamental blocker preventing door unlocking and exit.\n\n**Notable Decision Points:** At turn 49, Agent A made the pivotal discovery of the EXIT location and attempted to coordinate with Agent B through messaging. However, the subsequent communication exchanges (turns 49-51) reveal poor coordination: Agent A asked if Agent B had the key, but Agent B admitted at turn 50 that it was still at position [0,7] with no key yet. The agents' reliance on turn-based messaging in the final turns wasted precious opportunities for Agent B to actively search for the missing key item.\n\n**Recommendation:** Future runs should prioritize systematic"
+    },
+    {
+      "run_id": "20260412_222935_d5c4bf",
+      "seed": 19,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 11,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 19)\n\n**Summary:** Agents A and B failed to complete the dungeon objective within the 50-turn limit, achieving only 33% progress despite Agent B successfully acquiring the key on turn 2. The run was severely hampered by a systematic environmental anomaly: spurious block obstacles appeared 11 times across 41 turns, predominantly triggered during movement commands.\n\n**Critical Failure Point:** While Agent B obtained the key early (turn 2), no door was ever unlocked, indicating the agents either never reached the target door or were unable to coordinate effectively to use the key. The lack of inter-agent communication (0 messages sent) may have been a contributing factor\u2014neither agent attempted to coordinate their movements or share information about the anomalies.\n\n**Notable Decision Points:** The most significant issue was the agents' apparent inability to develop an adaptive strategy around the recurring spurious blocks. Starting at turn 10, anomalies appeared with increasing frequency in the second half of the run (6 of 11 anomalies occurred between turns 37\u201350), yet the agents continued attempting direct movement without apparent course correction, routing adjustments, or attempts to contact the DM (0 interactions). The failure to utilize available communication and DM escalation mechanics suggests the agents lacked reactive problem-solving when faced with persistent environmental obstacles."
+    },
+    {
+      "run_id": "20260412_223205_5182c0",
+      "seed": 20,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "door_encounter",
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 5,
+      "door_encounter_turn": 6,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 20)\n\n**Summary:** This run failed to complete the dungeon objective within the 50-turn limit, reaching only 0.33 progress before timeout on turn 51. Agent B successfully retrieved the key at turn 5, but Agent A became stuck at a locked door starting at turn 6 and was never able to progress beyond it. The critical failure point was the lack of communication between agents\u2014Agent B never delivered the key to Agent A, leaving the door permanently locked.\n\n**Root Causes:** The primary issue was insufficient inter-agent coordination; no messages were sent and there were zero DM interactions despite Agent A's repeated blocking attempts at turns 6, 19, and 23. Additionally, the run was plagued by 14 spurious_block anomalies scattered throughout (particularly dense at turns 14-15, 35, 39-43, and 45-47), which may have further hindered navigation and decision-making.\n\n**Key Decision Points:** The most critical moment was turn 5, when Agent B successfully picked up the key but apparently did not navigate toward Agent A's position at the locked door. A secondary failure occurred at turn 6 when Agent A first encountered the locked door\u2014at this juncture, explicitly messaging Agent B to coordinate key delivery would have been the optimal action, yet no such communication was attempted"
+    },
+    {
+      "run_id": "20260412_223432_7e5c99",
+      "seed": 21,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 9,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 22,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 21)\n\n**Summary:** Agents A and B failed to complete the dungeon objective within the 50-turn limit, achieving only 0.33 progress and never unlocking the final door. Agent A successfully located and picked up the key at turn 22, but the team was unable to progress further despite having the required item.\n\n**Critical Failure Points:** The run was severely hampered by nine spurious_block anomalies distributed across both agents (Agent B encountered five such blocks; Agent A encountered four), with the anomalies clustering around turns 6-12 and again at turns 19-41. These spurious blocks appear to have either blocked optimal pathfinding or caused agents to waste turns on dead ends rather than advancing toward the door unlock location.\n\n**Notable Decision Points:** The key pickup at turn 22 represented the major milestone, but the subsequent anomalies\u2014particularly the cluster at turns 31-41\u2014prevented the agents from leveraging this progress. The absence of any DM interactions or messages sent suggests the agents did not attempt to request assistance or coordinate around the movement impediments they encountered. A more significant turning point may have been earlier turns 6-12, where initial anomalies could have signaled a need for strategy recalibration."
+    },
+    {
+      "run_id": "20260412_223700_8bee4a",
+      "seed": 22,
+      "outcome": "stuck",
+      "total_turns": 14,
+      "anomaly_count": 2,
+      "distinct_event_types": [
+        "door_encounter",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 5,
+      "door_encounter_turn": 13,
+      "door_unlocked_turn": null,
+      "messages_sent": 9,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 22)\n\n**Summary:** Agents A and B became stuck in a deadlock situation despite successfully locating critical objectives. Agent B retrieved the key on turn 5 and identified the exit at [5,7], but the agents failed to coordinate effective door-unlocking procedures, resulting in zero progress toward the ultimate goal by turn 14.\n\n**Root Cause:** The primary failure was a critical miscommunication loop. Agent B discovered both the key and exit but remained at the exit location rather than moving to the locked door at [5,1] where Agent A was positioned. Agent A reached the locked door by turn 13 but lacked the key, while Agent B\u2014who held the key\u2014never navigated back to unlock it. Messages were sent frequently (9 total) but conveyed location information without clear action directives, creating confusion about whose responsibility it was to move where.\n\n**Notable Decision Points:** Turn 5 marked the key pickup, establishing the prerequisite for progression. Turn 8-11 represented critical coordination moments where Agent B had the key but chose to remain at the exit rather than backtrack to meet Agent A at the locked door. The anomalies on turns 2 (spurious block) and 12 (message delay) added friction but were not the primary blockers\u2014the agents' failure to execute a coherent spatial"
+    },
+    {
+      "run_id": "20260412_223739_c0c846",
+      "seed": 23,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 10,
+      "distinct_event_types": [
+        "key_pickup",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 21,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 23)\n\n**Summary:**\nAgent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with a progress score of only 0.33. Agent A successfully acquired the key on turn 2 and located the EXIT at [6,6] by turn 26, but the agents never unlocked the door or reached the exit together, ultimately timing out.\n\n**Critical Failure Points:**\nThe primary issue was that Agent A discovered the EXIT location early but appeared confused about the actual objective\u2014it repeatedly messaged Agent B about reaching \"the EXIT\" when the true goal required finding and unlocking a locked door (at position [4,3], mentioned only once in turn 31). Agent A never attempted to navigate toward or unlock the door despite holding the key, instead fixating on the EXIT location and waiting for Agent B to arrive there. Additionally, both agents encountered 10 spurious_block anomalies throughout the run (turns 3, 7, 8, 11, 17, 23, 35, 36, 43), which impeded navigation but shouldn't have prevented progress had objectives been clearer.\n\n**Key Decision Points:**\nThe most notable failure occurred between turns 26-31: Agent A had the key and door location but never attempted to move toward the locked door"
+    },
+    {
+      "run_id": "20260412_224016_e16556",
+      "seed": 24,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 8,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 24 Dungeon Run\n\n**Summary:** This run failed to achieve any progress before hitting the 50-turn limit, with the agents reaching turn 51 without unlocking doors or collecting key items. Both Agent A and Agent B encountered repeated spurious_block anomalies throughout the expedition\u20148 total incidents scattered across turns 4, 12, 18 (\u00d72), 23, 37, 40, and 47\u2014that appear to have severely disrupted navigation and coordination.\n\n**Critical Failure Points:** The agents never communicated with the Dungeon Master (0 DM interactions) and sent no messages between themselves, suggesting either a communication failure or a strategy that didn't incorporate collaborative problem-solving. The high frequency of anomalies (roughly one every 6 turns) created a pattern of obstruction that the agents failed to overcome or adapt to.\n\n**Notable Decision Gaps:** The most significant decision point was the lack of any attempt to contact the DM for guidance or clarification about the spurious blocks, particularly after the first few encounters on turns 4 and 12 made the pattern apparent. Additionally, Agent A's later attempts (turns 23 and 40) suggest the agents continued with the same unsuccessful movement strategy rather than pivoting to a different approach, indicating poor tactical adaptation when faced with consistent anomalies."
+    },
+    {
+      "run_id": "20260412_224245_c0260e",
+      "seed": 25,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 10,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 25)\n\n**Summary:** The dungeon exploration mission failed to achieve any progress, reaching the turn limit of 50 turns (51 total) with a final progress score of 0.0. Agent B encountered spurious_block anomalies on seven separate occasions (turns 13, 16, 19, 24, 30, 31, 45, 48), while Agent A hit the same anomaly twice (turns 4, 26), suggesting the agents were repeatedly attempting movement into blocked or invalid spaces without adapting their pathfinding strategy. **Critical failure point:** Neither agent successfully obtained a key pickup or unlocked any doors, indicating they likely became stuck in geometric dead-ends or were unable to establish effective communication and coordination, as evidenced by zero messages sent and zero DM interactions. **Root cause analysis:** The high frequency of spurious_block anomalies suggests the dungeon layout may have had narrow corridors or the agents lacked sufficient pathfinding heuristics to avoid repetitive collision attempts; the turn exhaustion without progress indicates no learning or strategy pivot occurred across the 50-turn window."
+    },
+    {
+      "run_id": "20260412_224513_0dbb92",
+      "seed": 26,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 21,
+      "distinct_event_types": [
+        "dm_response",
+        "door_encounter",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 25,
+      "door_unlocked_turn": null,
+      "messages_sent": 31,
+      "dm_interactions": 14,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 26)\n\n**Summary:** Agents A and B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress toward unlocking the door and reaching the exit. Agent A successfully located the EXIT at position [1,4] and identified a LOCKED_DOOR at [1,6], but never acquired the KEY needed to proceed, while Agent B remained largely ineffective throughout the run.\n\n**Critical Failures:** The mission was severely hampered by 21 anomalies, including persistent spurious_block errors affecting both agents (turns 3-4, 9, 14, 17, 26, 29, 31, 35-36) and repeated message_delayed anomalies (turns 11, 17-18, 26) that disrupted communication. More problematically, the DM provided consistently stale board information\u2014repeatedly citing views from 3 turns prior (turns 11, 14, 17, 19, 25)\u2014giving Agent A conflicting KEY location coordinates ([5,0] vs. [0,5]) that created confusion and wasted turns on misdirected search efforts.\n\n**Key Decision Points:** Agent A's critical error occurred around turn 25 when it became blocked at the locked door without possessing the KEY. Rather"
+    },
+    {
+      "run_id": "20260412_224806_a2e5dc",
+      "seed": 27,
+      "outcome": "stuck",
+      "total_turns": 16,
+      "anomaly_count": 4,
+      "distinct_event_types": [
+        "dm_response",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 6,
+      "dm_interactions": 3,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 27)\n\n**Summary:** Both Agent A and Agent B became stuck in a confined area around position [2,3] for the entire 16-turn run, achieving zero progress toward the objective. The critical failure occurred early when Agent A encountered spurious block anomalies on turns 3 and 7, and Agent B experienced similar blocking on turn 8, preventing either agent from exploring beyond their initial positions despite successfully locating the EXIT at [2,2].\n\n**Root Cause:** The agents were trapped by repeated spurious_block anomalies that created false environmental barriers, combined with stale DM information that became increasingly outdated (DM responses on turns 7 and 13 referenced board states from turns 4 and 10 respectively). This information lag meant the DM could not provide accurate navigation guidance to help agents escape their stuck positions or locate the KEY and LOCKED_DOOR required to progress.\n\n**Decision Point Failures:** The most notable missed opportunity was at turn 6-11, when Agent A and B both discovered the EXIT independently but received no actionable guidance on how to reach the KEY or LOCKED_DOOR. Rather than attempt alternative movement patterns or coordinate with each other, both agents remained at [2,3] sending repetitive status messages to the DM (6 messages total) while the DM's responses"
+    },
+    {
+      "run_id": "20260412_224858_066750",
+      "seed": 28,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 8,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 28)\n\n**Summary:** This run failed to achieve any progress before hitting the 50-turn limit at turn 51. Both Agent A and Agent B encountered repeated spurious_block anomalies throughout the mission, with 8 total anomalies occurring at turns 7, 8, 14, 20, 27, 37, 41, and 47\u2014primarily affecting Agent A (5 occurrences) versus Agent B (3 occurrences).\n\n**Root Cause:** The agents were unable to advance past blocking anomalies that prevented normal movement. Neither agent successfully retrieved a key item or unlocked any doors, and no DM interactions were initiated to resolve blockages, suggesting the agents either lacked a strategy for handling persistent anomalies or failed to adapt when encountering them repeatedly.\n\n**Critical Decision Points:** The most notable failure occurred around turn 7-8 when Agent A first encountered back-to-back spurious blocks\u2014at this juncture, the agents should have either attempted communication with the DM or changed their movement strategy entirely. By turn 20, when Agent A hit a third anomaly, the pattern was clear but went unaddressed. The lack of any messages sent (0 total) indicates the agents never escalated or requested external intervention despite obvious environmental interference."
+    },
+    {
+      "run_id": "20260412_225125_e04b1e",
+      "seed": 29,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 7,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 4,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 29)\n\n**Summary:**\nAgent B successfully retrieved the key on turn 4, but the run failed to progress beyond 33% completion within the 50-turn limit, terminating on turn 51. Agent A encountered seven spurious_block anomalies during movement attempts (turns 21, 24, 32, 40, 42, and 45), while Agent B experienced one similar anomaly on turn 37. The critical failure point was the inability to unlock any door despite possession of the key.\n\n**Root Cause:**\nThe run was undermined by recurring spurious_block anomalies that consistently interrupted Agent A's pathfinding and movement execution. Although Agent B acquired the key early (turn 4), the agents never successfully coordinated to reach and unlock a door. The high frequency of movement anomalies\u2014particularly targeting Agent A across multiple attempts\u2014suggests either environmental instability or pathfinding logic errors that prevented navigation to the unlock location.\n\n**Notable Decision Points:**\nThe key acquisition on turn 4 was executed correctly, but the subsequent decision to continue attempting movement despite cascading anomalies (rather than resetting strategy or attempting communication via messages) consumed turns 21\u201345 with minimal progress. The zero messages sent and zero DM interactions indicate no attempt to adapt strategy or request clarification when anomalies began repeating"
+    },
+    {
+      "run_id": "20260412_225353_1b094d",
+      "seed": 30,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 6,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 37,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Run Seed 30\n\nAgent A encountered persistent pathfinding failures throughout the run, triggering spurious_block anomalies on turns 2, 9, 17, 18, and 32 despite no actual obstacles being present. Agent B operated more successfully, reaching the key pickup on turn 37, but the run ultimately failed due to exceeding the 50-turn limit (finishing at turn 51) without unlocking the target door. The critical decision point occurred around turn 37 when Agent B obtained the key, but subsequent movement (turn 41) was again blocked by a spurious_block anomaly, preventing door unlock. The root cause appears to be a combination of pathfinding instability in Agent A and insufficient time allocation\u2014the agents needed at least one additional turn to utilize the key and reach the exit, but systematic movement anomalies consumed available turns before this could occur."
+    },
+    {
+      "run_id": "20260412_225622_528b79",
+      "seed": 31,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 6,
+      "distinct_event_types": [
+        "door_encounter",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 12,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 31)\n\n**Summary:** This run failed catastrophically due to a complete deadlock lasting 34 consecutive turns. Agent A encountered four spurious block anomalies (turns 1, 9, 24, 34) that prevented it from locating the key pickup, while Agent B became permanently stuck at a locked door from turn 12 onward with no ability to progress or communicate a request for assistance. **Critical Failure Points:** The run never unlocked any doors or retrieved the key, indicating Agent A never found the required pickup location despite having the entire map available to explore. Agent B's 34-turn stationary block (turns 12\u201346) represents a fundamental pathfinding or navigation failure\u2014the agent either lacked an alternate route or failed to re-route around the obstacle. **Notable Decision Gap:** Neither agent attempted to send a message to coordinate or request help, and no DM interactions occurred, suggesting the agents either lacked a communication protocol or were unable to recognize the deadlock situation. The run hit the 50-turn limit with zero progress score, making this a total mission failure."
+    },
+    {
+      "run_id": "20260412_225850_3cb7dd",
+      "seed": 32,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 17,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 4,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 32)\n\n**Summary:**\nAgent A and Agent B failed to complete the dungeon objective, reaching the 50-turn limit on turn 51 with only 0.33 progress score. While Agent A successfully acquired the key on turn 4, the run was crippled by persistent spurious_block anomalies that prevented meaningful progress toward the locked door.\n\n**Critical Failure Points:**\nThe run encountered 17 anomalies\u2014nearly all spurious_block errors during movement attempts\u2014distributed across both agents from turn 1 onward. Most significantly, no door unlock was ever achieved despite Agent A obtaining the key early, suggesting the agents either failed to navigate to the door location or were unable to execute the unlock action before the turn limit expired.\n\n**Notable Decision Points:**\nThe key pickup on turn 4 represented the only successful objective milestone, but this achievement proved isolated. The subsequent cascading anomalies on turns 8, 9, 12, 15-16, 25-29, and 31 indicate the agents struggled with pathfinding or encountered persistent environmental blockage issues. The lack of any DM interactions or messages sent suggests neither agent attempted to request guidance or clarification about the blocking conditions, which may have been a missed opportunity for recovery."
+    },
+    {
+      "run_id": "20260412_230118_ccf53b",
+      "seed": 33,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 11,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 6,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 11,
+      "dm_interactions": 1,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Seed 33 Dungeon Run\n\n**Summary:**\nAgents A and B failed to complete the dungeon objective within the 50-turn limit, achieving only 0.33 progress despite successfully locating the exit at [4,5] by turn 6 and identifying the key's location. Agent B retrieved the key on turn 6, and both agents communicated their discoveries, but the run ultimately stalled due to movement anomalies and coordination failures.\n\n**Critical Failure Points:**\nThe primary issue was a cascade of spurious_block anomalies beginning at turn 12 and recurring frequently (turns 12, 27, 31, 37, 40, 44, 45, 50), which prevented agents from reaching their objectives despite clear communication about positions and goals. Additionally, message_delayed anomalies on turns 17, 21, and 24 fragmented the agents' real-time coordination, causing duplicate and partially-truncated messages that may have obscured actionable information.\n\n**Notable Decision Points:**\nAgent A's early strategy (turn 6) to position itself at the exit while waiting for Agent B was sound, but the lack of a concrete rendezvous plan for the locked door proved costly\u2014the agents never confirmed the door's location or synchronized a meeting point. The DM interaction on turn 26 acknowledged stale information"
+    },
+    {
+      "run_id": "20260412_230350_6ccbec",
+      "seed": 34,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 7,
+      "distinct_event_types": [
+        "key_pickup",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 5,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Run Seed 34\n\n**Summary:** Agent B successfully retrieved the key on turn 5, but the team failed to progress beyond 33% completion within the 50-turn limit, ultimately hitting the turn cap on turn 51. The run was severely hampered by seven spurious_block anomalies that struck both agents during movement actions across turns 6\u201343, creating persistent navigation obstacles that prevented the team from reaching the locked door.\n\n**Critical Failure Point:** Agent B's early key acquisition on turn 5 was the only major success; however, the subsequent anomaly on turn 6 (immediately after pickup) appeared to trigger a pattern of repeated blocking events. With no DM interactions recorded and zero messages sent between agents, there was no evidence of coordination attempts or requests for guidance when the team encountered these obstacles.\n\n**Notable Decision Gap:** The most striking absence was the complete lack of communication or escalation\u2014neither agent attempted to send a message to request assistance or clarify strategy after the first anomaly, despite seven total movement failures. The team's failure to unlock any doors suggests they never recovered positionally from the early movement disruptions, leaving significant unexplored dungeon areas and ultimately running out of turns while still far from the objective."
+    },
+    {
+      "run_id": "20260412_234621_4812f5",
+      "seed": 35,
+      "outcome": "stuck",
+      "total_turns": 34,
+      "anomaly_count": 9,
+      "distinct_event_types": [
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 21,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 13,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 35 Dungeon Run\n\n**Summary:** Both agents became permanently stuck after turn 31 despite Agent B successfully locating the exit and key at position [1,5] by turn 21. Agent B held the key but the locked door was never unlocked, preventing mission completion.\n\n**Failure Analysis:** The run was crippled by nine spurious_block anomalies (turns 9, 11\u201312, 14\u201316, 34) that prevented normal movement, combined with two message_delayed anomalies (turns 27, 33) that corrupted coordination attempts. Although Agent B correctly identified the exit location and communicated it repeatedly in turns 24\u201333, Agent A remained unable to reach the exit area. The critical decision point was turn 21 when Agent B picked up the key\u2014this created a false sense of progress, but without a path to the locked door, the key became inert.\n\n**Notable Decisions:** Agent B's repeated messaging strategy (turns 24\u201333) showed good intent but proved ineffective given the communication anomalies and Agent A's immobility. The lack of any door unlock event and zero DM interactions suggest neither agent could successfully navigate to or activate the door mechanism. By turn 34, Agent A was still experiencing spurious_block anomalies while Agent B remained stuck at the exit with no way to proceed"
+    },
+    {
+      "run_id": "20260412_234735_33f225",
+      "seed": 36,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 7,
+      "distinct_event_types": [
+        "door_encounter",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 13,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 36 Dungeon Run\n\nThis run failed to complete the objective within the 50-turn limit, terminating at turn 51 with zero progress score. Agent B became trapped in a repeated loop of locked door encounters (turns 13, 22, 30, 33, 34, 37, 47), suggesting it reached a critical choke point early and lacked the means or coordination to proceed. Agent A encountered multiple spurious block anomalies (turns 4, 26, 28, 34) that appear to have disrupted navigation patterns, and Agent B later experienced the same anomaly type (turns 39, 41, 44), indicating environmental instability rather than isolated agent malfunction. The critical failure point occurred when neither agent acquired the key pickup or unlocked any doors\u2014since no DM interactions or messages were sent between agents, there was no mechanism for sharing information about obstacles or alternative routes. The run demonstrates that without inter-agent communication or a key acquisition early enough to unblock progression, spurious anomalies combined with locked-door barriers can render a dungeon unnavigable within the turn budget."
+    },
+    {
+      "run_id": "20260412_235003_aafd04",
+      "seed": 37,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 16,
+      "distinct_event_types": [
+        "door_encounter",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 48,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Run (Seed 37)\n\n**Outcome:** Mission failure due to turn limit exceeded at turn 51.\n\n**Summary:** Both Agent A and Agent B encountered persistent movement failures throughout this run, with 16 anomalies recorded\u2014predominantly spurious_block errors that prevented normal pathfinding. Agent B encountered a locked door at turn 48 with no prior key acquisition, indicating the agents never located or picked up the required key item. The critical failure point occurred at turn 1 when Agent B immediately hit a spurious_block anomaly, setting a problematic precedent for navigation throughout the mission. Without successful object interaction or door unlocking at any point, the agents were unable to progress toward mission objectives and exhausted the 50-turn budget without achieving any measurable progress (final score: 0.0).\n\n**Notable Decision Points:** The most significant issue was the inability to adapt to or circumvent the repeated spurious_block anomalies after turn 1; neither agent demonstrated alternative pathfinding strategies. Agent B's encounter with the locked door at turn 48 was a final confirmation that the key pickup objective was never accomplished, suggesting the agents may have been trapped in an inaccessible area due to the movement anomalies early in the run."
+    },
+    {
+      "run_id": "20260413_013123_cda6c3",
+      "seed": 1,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 1)\n\n**Summary:** Both Agent A and Agent B failed to progress through the dungeon, reaching the turn limit of 50 without acquiring any key pickups or unlocking doors, resulting in a final progress score of 0.0. The run was plagued by repeated spurious_block anomalies across 12 separate movement attempts, with both agents encountering these blocking errors throughout the mission\u2014Agent A hit the anomaly on turns 5, 11, 14, 29, 37, and 51, while Agent B encountered it on turns 5, 7, 10, 18, 36, and 46.\n\n**Root Cause:** The systematic occurrence of spurious_block anomalies suggests either a fundamental pathfinding or collision detection malfunction in the dungeon environment, preventing both agents from executing valid movement commands despite presumably selecting legitimate routes.\n\n**Critical Decision Points:** The failure to establish any agent-to-agent communication (0 messages sent) or invoke Dungeon Master assistance (0 DM interactions) represents a missed opportunity to diagnose or work around the environmental anomalies during the run, which could have salvaged the mission if either agent had attempted to signal for help or coordinate alternative strategies."
+    },
+    {
+      "run_id": "20260413_013409_391f74",
+      "seed": 38,
+      "outcome": "stuck",
+      "total_turns": 34,
+      "anomaly_count": 6,
+      "distinct_event_types": [
+        "dm_response",
+        "door_encounter",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 3,
+      "door_unlocked_turn": null,
+      "messages_sent": 21,
+      "dm_interactions": 1,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 38 Dungeon Run\n\n**Summary:** This 34-turn run resulted in complete failure with both agents stuck for the final 17+ turns. Agent A successfully located the EXIT at [6,2] by turn 10 but became trapped by repeated spurious_block anomalies (turns 12, 15) that prevented further movement, while Agent B remained ineffectively positioned at [1,6-7] unable to locate the KEY item. The critical failure point was the decision to rely on movement-based exploration rather than systematically mapping the dungeon layout\u2014Agent A's early discovery of the EXIT created a false sense of progress that masked the underlying inability to progress toward the actual win condition (unlocking the door with the key).\n\n**Notable Decision Points:** The most significant decision was Agent A's commitment to staying at the EXIT location starting around turn 10, which led to excessive repetitive messaging (21 total messages sent, many duplicates to self) rather than productive problem-solving. The DM interaction at turn 17 provided stale information (board state from turn 14), offering no actionable assistance. Agent B's failure to coordinate movement with Agent A or mount an effective key-search strategy compounded the deadlock\u2014both agents had essentially given up on productive actions by turn 20 and spent the remaining 14 turns in repetitive communication loops.\n\n**Root"
+    },
+    {
+      "run_id": "20260413_013553_37222a",
+      "seed": 39,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 10,
+      "distinct_event_types": [
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 39,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 39)\n\n**Summary:**\nAgent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with a progress score of only 0.33. Agent A successfully located the EXIT at position [3,4] and acquired the key by turn 2, but the mission stalled because the agents never successfully unlocked the locked door required to proceed.\n\n**Critical Failure Points:**\nThe primary issue was excessive reliance on messaging rather than coordinated action. Agent A discovered the locked door location at [5,2] (mentioned in turn 34 and 43 messages) but never navigated there to unlock it with the key already in inventory. Instead, Agent A spent 28+ turns (turns 18-46) repeatedly messaging Agent B about the EXIT location and key possession without advancing the core objective. Multiple message delays occurred (turns 27, 30, 32, 41, 42), and Agent B encountered four spurious block anomalies (turns 7, 13, 14, 29) that further hindered progress.\n\n**Notable Decision Points:**\nThe most consequential failure was Agent A's decision after turn 18 to prioritize communication over navigation\u2014rather than moving to [5,2] to unlock the door, Agent A entered a messaging loop. Had Agent A"
+    },
+    {
+      "run_id": "20260413_013855_3dba4c",
+      "seed": 38,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 38)\n\nThis run failed to achieve any progress before hitting the 50-turn limit at turn 51, with both Agent A and Agent B unable to navigate the dungeon environment. The critical failure point was the pervasive occurrence of spurious_block anomalies that repeatedly interrupted movement attempts: Agent B encountered blocking anomalies on turns 2, 16, 24, 27, 40, and 45, while Agent A experienced them on turns 11, 14, 39, 41, 44, and 47. These anomalies were not isolated incidents but rather a systemic pattern that prevented the agents from making meaningful progress toward key objectives like picking up items or unlocking doors. The agents never communicated via messages or sought DM intervention despite the mounting obstacles, suggesting either insufficient anomaly-response protocols or a decision to continue pushing forward through blocked paths rather than adapting strategy. Without ever securing a key pickup or unlocking any doors, the agents exhausted the turn budget in what appears to be a highly anomaly-prone dungeon configuration where movement reliability was fundamentally compromised from the earliest turns."
+    },
+    {
+      "run_id": "20260413_014128_d641d9",
+      "seed": 39,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 11,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 2,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 1,
+      "dm_interactions": 1,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 39)\n\n**Summary:** Agent A successfully retrieved the key at turn 2, but the expedition failed to progress beyond 33% completion before hitting the 50-turn limit. The run was undermined by pervasive spurious_block anomalies (11 total) that repeatedly impeded both agents' movement, particularly affecting Agent B's navigation after turn 7.\n\n**Critical Failure Point:** Despite Agent A acquiring the key early, the team never unlocked a door, suggesting they either failed to locate the correct door or couldn't navigate to it. The anomalies became increasingly problematic in the second half of the run (turns 24-45), creating a movement bottleneck that prevented productive progress.\n\n**Notable Decision Points:** Agent B's turn 50 message to the DM represented a pivotal moment\u2014acknowledging the stall and requesting assistance with board state information. However, the DM's response at turn 51 arrived too late, providing stale information from turn 48 after the turn limit had already been exceeded. The single DM interaction should have been triggered earlier to help agents navigate around the anomaly clusters, particularly after the pattern became evident around turn 15.\n\n**Root Cause:** The combination of persistent spurious_block anomalies and apparent navigation coordination failure between agents prevented effective use of the early key acquisition, resulting"
+    },
+    {
+      "run_id": "20260413_014359_dfebff",
+      "seed": 40,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 11,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Run Seed 40\n\nThe run terminated at turn 51 after hitting the 50-turn limit with zero progress. Both Agent A and Agent B encountered 11 spurious_block anomalies distributed across their movement attempts (Agent A: turns 2, 6, 21, 23, 30, 41, 47; Agent B: turns 13, 25, 30, 34), which severely disrupted navigation and prevented any meaningful dungeon exploration. Neither agent obtained a key pickup or unlocked doors, and no messages were sent to the Dungeon Master for assistance or guidance\u2014a critical oversight that suggests the agents either lacked awareness of the DM interaction mechanic or failed to recognize when anomalies necessitated external help. The high frequency of spurious_block anomalies (11 out of 51 turns) indicates either corrupted pathfinding or a dungeon layout with systematic blocking issues; the agents' inability to adapt strategy or request intervention resulted in complete mission failure."
+    },
+    {
+      "run_id": "20260413_014624_9f7617",
+      "seed": 41,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 8,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Seed 41 Dungeon Run\n\n**Summary:** Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress and no key pickup or door unlock achieved. The run was severely hampered by eight spurious_block anomalies that occurred during movement actions across both agents, with Agent A encountering five of these anomalies (turns 11, 12, 18, 25, 31, 48) and Agent B encountering two (turns 30, 49). The repeated anomalies suggest either a pathfinding issue causing agents to repeatedly attempt blocked routes, or environmental conditions that spawned false obstacles. The critical failure point occurred early at turns 11-12 when Agent A immediately encountered consecutive movement blocks, which may have forced both agents into suboptimal navigation patterns that persisted through turn 49. Without any DM interactions or messages sent, the agents appeared unable to adapt their strategy or communicate around the anomalous obstacles, ultimately exhausting the turn budget before securing any objectives."
+    },
+    {
+      "run_id": "20260413_014854_03d7f5",
+      "seed": 42,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 42)\n\n**Summary:** This run failed to achieve any progress before hitting the 50-turn limit, terminating at turn 51 with a final score of 0.0. Both Agent A and Agent B encountered persistent spurious block anomalies throughout the mission, with 14 total anomalies recorded across movement attempts.\n\n**Failure Analysis:** The agents were unable to navigate the dungeon environment due to repeated collision detection failures (spurious_block anomalies). These anomalies began immediately on turn 1 when Agent B attempted its first move and recurred sporadically but consistently throughout the run, with clustering around turns 4-5, 14, 34, and 45. No keys were picked up, no doors were unlocked, and no messages were sent, indicating the agents never progressed beyond initial navigation attempts.\n\n**Critical Decision Points:** The most significant failure occurred at the run's beginning when Agent B immediately encountered a spurious block on turn 1, suggesting either a pathfinding issue or an environmental generation problem with seed 42. The repeated failures on turns 45 and 51 (both agents hitting anomalies in the final stretch) indicate the agents did not adapt their movement strategy despite encountering systematic blocking. The absence of any DM interactions suggests the agents may not have attempted alternative strategies or problem-solving approaches"
+    },
+    {
+      "run_id": "20260413_015121_db4b5e",
+      "seed": 43,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "key_pickup",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 3,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 14,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 43)\n\n**Summary:** The mission failed due to exceeding the 50-turn limit, achieving only 33% progress. Agent B successfully located the exit and acquired the key by turn 3, but the agents never unlocked the required door to complete the objective. The critical failure point occurred at turn 3 when Agent B picked up the key\u2014Agent B then spent the remaining 47 turns unable to locate or navigate to a locked door despite repeatedly messaging Agent A about the exit location at [2,4].\n\n**Root Cause:** Agent B appears to have been caught in a pathfinding loop, encountering spurious_block anomalies on 8 separate turns (11, 15, 21, 26, 37, 38, 43), while Agent A encountered similar blocks on 5 turns (1, 6, 16, 36, 43). The agents were unable to coordinate effective movement despite 14 messages being sent; notably, most messages were Agent B messaging itself rather than coordinating with Agent A until turn 42.\n\n**Key Decision Points:** The most critical moment was turn 3 when the key was acquired with no corresponding progress toward the locked door. Agent B's decision to remain at the exit location [2,4] from approximately turn 28 onward, rather than actively searching for the"
+    },
+    {
+      "run_id": "20260413_015433_95c080",
+      "seed": 44,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 15,
+      "distinct_event_types": [
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 0,
+      "dm_interactions": 0,
+      "progress_score_final": 0.0,
+      "selected_for_repo": false,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 44)\n\n**Summary:** Both Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The mission was severely hampered by persistent spurious_block anomalies that repeatedly prevented movement across 15 separate turns, with Agent B being disproportionately affected (9 anomalies vs. Agent A's 6).\n\n**Critical Failure Points:** The agents encountered spurious blocks starting as early as turn 3 (Agent B) and continuing throughout the entire run, suggesting either a pathfinding algorithm that repeatedly selected invalid routes or an environment with inconsistent collision detection. No key pickups were obtained and no doors were unlocked, indicating the agents never reached their primary objectives before exhausting available turns.\n\n**Notable Decision Impact:** The decision to continue attempting movement along the same problematic routes (visible in clusters like turns 34-35 and 45, all Agent B) rather than triggering DM interaction or attempting alternative strategies proved fatal. The complete absence of any messages sent (0/all) and zero DM interactions indicates the agents lacked either the capability or the directive to request human assistance when facing repeated environmental failures\u2014a critical oversight given the systematic nature of the anomalies."
+    }
+  ],
+  "aggregate": {
+    "outcome_distribution": {
+      "turn_limit": 50,
+      "success": 2,
+      "stuck": 5
+    },
+    "avg_turns_by_outcome": {
+      "turn_limit": 50.3,
+      "success": 30.5,
+      "stuck": 23.8
+    },
+    "anomaly_rate_by_run": [
+      {
+        "run_id": "20260412_224513_0dbb92",
+        "seed": 26,
+        "anomaly_count": 21
+      },
+      {
+        "run_id": "20260412_212223_b00a7f",
+        "seed": 77,
+        "anomaly_count": 18
+      },
+      {
+        "run_id": "20260412_220702_cbcaec",
+        "seed": 9,
+        "anomaly_count": 17
+      },
+      {
+        "run_id": "20260412_225850_3cb7dd",
+        "seed": 32,
+        "anomaly_count": 17
+      },
+      {
+        "run_id": "20260412_235003_aafd04",
+        "seed": 37,
+        "anomaly_count": 16
+      },
+      {
+        "run_id": "20260413_015433_95c080",
+        "seed": 44,
+        "anomaly_count": 15
+      },
+      {
+        "run_id": "20260412_211410_82096a",
+        "seed": 42,
+        "anomaly_count": 14
+      },
+      {
+        "run_id": "20260412_221431_349f5a",
+        "seed": 12,
+        "anomaly_count": 14
+      },
+      {
+        "run_id": "20260412_223205_5182c0",
+        "seed": 20,
+        "anomaly_count": 14
+      },
+      {
+        "run_id": "20260413_014854_03d7f5",
+        "seed": 42,
+        "anomaly_count": 14
+      },
+      {
+        "run_id": "20260412_184206_eef061",
+        "seed": 42,
+        "anomaly_count": 13
+      },
+      {
+        "run_id": "20260412_184710_d4be6c",
+        "seed": 7,
+        "anomaly_count": 13
+      },
+      {
+        "run_id": "20260412_215157_eb6647",
+        "seed": 3,
+        "anomaly_count": 13
+      },
+      {
+        "run_id": "20260412_215704_ee36c4",
+        "seed": 5,
+        "anomaly_count": 13
+      },
+      {
+        "run_id": "20260412_220204_b6e763",
+        "seed": 7,
+        "anomaly_count": 13
+      },
+      {
+        "run_id": "20260412_185253_d161f1",
+        "seed": 999,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260412_212617_16aaa9",
+        "seed": 3,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260412_214800_dce28a",
+        "seed": 1,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260412_221157_f66a89",
+        "seed": 11,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260412_222157_74e5a1",
+        "seed": 16,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260413_013123_cda6c3",
+        "seed": 1,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260413_013855_3dba4c",
+        "seed": 38,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260413_015121_db4b5e",
+        "seed": 43,
+        "anomaly_count": 12
+      },
+      {
+        "run_id": "20260412_211601_35ff53",
+        "seed": 3,
+        "anomaly_count": 11
+      },
+      {
+        "run_id": "20260412_222935_d5c4bf",
+        "seed": 19,
+        "anomaly_count": 11
+      },
+      {
+        "run_id": "20260412_230118_ccf53b",
+        "seed": 33,
+        "anomaly_count": 11
+      },
+      {
+        "run_id": "20260413_014128_d641d9",
+        "seed": 39,
+        "anomaly_count": 11
+      },
+      {
+        "run_id": "20260413_014359_dfebff",
+        "seed": 40,
+        "anomaly_count": 11
+      },
+      {
+        "run_id": "20260412_211954_145a80",
+        "seed": 23,
+        "anomaly_count": 10
+      },
+      {
+        "run_id": "20260412_215436_6e5882",
+        "seed": 4,
+        "anomaly_count": 10
+      },
+      {
+        "run_id": "20260412_215937_b28da9",
+        "seed": 6,
+        "anomaly_count": 10
+      },
+      {
+        "run_id": "20260412_223739_c0c846",
+        "seed": 23,
+        "anomaly_count": 10
+      },
+      {
+        "run_id": "20260412_224245_c0260e",
+        "seed": 25,
+        "anomaly_count": 10
+      },
+      {
+        "run_id": "20260413_013553_37222a",
+        "seed": 39,
+        "anomaly_count": 10
+      },
+      {
+        "run_id": "20260412_220930_86d6ed",
+        "seed": 10,
+        "anomaly_count": 9
+      },
+      {
+        "run_id": "20260412_223432_7e5c99",
+        "seed": 21,
+        "anomaly_count": 9
+      },
+      {
+        "run_id": "20260412_234621_4812f5",
+        "seed": 35,
+        "anomaly_count": 9
+      },
+      {
+        "run_id": "20260412_214929_b43bda",
+        "seed": 2,
+        "anomaly_count": 8
+      },
+      {
+        "run_id": "20260412_222426_094802",
+        "seed": 17,
+        "anomaly_count": 8
+      },
+      {
+        "run_id": "20260412_224016_e16556",
+        "seed": 24,
+        "anomaly_count": 8
+      },
+      {
+        "run_id": "20260412_224858_066750",
+        "seed": 28,
+        "anomaly_count": 8
+      },
+      {
+        "run_id": "20260413_014624_9f7617",
+        "seed": 41,
+        "anomaly_count": 8
+      },
+      {
+        "run_id": "20260412_214232_47783d",
+        "seed": 42,
+        "anomaly_count": 7
+      },
+      {
+        "run_id": "20260412_222029_37217a",
+        "seed": 15,
+        "anomaly_count": 7
+      },
+      {
+        "run_id": "20260412_225125_e04b1e",
+        "seed": 29,
+        "anomaly_count": 7
+      },
+      {
+        "run_id": "20260412_230350_6ccbec",
+        "seed": 34,
+        "anomaly_count": 7
+      },
+      {
+        "run_id": "20260412_234735_33f225",
+        "seed": 36,
+        "anomaly_count": 7
+      },
+      {
+        "run_id": "20260412_211823_e423e5",
+        "seed": 15,
+        "anomaly_count": 6
+      },
+      {
+        "run_id": "20260412_220433_63edc0",
+        "seed": 8,
+        "anomaly_count": 6
+      },
+      {
+        "run_id": "20260412_225353_1b094d",
+        "seed": 30,
+        "anomaly_count": 6
+      },
+      {
+        "run_id": "20260412_225622_528b79",
+        "seed": 31,
+        "anomaly_count": 6
+      },
+      {
+        "run_id": "20260413_013409_391f74",
+        "seed": 38,
+        "anomaly_count": 6
+      },
+      {
+        "run_id": "20260412_221658_21fc9d",
+        "seed": 13,
+        "anomaly_count": 5
+      },
+      {
+        "run_id": "20260412_222655_b9ecde",
+        "seed": 18,
+        "anomaly_count": 4
+      },
+      {
+        "run_id": "20260412_224806_a2e5dc",
+        "seed": 27,
+        "anomaly_count": 4
+      },
+      {
+        "run_id": "20260412_221927_f519f9",
+        "seed": 14,
+        "anomaly_count": 3
+      },
+      {
+        "run_id": "20260412_223700_8bee4a",
+        "seed": 22,
+        "anomaly_count": 2
+      }
+    ],
+    "stale_data_decisions": 0
+  }
+}

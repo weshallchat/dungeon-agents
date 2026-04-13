@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_215157_eb6647",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      1,
+      1
+    ],
+    "B": [
+      1,
+      6
+    ]
+  },
+  "seed": 3,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/07123f0ad4ed4ee5b321d0b37c765ff3",
+  "incident_report": "# Incident Report: Dungeon Agent Run (Seed 3)\n\n**Summary:**\nAgents A and B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The run was severely hampered by frequent spurious_block anomalies (10 movement failures across both agents) and pervasive communication delays that prevented coordinated action.\n\n**Root Cause of Failure:**\nThe mission collapsed due to a combination of environmental obstruction and information decay. Agent A successfully located the EXIT by turn 10, communicating its position to the DM multiple times (turns 10, 11, 16, 20, 27), yet never acquired the KEY or unlocked the LOCKED_DOOR. Agent B received inconsistent intel about the KEY's location (initially [7, 4] per turn 23, later [4, 4] per turn 32) but made no documented progress toward retrieving it. The stale DM board information (always 3-5 turns behind current state) proved insufficient for coordinating the two-objective solution.\n\n**Critical Decision Points:**\nThe first major failure was turns 3-4, when both agents encountered spurious_block anomalies during initial exploration, immediately degrading movement reliability. The pivotal communication window occurred at turn 23, where Agent B acknowledged the EXIT location but committed to"
+}

@@ -1,0 +1,19 @@
+{
+  "run_id": "20260412_212617_16aaa9",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      4,
+      0
+    ],
+    "B": [
+      2,
+      6
+    ]
+  },
+  "seed": 3,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/55dda6ed0c463fa08ede3be376a9c66c",
+  "incident_report": "# Incident Report: Dungeon Agent Run (Seed 3)\n\n**Summary:** Agent A and Agent B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. Agent A successfully located the EXIT at position [3, -1] by turn 6 and communicated this discovery repeatedly (turns 6-7, 24-26, 31-33, 36-39), but both agents encountered persistent spurious_block anomalies (12 total) that prevented meaningful movement and objective completion. The run was critically hampered by stale information from the DM (turns 7-8 and 26, 33), whose board view lagged by 1-5 turns, and the agents never located the KEY or LOCKED_DOOR, which were prerequisites for reaching the exit.\n\n**Key Decision Points:** The most notable failure occurred around turns 6-7 when Agent A should have consolidated its EXIT discovery into a focused search strategy for the KEY and LOCKED_DOOR, rather than entering a repetitive messaging cycle that continued through turn 49. Agent B's limited exploration scope (positions around [2, 6] and [1, 6]) suggests insufficient coordination between agents on search area division. The anomaly spike affecting Agent B starting at turn 34 effectively removed half the team's mobility during the final 16 turns"
+}

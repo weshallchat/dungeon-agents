@@ -16,48 +16,95 @@
       line-height: 1.5;
     }
 
-    h1 { font-size: 16px; color: #ffffff; margin-bottom: 4px; letter-spacing: 0.5px; }
-    h2 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 28px 0 10px; border-bottom: 1px solid #222; padding-bottom: 6px; }
+    h1 { font-size: 16px; color: #fff; margin-bottom: 4px; letter-spacing: 0.5px; }
+    h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin: 28px 0 10px; border-bottom: 1px solid #222; padding-bottom: 6px; }
     h3 { font-size: 12px; color: #aaa; margin: 16px 0 6px; }
+    .subtitle { color: #555; font-size: 12px; margin-bottom: 20px; }
 
-    .subtitle { color: #555; font-size: 12px; margin-bottom: 24px; }
-
-    /* File loader */
+    /* Loader bar */
     .loader {
-      display: flex; gap: 16px; align-items: center;
-      background: #181818; border: 1px solid #2a2a2a;
-      padding: 16px 20px; border-radius: 4px; margin-bottom: 28px;
+      display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+      background: #141414; border: 1px solid #222;
+      padding: 14px 18px; border-radius: 4px; margin-bottom: 24px;
     }
-    .loader label { color: #888; font-size: 12px; }
-    .loader input[type=file] { color: #ccc; font-size: 12px; cursor: pointer; }
+    .loader-group { display: flex; flex-direction: column; gap: 4px; }
+    .loader-label { color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .loader input[type=file] { color: #bbb; font-size: 12px; cursor: pointer; }
     .loader input[type=file]::file-selector-button {
-      background: #252525; border: 1px solid #3a3a3a; color: #ccc;
-      padding: 4px 12px; border-radius: 3px; cursor: pointer; font-family: inherit;
-      font-size: 12px; margin-right: 10px;
+      background: #222; border: 1px solid #333; color: #ccc;
+      padding: 3px 10px; border-radius: 3px; cursor: pointer;
+      font-family: inherit; font-size: 11px; margin-right: 8px;
     }
-    .loader input[type=file]::file-selector-button:hover { background: #303030; }
+    .loader input[type=file]::file-selector-button:hover { background: #2a2a2a; }
+    #load-status { color: #4ec94e; font-size: 11px; }
 
-    /* Incident summary */
+    /* Tabs */
+    .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid #1e1e1e; }
+    .tab {
+      padding: 7px 16px; cursor: pointer; font-size: 11px; color: #555;
+      text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid transparent;
+      transition: color 0.1s;
+    }
+    .tab:hover { color: #888; }
+    .tab.active { color: #d4d4d4; border-bottom-color: #4a4a4a; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Summary */
     .summary-box {
-      background: #141414; border: 1px solid #2a2a2a;
-      border-radius: 4px; padding: 16px 20px; margin-bottom: 8px;
+      background: #141414; border: 1px solid #222;
+      border-radius: 4px; padding: 16px 20px; margin-bottom: 12px;
     }
+    .incident-report {
+      color: #c0c0c0; font-size: 13px; line-height: 1.7; margin-bottom: 16px;
+      padding-bottom: 14px; border-bottom: 1px solid #1e1e1e; font-family: sans-serif;
+    }
+    .incident-report.placeholder { color: #444; font-style: italic; }
     .summary-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 14px; }
-    .summary-meta .stat { display: flex; flex-direction: column; }
-    .summary-meta .stat-label { color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .summary-meta .stat-value { color: #e0e0e0; font-size: 14px; font-weight: bold; }
-    .stat-value.success { color: #4ec94e; }
-    .stat-value.failure { color: #e05555; }
+    .stat { display: flex; flex-direction: column; }
+    .stat-label { color: #555; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { color: #e0e0e0; font-size: 14px; font-weight: bold; }
+    .stat-value.ok { color: #4ec94e; }
+    .stat-value.warn { color: #e05555; }
 
-    .issue-list { list-style: none; }
+    .issue-list { list-style: none; margin-top: 10px; }
     .issue-list li {
       padding: 5px 8px; margin-bottom: 3px; border-radius: 3px;
       font-size: 12px; display: flex; gap: 10px; align-items: baseline;
     }
     .issue-list li.anomaly { background: #1f1010; border-left: 3px solid #e05555; }
     .issue-list li.divergence { background: #1a1a0e; border-left: 3px solid #c9a227; }
-    .issue-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.6; min-width: 72px; }
+    .issue-tag { font-size: 10px; text-transform: uppercase; opacity: 0.6; min-width: 72px; }
     .issue-turn { color: #666; min-width: 52px; }
+
+    /* Key-Moment Grids */
+    .grid-scroll { overflow-x: auto; padding-bottom: 12px; }
+    .grid-row { display: flex; gap: 24px; align-items: flex-start; min-width: max-content; }
+    .grid-moment { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .grid-label { font-size: 10px; color: #666; text-align: center; max-width: 120px; line-height: 1.4; }
+    .grid-label strong { color: #aaa; display: block; margin-bottom: 2px; }
+    .dungeon-grid {
+      display: grid; border: 1px solid #2a2a2a; border-radius: 2px; overflow: hidden;
+      position: relative;
+    }
+    .grid-cell {
+      width: 18px; height: 18px; position: relative;
+    }
+    .cell-WALL        { background: #1a1a1a; }
+    .cell-EMPTY       { background: #2a2a2a; }
+    .cell-KEY         { background: #7a5c00; }
+    .cell-LOCKED_DOOR { background: #5c0000; }
+    .cell-OPEN_DOOR   { background: #1a4a1a; }
+    .cell-EXIT        { background: #1a6a1a; }
+    .cell-FOG         { background: #111; }
+    .agent-dot {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 10px; height: 10px; border-radius: 50%; font-size: 7px;
+      display: flex; align-items: center; justify-content: center; font-weight: bold;
+      z-index: 2;
+    }
+    .agent-A { background: #2e7d2e; color: #fff; }
+    .agent-B { background: #2e4a8a; color: #fff; }
 
     /* Timeline */
     table { width: 100%; border-collapse: collapse; }
@@ -68,279 +115,547 @@
     }
     tbody tr { border-bottom: 1px solid #1a1a1a; cursor: pointer; }
     tbody tr:hover { background: #161616; }
-    tbody tr.row-A { }
-    tbody tr.row-B { }
-    tbody tr.row-DM { opacity: 0.7; }
     tbody tr.row-anomaly { border-left: 3px solid #e05555; }
     tbody tr.row-divergence { border-left: 3px solid #c9a227; }
-    tbody tr.row-dm_response { border-left: 3px solid #4a7fa5; }
-
+    tbody tr.row-DM { border-left: 3px solid #4a7fa5; opacity: 0.85; }
     td { padding: 6px 10px; vertical-align: top; }
     td.turn-col { color: #555; width: 48px; }
     td.agent-col { width: 44px; }
     .agent-badge {
-      display: inline-block; padding: 1px 7px; border-radius: 2px;
-      font-size: 11px; font-weight: bold;
+      display: inline-block; padding: 1px 7px; border-radius: 2px; font-size: 11px; font-weight: bold;
     }
     .badge-A { background: #1a2e1a; color: #4ec94e; }
     .badge-B { background: #1a1a2e; color: #5585e0; }
     .badge-DM { background: #1e2a35; color: #4a7fa5; }
     td.tool-col { color: #c792ea; width: 110px; }
     td.args-col { color: #888; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    td.result-col { color: #b5b5b5; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.result-col { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .result-success { color: #4ec94e; }
+    .result-failed  { color: #e05555; }
+    .result-anomaly { color: #e08855; }
     td.flags-col { width: 80px; }
-
     .flag { display: inline-block; font-size: 11px; margin-right: 4px; }
     .flag-anomaly { color: #e05555; }
     .flag-divergence { color: #c9a227; }
     .flag-delay { color: #e08855; }
 
-    /* Expanded detail row */
-    .detail-row td {
-      padding: 0; border-bottom: 1px solid #222;
-    }
+    .detail-row td { padding: 0; border-bottom: 1px solid #222; }
     .detail-inner {
       display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
       background: #1a1a1a; font-size: 11px;
     }
-    .detail-panel {
-      background: #111; padding: 12px 16px;
-    }
-    .detail-panel h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 8px; }
-    pre {
-      white-space: pre-wrap; word-break: break-all;
-      color: #b0b0b0; font-size: 11px; line-height: 1.6;
-    }
-    .diff-added { color: #e05555; background: #2a1010; }
+    .detail-panel { background: #111; padding: 12px 16px; }
+    .detail-panel h4 { font-size: 10px; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+    pre { white-space: pre-wrap; word-break: break-all; color: #b0b0b0; font-size: 11px; line-height: 1.6; }
+    .diff-changed { color: #e05555; background: #2a1010; }
+
+    /* Charts */
+    .charts-stack { display: flex; flex-direction: column; gap: 24px; }
+    .chart-block { background: #141414; border: 1px solid #222; border-radius: 4px; padding: 16px; }
+    .chart-title { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    canvas { display: block; }
 
     /* Message trace */
     .msg-trace {
-      display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0;
+      display: grid; grid-template-columns: 1fr 80px 1fr;
       border: 1px solid #222; border-radius: 4px; overflow: hidden;
     }
     .msg-col-header {
-      background: #141414; padding: 8px 12px; font-size: 11px;
+      background: #141414; padding: 7px 10px; font-size: 10px;
       text-transform: uppercase; letter-spacing: 0.5px; color: #555;
       border-bottom: 1px solid #222; text-align: center;
     }
-    .msg-timeline { position: relative; min-height: 60px; }
     .msg-row {
-      display: grid; grid-template-columns: 1fr 80px 1fr;
-      border-bottom: 1px solid #1a1a1a; min-height: 40px; align-items: center;
+      display: contents;
     }
-    .msg-cell { padding: 8px 12px; font-size: 12px; }
-    .msg-cell.center { text-align: center; }
+    .msg-cell {
+      padding: 8px 10px; font-size: 11px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .msg-cell.center { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .msg-bubble {
       background: #181818; border: 1px solid #2a2a2a; border-radius: 3px;
       padding: 4px 8px; font-size: 11px; color: #c0c0c0;
     }
     .msg-bubble.delayed { border-color: #e05555; }
-    .msg-arrow {
-      font-size: 11px; color: #555; display: flex;
-      align-items: center; justify-content: center; flex-direction: column; gap: 2px;
-    }
+    .msg-bubble.dm { border-style: dashed; border-color: #4a7fa5; }
+    .msg-arrow { font-size: 11px; color: #555; }
     .msg-arrow.delayed { color: #e05555; }
-    .msg-turn { font-size: 10px; color: #444; }
+    .msg-turn { font-size: 10px; color: #444; margin-top: 2px; }
     .msg-delay-label { font-size: 10px; color: #e05555; }
 
-    /* Empty / loading states */
-    .empty { color: #444; padding: 32px; text-align: center; }
-
-    /* Section wrapper */
-    .section { margin-bottom: 40px; }
-
-    /* Run list (multi-run picker) */
-    .run-list { display: flex; flex-direction: column; gap: 4px; }
-    .run-item {
-      background: #141414; border: 1px solid #222; border-radius: 3px;
-      padding: 8px 14px; cursor: pointer; display: flex; gap: 20px; align-items: center;
+    /* Cross-run aggregate */
+    .agg-charts { display: flex; flex-direction: column; gap: 24px; }
+    .agg-stat { color: #888; font-size: 12px; margin-bottom: 12px; }
+    .agg-stat strong { color: #d4d4d4; }
+    .run-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .run-table th {
+      text-align: left; padding: 5px 8px; font-size: 10px; text-transform: uppercase;
+      letter-spacing: 0.5px; color: #555; border-bottom: 1px solid #222;
     }
-    .run-item:hover { background: #1a1a1a; border-color: #333; }
-    .run-item.active { border-color: #3a3a3a; }
-    .run-id { color: #888; font-size: 11px; }
-    .run-outcome.success { color: #4ec94e; }
-    .run-outcome.failure { color: #e05555; }
-    .run-turns { color: #555; font-size: 11px; }
+    .run-table td { padding: 5px 8px; font-size: 11px; border-bottom: 1px solid #1a1a1a; }
+    .run-table tr.selected { background: #1a1e1a; }
+    .badge-event {
+      display: inline-block; background: #222; border: 1px solid #333;
+      border-radius: 2px; padding: 1px 5px; font-size: 10px; margin: 1px;
+      color: #888;
+    }
+    .badge-event.has { background: #1a2a1a; border-color: #2a4a2a; color: #4ec94e; }
+    .outcome-success { color: #4ec94e; }
+    .outcome-turn_limit { color: #e05555; }
+    .outcome-stuck { color: #e08855; }
+    .outcome-key_blocked { color: #c9a227; }
+
+    .empty { color: #444; padding: 32px; text-align: center; }
+    .section { margin-bottom: 32px; }
+
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 11px; color: #666; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-rect { width: 12px; height: 10px; border-radius: 1px; }
   </style>
 </head>
 <body>
 
 <h1>Dungeon Agents — Run Viewer</h1>
-<p class="subtitle">Load an events.jsonl file to inspect a run.</p>
+<p class="subtitle">Load an events.jsonl to inspect a run. summary.json and analysis.json are optional.</p>
 
 <div class="loader">
-  <label>events.jsonl</label>
-  <input type="file" id="file-input" accept=".jsonl,.json">
-  <span id="load-status" style="color:#555; font-size:11px;"></span>
+  <div class="loader-group">
+    <span class="loader-label">events.jsonl *</span>
+    <input type="file" id="file-events" accept=".jsonl,.json">
+  </div>
+  <div class="loader-group">
+    <span class="loader-label">summary.json (optional)</span>
+    <input type="file" id="file-summary" accept=".json">
+  </div>
+  <div class="loader-group">
+    <span class="loader-label">analysis.json (optional, enables View 6)</span>
+    <input type="file" id="file-analysis" accept=".json">
+  </div>
+  <span id="load-status"></span>
 </div>
 
 <div id="app" style="display:none;">
+  <div class="tabs">
+    <div class="tab active" data-tab="summary">1. Incident Summary</div>
+    <div class="tab" data-tab="grids">2. Key Moments</div>
+    <div class="tab" data-tab="timeline">3. Timeline</div>
+    <div class="tab" data-tab="charts">4. Charts</div>
+    <div class="tab" data-tab="messages">5. Message Trace</div>
+    <div class="tab" data-tab="aggregate">6. Cross-Run</div>
+  </div>
 
-  <div class="section">
-    <h2>Incident Summary</h2>
-    <div class="summary-box">
-      <div class="summary-meta" id="summary-meta"></div>
-      <div id="summary-issues"></div>
+  <!-- View 1: Incident Summary -->
+  <div class="tab-content active" id="tab-summary">
+    <div class="section">
+      <div class="summary-box">
+        <div id="incident-report" class="incident-report placeholder">Load summary.json to see incident report.</div>
+        <div class="summary-meta" id="summary-meta"></div>
+        <div id="summary-milestone"></div>
+      </div>
+      <h3>Anomalies</h3>
+      <ul class="issue-list" id="anomaly-list"></ul>
+      <h3 style="margin-top:16px;">Belief Divergences</h3>
+      <ul class="issue-list" id="divergence-list"></ul>
     </div>
   </div>
 
-  <div class="section">
-    <h2>Timeline</h2>
-    <table id="timeline-table">
-      <thead>
-        <tr>
-          <th>Turn</th>
-          <th>Agent</th>
-          <th>Tool</th>
-          <th>Args</th>
-          <th>Result</th>
-          <th>Flags</th>
-        </tr>
-      </thead>
-      <tbody id="timeline-body"></tbody>
-    </table>
+  <!-- View 2: Key-Moment Grids -->
+  <div class="tab-content" id="tab-grids">
+    <div class="section">
+      <div class="grid-scroll">
+        <div class="grid-row" id="grid-row"></div>
+      </div>
+      <div class="legend" style="margin-top:16px;">
+        <div class="legend-item"><div class="legend-rect" style="background:#1a1a1a;"></div>Wall</div>
+        <div class="legend-item"><div class="legend-rect" style="background:#2a2a2a;"></div>Empty</div>
+        <div class="legend-item"><div class="legend-rect" style="background:#7a5c00;"></div>Key</div>
+        <div class="legend-item"><div class="legend-rect" style="background:#5c0000;"></div>Locked Door</div>
+        <div class="legend-item"><div class="legend-rect" style="background:#1a4a1a;"></div>Open Door</div>
+        <div class="legend-item"><div class="legend-rect" style="background:#1a6a1a;"></div>Exit</div>
+        <div class="legend-item"><div class="legend-rect" style="background:#111;border:1px solid #222;"></div>Fog</div>
+        <div class="legend-item"><div class="legend-dot agent-A"></div>Agent A</div>
+        <div class="legend-item"><div class="legend-dot agent-B"></div>Agent B</div>
+      </div>
+    </div>
   </div>
 
-  <div class="section">
-    <h2>Message Trace</h2>
-    <div id="message-trace"></div>
+  <!-- View 3: Timeline -->
+  <div class="tab-content" id="tab-timeline">
+    <div class="section">
+      <table id="timeline-table">
+        <thead>
+          <tr>
+            <th>Turn</th><th>Agent</th><th>Tool</th>
+            <th>Args</th><th>Result</th><th>Flags</th>
+          </tr>
+        </thead>
+        <tbody id="timeline-body"></tbody>
+      </table>
+    </div>
   </div>
 
+  <!-- View 4: Charts -->
+  <div class="tab-content" id="tab-charts">
+    <div class="section charts-stack">
+      <div class="chart-block">
+        <div class="chart-title">Anomaly Rate per Turn</div>
+        <canvas id="chart-anomaly" width="900" height="120"></canvas>
+        <div class="legend" style="margin-top:8px;">
+          <div class="legend-item"><div class="legend-rect" style="background:#c94444;"></div>Spurious Block</div>
+          <div class="legend-item"><div class="legend-rect" style="background:#c97a44;"></div>Message Delayed</div>
+        </div>
+      </div>
+      <div class="chart-block">
+        <div class="chart-title">LLM Latency per Turn (ms)</div>
+        <canvas id="chart-latency" width="900" height="160"></canvas>
+        <div class="legend" style="margin-top:8px;">
+          <div class="legend-item"><div class="legend-dot" style="background:#4ec94e;"></div>Agent A</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#5585e0;"></div>Agent B</div>
+        </div>
+      </div>
+      <div class="chart-block">
+        <div class="chart-title">Token Usage per Turn</div>
+        <canvas id="chart-tokens" width="900" height="160"></canvas>
+        <div class="legend" style="margin-top:8px;">
+          <div class="legend-item"><div class="legend-rect" style="background:#2e5a2e;"></div>A Prompt</div>
+          <div class="legend-item"><div class="legend-rect" style="background:#4ec94e;"></div>A Completion</div>
+          <div class="legend-item"><div class="legend-rect" style="background:#2e3a6a;"></div>B Prompt</div>
+          <div class="legend-item"><div class="legend-rect" style="background:#5585e0;"></div>B Completion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View 5: Message Trace -->
+  <div class="tab-content" id="tab-messages">
+    <div class="section" id="message-trace"></div>
+  </div>
+
+  <!-- View 6: Cross-Run Aggregate -->
+  <div class="tab-content" id="tab-aggregate">
+    <div class="section" id="aggregate-content">
+      <p class="empty">Load analysis.json to see cross-run aggregate.</p>
+    </div>
+  </div>
 </div>
 
 <script>
-// ─── Data ───────────────────────────────────────────────────────────────────
+// ─── State ──────────────────────────────────────────────────────────────────
 
 let events = [];
+let summaryData = null;
+let analysisData = null;
+let gridSize = 8;
 
-document.getElementById('file-input').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+// ─── File loading ────────────────────────────────────────────────────────────
+
+function readJSON(file, cb) {
   const reader = new FileReader();
-  reader.onload = (ev) => {
-    const lines = ev.target.result.trim().split('\n').filter(l => l.trim());
-    try {
-      events = lines.map(l => JSON.parse(l));
-      document.getElementById('load-status').textContent = `${events.length} events loaded`;
-      document.getElementById('app').style.display = 'block';
-      render();
-    } catch (err) {
-      document.getElementById('load-status').textContent = 'Parse error: ' + err.message;
-    }
+  reader.onload = e => { try { cb(JSON.parse(e.target.result)); } catch (err) { alert('Parse error: ' + err.message); } };
+  reader.readAsText(file);
+}
+
+function readJSONL(file, cb) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.trim().split('\n').filter(l => l.trim());
+    try { cb(lines.map(l => JSON.parse(l))); } catch (err) { alert('Parse error: ' + err.message); }
   };
   reader.readAsText(file);
+}
+
+document.getElementById('file-events').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  readJSONL(file, data => {
+    events = data;
+    gridSize = deriveGridSize(events);
+    document.getElementById('load-status').textContent = `${events.length} events loaded`;
+    document.getElementById('app').style.display = 'block';
+    renderAll();
+  });
 });
 
-// ─── Divergence detection ────────────────────────────────────────────────────
+document.getElementById('file-summary').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  readJSON(file, data => {
+    summaryData = data;
+    if (events.length) renderSummary();
+  });
+});
 
-function findDivergences(events) {
+document.getElementById('file-analysis').addEventListener('change', e => {
+  const file = e.target.files[0]; if (!file) return;
+  readJSON(file, data => {
+    analysisData = data;
+    renderAggregate();
+  });
+});
+
+// ─── Tabs ────────────────────────────────────────────────────────────────────
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'charts' && events.length) renderCharts();
+  });
+});
+
+// ─── Render all ──────────────────────────────────────────────────────────────
+
+function renderAll() {
+  renderSummary();
+  renderGrids();
+  renderTimeline();
+  renderMessageTrace();
+  // Charts render on tab activation to avoid canvas sizing issues
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function deriveGridSize(evs) {
+  let max = 8;
+  for (const ev of evs) {
+    const pos = ev.world_truth?.actual_position || ev.agent_belief?.position;
+    if (pos) { max = Math.max(max, pos[0] + 1, pos[1] + 1); }
+  }
+  return max;
+}
+
+function getAnomalies(evs) {
+  return evs.filter(ev => ev.action?.anomaly);
+}
+
+function findDivergences(evs) {
   const divs = [];
-  for (const ev of events) {
-    if (!ev.agent_belief || !ev.world_truth) continue;
-    if (ev.agent_id === 'DM') continue;
-
+  for (const ev of evs) {
+    if (!ev.agent_belief || !ev.world_truth || ev.agent_id === 'DM') continue;
     const belief = ev.agent_belief.visible_cells || {};
     const truth = ev.world_truth.adjacent_cell_contents || {};
     const diffs = [];
-
-    // 1. Visible cell content mismatches (DM stale-info divergence)
     for (const dir of ['current','north','south','east','west']) {
       if (belief[dir] !== undefined && truth[dir] !== undefined && belief[dir] !== truth[dir]) {
         diffs.push({ dir, believed: belief[dir], actual: truth[dir] });
       }
     }
-
-    // 2. Key location: agent sees KEY in view but truth says key is gone
-    const keyLoc = ev.world_truth.key_location;
-    const invHasKey = (ev.agent_belief.inventory || []).includes('key');
-    const beliefSeesKey = Object.values(belief).includes('KEY');
-    if (beliefSeesKey && keyLoc === null && !invHasKey) {
-      diffs.push({ dir: 'key_location', believed: 'KEY visible', actual: 'key already picked up' });
-    }
-
-    // 3. Spurious block — agent expected cell was passable (truth shows EMPTY/passable)
-    //    but tool returned "path blocked unexpectedly". The cell was actually free.
-    //    This is a belief/reality mismatch: the world said "you can't move" but the
-    //    grid says the cell was open.
     if (ev.action?.anomaly_reason === 'spurious_block') {
-      const direction = ev.action?.args?.direction;
-      const truthCell = direction ? truth[direction] : undefined;
-      diffs.push({
-        dir: `move_${direction || '?'}`,
-        believed: 'passable (move should succeed)',
-        actual: `spurious block — cell was ${truthCell || 'unknown'} but tool rejected move`,
-      });
+      const d = ev.action?.args?.direction;
+      diffs.push({ dir: `move_${d||'?'}`, believed: 'passable', actual: 'spurious_block' });
     }
-
-    if (diffs.length > 0) {
-      divs.push({ turn: ev.turn, agent_id: ev.agent_id, diffs });
-    }
+    if (diffs.length > 0) divs.push({ turn: ev.turn, agent_id: ev.agent_id, diffs });
   }
   return divs;
 }
 
-function getAnomalies(events) {
-  return events.filter(ev => ev.action && ev.action.anomaly);
+function resultSummary(result) {
+  if (!result || typeof result !== 'object') return { text: String(result), cls: '' };
+  const status = result.status || '?';
+  const reason = result.reason || result.to || '';
+  const text = reason ? `${status} (${reason})` : status;
+  const cls = status === 'success' || status === 'sent' ? 'result-success'
+            : status === 'anomaly' ? 'result-anomaly' : 'result-failed';
+  return { text, cls };
 }
 
-// ─── Render ──────────────────────────────────────────────────────────────────
+// ─── View 1: Incident Summary ─────────────────────────────────────────────────
 
-function render() {
+function renderSummary() {
   const anomalies = getAnomalies(events);
   const divergences = findDivergences(events);
-  renderSummary(anomalies, divergences);
-  renderTimeline(anomalies, divergences);
-  renderMessageTrace();
-}
 
-function renderSummary(anomalies, divergences) {
-  // Derive outcome from last event's run summary if available, else infer
-  const lastEv = events[events.length - 1];
-  const runId = lastEv?.run_id || '—';
-  const totalTurns = Math.max(...events.map(e => e.turn));
+  // Incident report
+  const reportEl = document.getElementById('incident-report');
+  if (summaryData?.incident_report) {
+    reportEl.textContent = summaryData.incident_report;
+    reportEl.classList.remove('placeholder');
+  } else {
+    reportEl.textContent = 'Load summary.json to see incident report.';
+    reportEl.classList.add('placeholder');
+  }
 
-  // Try to guess outcome from events (look for success pattern)
-  let outcome = 'unknown';
-  let reason = '';
+  // Stats
+  const last = events[events.length - 1];
+  const totalTurns = summaryData?.total_turns ?? Math.max(...events.map(e => e.turn));
+  const outcome = summaryData?.outcome ?? '—';
+  const progressScore = last?.game_state_summary?.progress_score ?? 0;
+  const milestone = last?.game_state_summary?.milestone ?? '—';
+  const dmCount = events.filter(e => e.event_type === 'dm_response').length;
 
-  const metaEl = document.getElementById('summary-meta');
-  metaEl.innerHTML = `
-    <div class="stat"><span class="stat-label">Run ID</span><span class="stat-value" style="font-size:11px;color:#888;">${runId}</span></div>
+  // Milestone turns
+  let keyTurn = '—', doorTurn = '—', unlockTurn = '—';
+  for (const ev of events) {
+    const r = ev.action?.result || {};
+    if (keyTurn === '—' && ev.action?.tool === 'pick_up' && r.status === 'success') keyTurn = ev.turn;
+    if (doorTurn === '—' && ev.action?.tool === 'move' && r.reason === 'locked_door') doorTurn = ev.turn;
+    if (unlockTurn === '—' && ev.action?.tool === 'unlock_door' && r.status === 'success') unlockTurn = ev.turn;
+  }
+
+  const outcomeClass = outcome === 'success' ? 'ok' : 'warn';
+  document.getElementById('summary-meta').innerHTML = `
+    <div class="stat"><span class="stat-label">Outcome</span><span class="stat-value ${outcomeClass}">${outcome}</span></div>
     <div class="stat"><span class="stat-label">Turns</span><span class="stat-value">${totalTurns}</span></div>
-    <div class="stat"><span class="stat-label">Anomalies</span><span class="stat-value ${anomalies.length > 0 ? 'failure' : ''}">${anomalies.length}</span></div>
-    <div class="stat"><span class="stat-label">Belief Divergences</span><span class="stat-value ${divergences.length > 0 ? 'failure' : ''}">${divergences.length}</span></div>
-    <div class="stat"><span class="stat-label">DM Responses</span><span class="stat-value">${events.filter(e=>e.event_type==='dm_response').length}</span></div>
+    <div class="stat"><span class="stat-label">Anomalies</span><span class="stat-value ${anomalies.length ? 'warn' : ''}">${anomalies.length}</span></div>
+    <div class="stat"><span class="stat-label">Divergences</span><span class="stat-value ${divergences.length ? 'warn' : ''}">${divergences.length}</span></div>
+    <div class="stat"><span class="stat-label">DM Interactions</span><span class="stat-value">${dmCount}</span></div>
+    <div class="stat"><span class="stat-label">Progress</span><span class="stat-value">${(progressScore * 100).toFixed(0)}%</span></div>
+    <div class="stat"><span class="stat-label">Milestone</span><span class="stat-value" style="font-size:12px;">${milestone}</span></div>
+    <div class="stat"><span class="stat-label">Key pickup</span><span class="stat-value" style="font-size:12px;">turn ${keyTurn}</span></div>
+    <div class="stat"><span class="stat-label">Door encounter</span><span class="stat-value" style="font-size:12px;">turn ${doorTurn}</span></div>
+    <div class="stat"><span class="stat-label">Door unlocked</span><span class="stat-value" style="font-size:12px;">turn ${unlockTurn}</span></div>
   `;
 
-  const issuesEl = document.getElementById('summary-issues');
-  if (anomalies.length === 0 && divergences.length === 0) {
-    issuesEl.innerHTML = '<p style="color:#444;font-size:12px;margin-top:8px;">No anomalies or belief divergences detected.</p>';
+  // Anomalies list
+  const aList = document.getElementById('anomaly-list');
+  if (anomalies.length === 0) {
+    aList.innerHTML = '<li style="color:#444;padding:8px 0;list-style:none;">None.</li>';
+  } else {
+    aList.innerHTML = anomalies.map(ev => `
+      <li class="anomaly">
+        <span class="issue-tag">anomaly</span>
+        <span class="issue-turn">turn ${ev.turn}</span>
+        <span>Agent ${ev.agent_id} · <strong>${ev.action.tool}</strong> · ${ev.action.anomaly_reason}</span>
+      </li>`).join('');
+  }
+
+  // Divergences list
+  const dList = document.getElementById('divergence-list');
+  if (divergences.length === 0) {
+    dList.innerHTML = '<li style="color:#444;padding:8px 0;list-style:none;">None.</li>';
+  } else {
+    dList.innerHTML = divergences.map(div => `
+      <li class="divergence">
+        <span class="issue-tag">divergence</span>
+        <span class="issue-turn">turn ${div.turn}</span>
+        <span>Agent ${div.agent_id} · ${div.diffs.map(d=>`${d.dir}: believed ${d.believed} / actual ${d.actual}`).join('; ')}</span>
+      </li>`).join('');
+  }
+}
+
+// ─── View 2: Key-Moment Grids ─────────────────────────────────────────────────
+
+function buildRevealedMap(evs, upToIndex) {
+  // Returns a Map of "r,c" -> cellType string, accumulated from all observations up to index
+  const revealed = new Map();
+  for (let i = 0; i <= upToIndex; i++) {
+    const ev = evs[i];
+    if (!ev || ev.agent_id === 'DM') continue;
+    const pos = ev.world_truth?.actual_position;
+    const cells = ev.world_truth?.adjacent_cell_contents;
+    if (!pos || !cells) continue;
+    const [r, c] = pos;
+    const dirs = { current: [0,0], north: [-1,0], south: [1,0], east: [0,1], west: [0,-1] };
+    for (const [dir, [dr, dc]] of Object.entries(dirs)) {
+      if (cells[dir] !== undefined) {
+        revealed.set(`${r+dr},${c+dc}`, cells[dir]);
+      }
+    }
+  }
+  return revealed;
+}
+
+function findKeyMoments(evs) {
+  const moments = [];
+  for (let i = 0; i < evs.length; i++) {
+    const ev = evs[i];
+    const tool = ev.action?.tool;
+    const result = ev.action?.result || {};
+    const anomaly = ev.action?.anomaly;
+    let label = null;
+
+    if (ev.turn === 1 && moments.length === 0) label = 'Initial state';
+    else if (anomaly) label = `Anomaly: ${ev.action.anomaly_reason}`;
+    else if (tool === 'pick_up' && result.status === 'success') label = 'Key picked up';
+    else if (tool === 'move' && result.reason === 'locked_door') label = 'Blocked at door';
+    else if (tool === 'unlock_door' && result.status === 'success') label = 'Door unlocked';
+    else if (tool === 'send_message') label = `Msg → ${ev.action.args?.to}`;
+
+    if (label !== null) {
+      moments.push({ ev, idx: i, label });
+      if (moments.length >= 12) break;
+    }
+  }
+  return moments;
+}
+
+function renderGrid(revealed, positions, size) {
+  const el = document.createElement('div');
+  el.className = 'dungeon-grid';
+  el.style.gridTemplateColumns = `repeat(${size}, 18px)`;
+  el.style.gridTemplateRows = `repeat(${size}, 18px)`;
+
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-cell';
+      const key = `${r},${c}`;
+      const cellType = revealed.get(key);
+      cell.classList.add(cellType ? `cell-${cellType}` : 'cell-FOG');
+
+      // Overlay agents
+      const agentA = positions?.A && positions.A[0] === r && positions.A[1] === c;
+      const agentB = positions?.B && positions.B[0] === r && positions.B[1] === c;
+      if (agentA || agentB) {
+        const dot = document.createElement('div');
+        dot.className = 'agent-dot ' + (agentA ? 'agent-A' : 'agent-B');
+        dot.textContent = agentA ? 'A' : 'B';
+        cell.appendChild(dot);
+        // If both on same cell
+        if (agentA && agentB) {
+          const dot2 = document.createElement('div');
+          dot2.className = 'agent-dot agent-B';
+          dot2.style.left = '75%';
+          dot2.textContent = 'B';
+          cell.appendChild(dot2);
+        }
+      }
+      el.appendChild(cell);
+    }
+  }
+  return el;
+}
+
+function renderGrids() {
+  const container = document.getElementById('grid-row');
+  container.innerHTML = '';
+  const moments = findKeyMoments(events);
+
+  if (moments.length === 0) {
+    container.innerHTML = '<p class="empty">No notable turns found.</p>';
     return;
   }
 
-  let html = '<ul class="issue-list" style="margin-top:12px;">';
-  for (const ev of anomalies) {
-    html += `<li class="anomaly">
-      <span class="issue-tag">anomaly</span>
-      <span class="issue-turn">turn ${ev.turn}</span>
-      <span>Agent ${ev.agent_id} · <strong>${ev.action.tool}</strong> · ${ev.action.anomaly_reason}</span>
-    </li>`;
+  for (const { ev, idx, label } of moments) {
+    const revealed = buildRevealedMap(events, idx);
+    const positions = ev.game_state_summary?.agent_positions;
+
+    const gridEl = renderGrid(revealed, positions, gridSize);
+    const moment = document.createElement('div');
+    moment.className = 'grid-moment';
+    const lbl = document.createElement('div');
+    lbl.className = 'grid-label';
+    lbl.innerHTML = `<strong>Turn ${ev.turn} · ${ev.agent_id}</strong>${esc(label)}`;
+    moment.appendChild(gridEl);
+    moment.appendChild(lbl);
+    container.appendChild(moment);
   }
-  for (const div of divergences) {
-    const desc = div.diffs.map(d => `${d.dir}: believed ${d.believed}, actual ${d.actual}`).join('; ');
-    html += `<li class="divergence">
-      <span class="issue-tag">divergence</span>
-      <span class="issue-turn">turn ${div.turn}</span>
-      <span>Agent ${div.agent_id} · ${desc}</span>
-    </li>`;
-  }
-  html += '</ul>';
-  issuesEl.innerHTML = html;
 }
 
-function renderTimeline(anomalies, divergences) {
-  const anomalyTurns = new Set(anomalies.map(e => `${e.turn}-${e.agent_id}`));
-  const divTurns = new Set(divergences.map(d => `${d.turn}-${d.agent_id}`));
+// ─── View 3: Timeline ─────────────────────────────────────────────────────────
+
+function renderTimeline() {
+  const anomalies = getAnomalies(events);
+  const divergences = findDivergences(events);
+  const anomalyKeys = new Set(anomalies.map(e => `${e.turn}-${e.agent_id}`));
+  const divKeys = new Set(divergences.map(d => `${d.turn}-${d.agent_id}`));
 
   const tbody = document.getElementById('timeline-body');
   tbody.innerHTML = '';
@@ -348,65 +663,56 @@ function renderTimeline(anomalies, divergences) {
   for (const ev of events) {
     const key = `${ev.turn}-${ev.agent_id}`;
     const isAnomaly = ev.action?.anomaly;
-    const isDivergence = divTurns.has(key);
+    const isDivergence = divKeys.has(key);
     const isDM = ev.agent_id === 'DM';
     const isDelay = ev.action?.anomaly_reason === 'message_delayed';
 
-    let rowClass = `row-${ev.agent_id}`;
-    if (isDM) rowClass += ' row-dm_response';
-    if (isAnomaly) rowClass += ' row-anomaly';
-    else if (isDivergence) rowClass += ' row-divergence';
+    let rowClass = '';
+    if (isDM) rowClass = 'row-DM';
+    else if (isAnomaly) rowClass = 'row-anomaly';
+    else if (isDivergence) rowClass = 'row-divergence';
 
     const flags = [
       isAnomaly ? '<span class="flag flag-anomaly" title="anomaly">⚠</span>' : '',
-      isDivergence ? '<span class="flag flag-divergence" title="belief divergence">◆</span>' : '',
+      isDivergence && !isAnomaly ? '<span class="flag flag-divergence" title="belief divergence">◆</span>' : '',
       isDelay ? '<span class="flag flag-delay" title="message delayed">⧗</span>' : '',
     ].join('');
 
     const argsStr = ev.action?.args ? JSON.stringify(ev.action.args).slice(0, 40) : '';
-    const resultStr = (ev.action?.result || '').slice(0, 60);
+    const { text: resultText, cls: resultCls } = resultSummary(ev.action?.result);
 
-    const badgeClass = `badge-${ev.agent_id}`;
     const tr = document.createElement('tr');
-    tr.className = rowClass;
-    tr.dataset.idx = events.indexOf(ev);
+    if (rowClass) tr.className = rowClass;
     tr.innerHTML = `
       <td class="turn-col">${ev.turn}</td>
-      <td class="agent-col"><span class="agent-badge ${badgeClass}">${ev.agent_id}</span></td>
-      <td class="tool-col">${ev.action?.tool || ev.event_type}</td>
-      <td class="args-col" title="${escHtml(JSON.stringify(ev.action?.args||{}))}">${escHtml(argsStr)}</td>
-      <td class="result-col" title="${escHtml(ev.action?.result||'')}">${escHtml(resultStr)}</td>
+      <td class="agent-col"><span class="agent-badge badge-${ev.agent_id}">${ev.agent_id}</span></td>
+      <td class="tool-col">${esc(ev.action?.tool || ev.event_type)}</td>
+      <td class="args-col" title="${esc(JSON.stringify(ev.action?.args||{}))}">${esc(argsStr)}</td>
+      <td class="result-col ${resultCls}">${esc(resultText)}</td>
       <td class="flags-col">${flags}</td>
     `;
-
-    tr.addEventListener('click', () => toggleDetail(tr, ev, isDivergence));
+    tr.addEventListener('click', () => toggleDetail(tr, ev, isDivergence, divergences));
     tbody.appendChild(tr);
   }
 }
 
-function toggleDetail(tr, ev, isDivergence) {
-  const existing = tr.nextSibling;
-  if (existing && existing.classList && existing.classList.contains('detail-row')) {
-    existing.remove();
-    return;
-  }
+function toggleDetail(tr, ev, isDivergence, divergences) {
+  const next = tr.nextSibling;
+  if (next && next.classList?.contains('detail-row')) { next.remove(); return; }
 
   const belief = JSON.stringify(ev.agent_belief || {}, null, 2);
   const truth = JSON.stringify(ev.world_truth || {}, null, 2);
+  const gss = JSON.stringify(ev.game_state_summary || {}, null, 2);
 
-  // Diff: highlight lines in truth that differ from belief
-  const beliefLines = belief.split('\n');
-  const truthLines = truth.split('\n');
+  const divForThis = divergences.filter(d => d.turn === ev.turn && d.agent_id === ev.agent_id);
+  const divHtml = isDivergence && divForThis.length
+    ? `<span style="color:#c9a227"> ◆ diverges</span>`
+    : '';
 
-  // Simple line-level diff highlight for truth panel
   function diffHighlight(truthStr, beliefStr) {
-    const tLines = truthStr.split('\n');
-    const bSet = new Set(beliefStr.split('\n').map(l => l.trim()));
-    return tLines.map(line => {
-      const trimmed = line.trim();
-      // Flag lines with values that look like they differ
-      const inBelief = bSet.has(trimmed);
-      return inBelief ? escHtml(line) : `<span class="diff-added">${escHtml(line)}</span>`;
+    const bLines = new Set(beliefStr.split('\n').map(l => l.trim()));
+    return truthStr.split('\n').map(line => {
+      return bLines.has(line.trim()) ? esc(line) : `<span class="diff-changed">${esc(line)}</span>`;
     }).join('\n');
   }
 
@@ -416,55 +722,214 @@ function toggleDetail(tr, ev, isDivergence) {
     <div class="detail-inner">
       <div class="detail-panel">
         <h4>Agent Belief</h4>
-        <pre>${escHtml(belief)}</pre>
+        <pre>${esc(belief)}</pre>
       </div>
       <div class="detail-panel">
-        <h4>World Truth ${isDivergence ? '<span style="color:#c9a227">◆ diverges</span>' : ''}</h4>
-        <pre>${isDivergence ? diffHighlight(truth, belief) : escHtml(truth)}</pre>
+        <h4>World Truth${divHtml}</h4>
+        <pre>${isDivergence ? diffHighlight(truth, belief) : esc(truth)}</pre>
       </div>
     </div>
-    <div class="detail-panel" style="border-top:1px solid #1a1a1a;">
-      <h4>LLM</h4>
-      <pre>tokens: ${ev.llm?.prompt_tokens}↑ ${ev.llm?.completion_tokens}↓  latency: ${ev.llm?.latency_ms}ms
-${escHtml(ev.llm?.raw_response || '(no text output)')}</pre>
+    <div class="detail-inner">
+      <div class="detail-panel">
+        <h4>Game State Summary</h4>
+        <pre>${esc(gss)}</pre>
+      </div>
+      <div class="detail-panel">
+        <h4>LLM</h4>
+        <pre>tokens: ${ev.llm?.prompt_tokens ?? '?'}↑ ${ev.llm?.completion_tokens ?? '?'}↓  latency: ${ev.llm?.latency_ms ?? '?'}ms
+
+${esc(ev.llm?.raw_response || '(no text output)')}</pre>
+      </div>
     </div>
   </td>`;
   tr.after(detailRow);
 }
 
-function renderMessageTrace() {
-  const msgEvents = events.filter(ev =>
-    (ev.action?.tool === 'send_message') ||
-    ev.event_type === 'dm_response' ||
-    ev.event_type === 'message_received'
-  );
+// ─── View 4: Charts ───────────────────────────────────────────────────────────
 
-  const container = document.getElementById('message-trace');
+function drawAxis(ctx, x, y, w, h, minV, maxV, nTicks, xLabels) {
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#555';
+  ctx.font = '10px Menlo, monospace';
 
-  if (msgEvents.length === 0) {
-    container.innerHTML = '<p class="empty">No messages exchanged.</p>';
-    return;
+  // Y axis ticks
+  for (let i = 0; i <= nTicks; i++) {
+    const val = minV + (maxV - minV) * (i / nTicks);
+    const yy = y + h - (h * i / nTicks);
+    ctx.beginPath(); ctx.moveTo(x, yy); ctx.lineTo(x + w, yy);
+    ctx.strokeStyle = '#1e1e1e'; ctx.stroke();
+    ctx.fillText(Math.round(val), x - 36, yy + 3);
   }
 
-  // Build message rows from send_message tool calls
+  // X axis labels
+  if (xLabels) {
+    const step = Math.max(1, Math.floor(xLabels.length / 10));
+    for (let i = 0; i < xLabels.length; i += step) {
+      const xx = x + (i / (xLabels.length - 1)) * w;
+      ctx.fillText(xLabels[i], xx - 6, y + h + 14);
+    }
+  }
+
+  // Axis lines
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y + h); ctx.lineTo(x + w, y + h); ctx.stroke();
+}
+
+function renderCharts() {
+  const turns = [...new Set(events.filter(e => e.agent_id !== 'DM').map(e => e.turn))].sort((a,b)=>a-b);
+  if (turns.length === 0) return;
+
+  const margin = { left: 42, right: 16, top: 16, bottom: 24 };
+
+  // --- Anomaly bar chart ---
+  {
+    const canvas = document.getElementById('chart-anomaly');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    const cw = W - margin.left - margin.right;
+    const ch = H - margin.top - margin.bottom;
+    const x0 = margin.left, y0 = margin.top;
+
+    drawAxis(ctx, x0, y0, cw, ch, 0, 1, 1, turns.map(String));
+
+    const barW = Math.max(2, (cw / turns.length) - 2);
+    for (let i = 0; i < turns.length; i++) {
+      const t = turns[i];
+      const turnEvs = events.filter(e => e.turn === t && e.action?.anomaly);
+      const xx = x0 + (i / turns.length) * cw;
+      for (const ev of turnEvs) {
+        const isBlock = ev.action?.anomaly_reason === 'spurious_block';
+        ctx.fillStyle = isBlock ? '#c94444' : '#c97a44';
+        ctx.fillRect(xx, y0, barW, ch);
+      }
+    }
+  }
+
+  // --- Latency line chart ---
+  {
+    const canvas = document.getElementById('chart-latency');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    const cw = W - margin.left - margin.right;
+    const ch = H - margin.top - margin.bottom;
+    const x0 = margin.left, y0 = margin.top;
+
+    const latA = turns.map(t => events.find(e => e.turn === t && e.agent_id === 'A')?.llm?.latency_ms ?? null);
+    const latB = turns.map(t => events.find(e => e.turn === t && e.agent_id === 'B')?.llm?.latency_ms ?? null);
+    const allLat = [...latA, ...latB].filter(v => v !== null);
+    const maxLat = allLat.length ? Math.max(...allLat) * 1.1 : 1000;
+
+    drawAxis(ctx, x0, y0, cw, ch, 0, maxLat, 4, turns.map(String));
+
+    function drawLine(data, color) {
+      ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      let started = false;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] === null) { started = false; continue; }
+        const xx = x0 + (i / (turns.length - 1 || 1)) * cw;
+        const yy = y0 + ch - (data[i] / maxLat) * ch;
+        if (!started) { ctx.moveTo(xx, yy); started = true; }
+        else ctx.lineTo(xx, yy);
+      }
+      ctx.stroke();
+      // dots
+      ctx.fillStyle = color;
+      for (let i = 0; i < data.length; i++) {
+        if (data[i] === null) continue;
+        const xx = x0 + (i / (turns.length - 1 || 1)) * cw;
+        const yy = y0 + ch - (data[i] / maxLat) * ch;
+        ctx.beginPath(); ctx.arc(xx, yy, 2.5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+
+    drawLine(latA, '#4ec94e');
+    drawLine(latB, '#5585e0');
+  }
+
+  // --- Token stacked bar chart ---
+  {
+    const canvas = document.getElementById('chart-tokens');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    const cw = W - margin.left - margin.right;
+    const ch = H - margin.top - margin.bottom;
+    const x0 = margin.left, y0 = margin.top;
+
+    const maxTok = Math.max(...turns.map(t => {
+      const a = events.find(e => e.turn === t && e.agent_id === 'A');
+      const b = events.find(e => e.turn === t && e.agent_id === 'B');
+      return Math.max(
+        (a?.llm?.prompt_tokens || 0) + (a?.llm?.completion_tokens || 0),
+        (b?.llm?.prompt_tokens || 0) + (b?.llm?.completion_tokens || 0),
+      );
+    })) * 1.1 || 1000;
+
+    drawAxis(ctx, x0, y0, cw, ch, 0, maxTok, 4, turns.map(String));
+
+    const slotW = Math.max(2, (cw / turns.length));
+    const barW = Math.max(1, slotW / 2 - 1);
+
+    for (let i = 0; i < turns.length; i++) {
+      const t = turns[i];
+      const a = events.find(e => e.turn === t && e.agent_id === 'A');
+      const b = events.find(e => e.turn === t && e.agent_id === 'B');
+      const slotX = x0 + (i / turns.length) * cw;
+
+      if (a) {
+        const pt = a.llm?.prompt_tokens || 0;
+        const ct = a.llm?.completion_tokens || 0;
+        const ph = (pt / maxTok) * ch;
+        const cth = (ct / maxTok) * ch;
+        ctx.fillStyle = '#2e5a2e';
+        ctx.fillRect(slotX, y0 + ch - ph, barW, ph);
+        ctx.fillStyle = '#4ec94e';
+        ctx.fillRect(slotX, y0 + ch - ph - cth, barW, cth);
+      }
+      if (b) {
+        const pt = b.llm?.prompt_tokens || 0;
+        const ct = b.llm?.completion_tokens || 0;
+        const ph = (pt / maxTok) * ch;
+        const cth = (ct / maxTok) * ch;
+        ctx.fillStyle = '#2e3a6a';
+        ctx.fillRect(slotX + barW + 1, y0 + ch - ph, barW, ph);
+        ctx.fillStyle = '#5585e0';
+        ctx.fillRect(slotX + barW + 1, y0 + ch - ph - cth, barW, cth);
+      }
+    }
+  }
+}
+
+// ─── View 5: Message Trace ────────────────────────────────────────────────────
+
+function renderMessageTrace() {
+  const container = document.getElementById('message-trace');
   const rows = [];
+
   for (const ev of events) {
     if (ev.action?.tool === 'send_message' && ev.action?.args) {
-      const from = ev.agent_id;
-      const to = ev.action.args.to;
-      const content = ev.action.args.content || '';
-      const delayed = ev.action.anomaly_reason === 'message_delayed';
-      rows.push({ turn: ev.turn, from, to, content, delayed, type: 'send' });
+      rows.push({
+        turn: ev.turn, from: ev.agent_id, to: ev.action.args.to,
+        content: ev.action.args.content || '',
+        delayed: ev.action.anomaly_reason === 'message_delayed',
+        isDM: false,
+      });
     }
     if (ev.event_type === 'dm_response' && ev.action?.args) {
-      const to = ev.action.args.to;
-      const content = ev.action.args.content || '';
-      rows.push({ turn: ev.turn, from: 'DM', to, content, delayed: false, type: 'dm_send' });
+      rows.push({
+        turn: ev.turn, from: 'DM', to: ev.action.args.to,
+        content: ev.action.args.content || '',
+        delayed: false, isDM: true,
+      });
     }
   }
 
   if (rows.length === 0) {
-    container.innerHTML = '<p class="empty">No messages sent.</p>';
+    container.innerHTML = '<p class="empty">No messages exchanged in this run.</p>';
     return;
   }
 
@@ -475,34 +940,22 @@ function renderMessageTrace() {
   `;
 
   for (const row of rows) {
-    const delayedClass = row.delayed ? 'delayed' : '';
-    const arrowLabel = row.delayed ? '→ delayed' : '→';
+    const bubbleClass = row.isDM ? 'dm' : (row.delayed ? 'delayed' : '');
+    const snippet = esc(row.content.slice(0, 70)) + (row.content.length > 70 ? '…' : '');
+    const bubble = `<div class="msg-bubble ${bubbleClass}" title="${esc(row.content)}">${snippet}</div><div class="msg-turn">turn ${row.turn}${row.delayed ? ' <span class="msg-delay-label">+1 delay</span>' : ''}</div>`;
+    const arrow = `<div class="msg-arrow ${row.delayed ? 'delayed' : ''}">→</div>`;
 
-    // Determine layout: who's in left/center/right columns
-    let leftCell = '', centerCell = '', rightCell = '';
-    const bubble = `<div class="msg-bubble ${delayedClass}" title="${escHtml(row.content)}">${escHtml(row.content.slice(0, 60))}${row.content.length > 60 ? '…' : ''}</div><div class="msg-turn">turn ${row.turn}</div>`;
-    const arrow = `<div class="msg-arrow ${delayedClass}">${arrowLabel}${row.delayed ? '<span class="msg-delay-label">+1 extra</span>' : ''}</div>`;
-
-    if (row.from === 'A' && row.to === 'B') {
-      leftCell = bubble; centerCell = arrow; rightCell = '';
-    } else if (row.from === 'B' && row.to === 'A') {
-      leftCell = ''; centerCell = arrow; rightCell = bubble;
-    } else if (row.from === 'A' && row.to === 'DM') {
-      leftCell = bubble; centerCell = arrow; rightCell = '';
-    } else if (row.from === 'B' && row.to === 'DM') {
-      leftCell = ''; centerCell = arrow; rightCell = bubble;
-    } else if (row.from === 'DM' && row.to === 'A') {
-      leftCell = ''; centerCell = bubble + arrow; rightCell = '';
-    } else if (row.from === 'DM' && row.to === 'B') {
-      leftCell = ''; centerCell = bubble + arrow; rightCell = '';
-    } else {
-      leftCell = bubble; centerCell = arrow; rightCell = '';
-    }
+    let L = '', C = '', R = '';
+    if (row.from === 'A' && (row.to === 'B' || row.to === 'DM')) { L = bubble; C = arrow; }
+    else if (row.from === 'B' && (row.to === 'A' || row.to === 'DM')) { R = bubble; C = arrow; }
+    else if (row.from === 'DM' && row.to === 'A') { L = bubble; C = arrow; }
+    else if (row.from === 'DM' && row.to === 'B') { R = bubble; C = arrow; }
+    else { L = bubble; C = arrow; }
 
     html += `<div class="msg-row">
-      <div class="msg-cell">${leftCell}</div>
-      <div class="msg-cell center">${centerCell}</div>
-      <div class="msg-cell">${rightCell}</div>
+      <div class="msg-cell">${L}</div>
+      <div class="msg-cell center">${C}</div>
+      <div class="msg-cell">${R}</div>
     </div>`;
   }
 
@@ -510,14 +963,142 @@ function renderMessageTrace() {
   container.innerHTML = html;
 }
 
-// ─── Utils ───────────────────────────────────────────────────────────────────
+// ─── View 6: Cross-Run Aggregate ──────────────────────────────────────────────
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+function renderAggregate() {
+  const container = document.getElementById('aggregate-content');
+  if (!analysisData) {
+    container.innerHTML = '<p class="empty">Load analysis.json to see cross-run aggregate.</p>';
+    return;
+  }
+
+  const agg = analysisData.aggregate || {};
+  const runs = analysisData.runs || [];
+  const outcomes = agg.outcome_distribution || {};
+  const avgTurns = agg.avg_turns_by_outcome || {};
+  const stale = agg.stale_data_decisions;
+
+  const ALL_EVENTS = ['spurious_block','key_pickup','door_encounter','door_unlocked','message_sent','dm_response','message_delayed'];
+
+  let html = `
+    <div class="agg-charts">
+      <div class="chart-block">
+        <div class="chart-title">Anomaly Count by Run</div>
+        <canvas id="agg-chart-anomaly" width="900" height="140"></canvas>
+      </div>
+      <div class="chart-block">
+        <div class="chart-title">Turns per Outcome Type</div>
+        <canvas id="agg-chart-turns" width="900" height="140"></canvas>
+      </div>
+    </div>
+
+    <div class="section" style="margin-top:24px;">
+      <h2>Aggregate Stats</h2>
+      <div class="summary-meta">
+        <div class="stat"><span class="stat-label">Total Runs</span><span class="stat-value">${analysisData.total_runs}</span></div>
+        ${Object.entries(outcomes).map(([k,v]) => `<div class="stat"><span class="stat-label">${k}</span><span class="stat-value outcome-${k}">${v}</span></div>`).join('')}
+      </div>
+      <div class="agg-stat" style="margin-top:12px;">
+        <strong>Avg turns by outcome:</strong>
+        ${Object.entries(avgTurns).map(([k,v]) => `${k}: ${v}`).join(' · ')}
+      </div>
+      <div class="agg-stat">
+        <strong>Stale data decisions:</strong> ${typeof stale === 'string' ? stale : stale + ' contradictions across runs'}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Run Selection</h2>
+      <table class="run-table">
+        <thead>
+          <tr>
+            <th>Seed</th><th>Outcome</th><th>Turns</th><th>Anomalies</th><th>Progress</th>
+            ${ALL_EVENTS.map(e => `<th style="font-size:9px;">${e.replace('_','·')}</th>`).join('')}
+            <th>Selected</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${runs.map(r => `
+            <tr class="${r.selected_for_repo ? 'selected' : ''}">
+              <td>${r.seed ?? '—'}</td>
+              <td class="outcome-${r.outcome}">${r.outcome}</td>
+              <td>${r.total_turns}</td>
+              <td>${r.anomaly_count}</td>
+              <td>${((r.progress_score_final||0)*100).toFixed(0)}%</td>
+              ${ALL_EVENTS.map(e => `<td><span class="badge-event ${(r.distinct_event_types||[]).includes(e) ? 'has' : ''}">${(r.distinct_event_types||[]).includes(e) ? '✓' : '—'}</span></td>`).join('')}
+              <td>${r.selected_for_repo ? '✓' : '—'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = html;
+
+  // Draw aggregate charts after DOM is updated
+  requestAnimationFrame(() => {
+    drawAggAnomalyChart(runs);
+    drawAggTurnsChart(runs, avgTurns, outcomes);
+  });
+}
+
+function drawAggAnomalyChart(runs) {
+  const canvas = document.getElementById('agg-chart-anomaly');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const margin = { left: 42, right: 16, top: 16, bottom: 24 };
+  const cw = W - margin.left - margin.right;
+  const ch = H - margin.top - margin.bottom;
+  const x0 = margin.left, y0 = margin.top;
+
+  const sorted = [...runs].sort((a,b) => (b.anomaly_count||0) - (a.anomaly_count||0));
+  const maxA = Math.max(...sorted.map(r => r.anomaly_count||0), 1);
+
+  drawAxis(ctx, x0, y0, cw, ch, 0, maxA, 4, sorted.map(r => String(r.seed ?? '?')));
+
+  const barW = Math.max(2, cw / sorted.length - 1);
+  const OUTCOME_COLORS = { success: '#2e7d2e', turn_limit: '#7d2e2e', stuck: '#7d5a2e', key_blocked: '#7d7a2e' };
+
+  for (let i = 0; i < sorted.length; i++) {
+    const r = sorted[i];
+    const h = ((r.anomaly_count||0) / maxA) * ch;
+    const xx = x0 + (i / sorted.length) * cw;
+    ctx.fillStyle = OUTCOME_COLORS[r.outcome] || '#444';
+    ctx.fillRect(xx, y0 + ch - h, barW, h);
+  }
+}
+
+function drawAggTurnsChart(runs, avgTurns, outcomes) {
+  const canvas = document.getElementById('agg-chart-turns');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const margin = { left: 42, right: 16, top: 16, bottom: 24 };
+  const cw = W - margin.left - margin.right;
+  const ch = H - margin.top - margin.bottom;
+  const x0 = margin.left, y0 = margin.top;
+
+  const outcomeTypes = Object.keys(avgTurns);
+  const maxT = Math.max(...Object.values(avgTurns), 1) * 1.1;
+  const OUTCOME_COLORS = { success: '#2e7d2e', turn_limit: '#7d2e2e', stuck: '#7d5a2e', key_blocked: '#7d7a2e' };
+
+  drawAxis(ctx, x0, y0, cw, ch, 0, maxT, 4, outcomeTypes);
+
+  const barW = Math.min(60, (cw / outcomeTypes.length) - 10);
+  for (let i = 0; i < outcomeTypes.length; i++) {
+    const ot = outcomeTypes[i];
+    const avg = avgTurns[ot] || 0;
+    const h = (avg / maxT) * ch;
+    const xx = x0 + (i / outcomeTypes.length) * cw + (cw / outcomeTypes.length - barW) / 2;
+    ctx.fillStyle = OUTCOME_COLORS[ot] || '#444';
+    ctx.fillRect(xx, y0 + ch - h, barW, h);
+    ctx.fillStyle = '#888';
+    ctx.font = '10px Menlo, monospace';
+    ctx.fillText(Math.round(avg), xx + barW/2 - 8, y0 + ch - h - 4);
+  }
 }
 </script>
 </body>
