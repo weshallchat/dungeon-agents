@@ -1,0 +1,18 @@
+{
+  "run_id": "20260413_022058_88364d",
+  "outcome": "turn_limit",
+  "reason": "turn limit of 50 reached",
+  "total_turns": 51,
+  "final_positions": {
+    "A": [
+      4,
+      0
+    ],
+    "B": [
+      1,
+      6
+    ]
+  },
+  "seed": 49,
+  "langfuse_trace_url": "https://us.cloud.langfuse.com/project/cmnv10gy003ygad06q4nc5epx/traces/31977d882e9355d09580fc4a183f1544"
+}
