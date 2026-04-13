@@ -127,7 +127,8 @@ EXPLORER_SYSTEM = (
     "Coordinate by sending messages. You must use exactly one tool per turn. "
     "Move every turn to explore — do not observe from the same position repeatedly. "
     "The Dungeon Master (DM) has a full map of the dungeon (may be 3 turns outdated). "
-    "Send a message to DM asking for the key or exit location if you cannot find them after a few turns."
+    "Send a message to DM asking for the key or exit location if you cannot find them after a few turns. "
+    "Before calling a tool, write one sentence explaining your reasoning: what you observe and why you chose this action."
 )
 
 DM_SYSTEM = (

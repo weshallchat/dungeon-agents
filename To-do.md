@@ -205,21 +205,19 @@ Implement three `<canvas>` charts sharing the same x-axis (turn number):
 ## Phase 12: Viewer — Agent Reasoning + Movement Trace
 
 ### 12.1 View 3 — Reasoning column
-- [ ] Add `Reasoning` column to timeline table
-- [ ] Source from `ev.llm.raw_response` — take first non-empty line, truncate to 80 chars
-- [ ] Style: italic, `color: #666`, max-width constrained
+- [x] Add `Reasoning` column to timeline table
+- [x] Source from `ev.llm.raw_response` — take first non-empty line, truncate to 80 chars
+- [x] Style: italic, `color: #999`, max-width 300px
+- [ ] Fix: add one-sentence reasoning instruction to `EXPLORER_SYSTEM` in `agents.py` so future runs populate `raw_response`
+- [ ] Fix viewer: synthesize fallback reasoning from tool+args when `raw_response` is empty (covers committed runs)
 
-### 12.2 View 7 — Agent Movement Trace
-- [ ] Add 7th tab: "7. Movement"
-- [ ] Build `buildPositionHistory(events)` → array of `{turn, A: [r,c], B: [r,c], gss}` indexed by event
-- [ ] Build full revealed map from all events (same `buildRevealedMap` as View 2)
-- [ ] Render full-size CSS dungeon grid (same cell colours as View 2)
-- [ ] Overlay trail dots: A's past positions (faded green), B's past positions (faded blue)
-- [ ] Overlay current position circles (solid A=green, B=blue) at slider turn
-- [ ] **Slider**: `<input type="range">` from event 0 to events.length-1; updates grid on input
-- [ ] **Play/Pause button**: steps slider forward every 400ms; stops at end
-- [ ] Turn counter label and game state line (door state, key holder, progress score)
-- [ ] **Done condition**: load any events.jsonl, scrub slider — grid animates agent paths correctly
+### 12.2 Movement Trace (now tab 2)
+- [x] Add movement tab with slider + play/pause
+- [x] `buildPositionHistory(events)` → per-event `{turn, A, B, gss}`
+- [x] Full revealed map with trail dots and agent circles
+- [ ] Increase grid cell size to 36px
+- [ ] Add scrollable event log panel to the right of the grid: every event entry with turn, agent, tool, result, position, inventory; current event highlighted; clicking row jumps slider
+- [ ] Tab reorder: Summary · Movement · Timeline · Key Moments · Message Trace · Charts · Cross-Run
 
 ---
 

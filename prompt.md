@@ -192,23 +192,27 @@ Each grid is:
 ### View 3: Timeline Table
 
 Table: `Turn | Agent | Tool | Args | Result | Reasoning | Flags`
-- **Reasoning column**: one-line truncated text from `llm.raw_response` — the agent's stated reason for choosing that tool. Shown as italic grey text, truncated to ~80 chars.
+- **Reasoning column**: sourced first from `llm.raw_response` (first non-empty line, truncated to ~80 chars). If `raw_response` is empty (agents called tool directly with no text preamble), fall back to a synthesized description from the tool name and args (e.g. `"Moving north"`, `"Sending message to B: …"`). Shown as italic grey text.
+- Explorer agents include a one-sentence reasoning preamble before each tool call (added to `EXPLORER_SYSTEM` prompt: `"Before calling a tool, write one sentence explaining your reasoning."`). This populates `raw_response` for future runs; the synthesized fallback covers existing committed runs.
 - Flag icons: ⚠ anomaly, ◆ belief divergence, ⧗ message delay
 - Anomaly rows: red left border. Divergence rows: yellow left border. DM rows: blue left border.
 - Clicking a row expands it inline to show `agent_belief` and `world_truth` JSON side-by-side, with diverging fields highlighted.
 
-### View 7: Agent Movement Trace
+### View 2 (formerly 7): Agent Movement Trace
+
+Tab order: 1. Incident Summary · 2. Movement · 3. Timeline · 4. Key Moments · 5. Message Trace · 6. Charts · 7. Cross-Run
 
 Interactive grid showing both agents' movement paths through the dungeon over all turns.
 
 - Full revealed map built from all events (fog-of-war cleared progressively)
-- **Slider**: scrub to any turn — grid updates to show agent positions at that turn
-- **Play/Pause button**: auto-steps through turns at a fixed interval (~400ms/turn)
+- **Larger grid**: cells rendered at 36px for readability
+- **Slider**: scrub to any event — grid updates to show agent positions at that event
+- **Play/Pause button**: auto-steps through events at ~400ms/event; stops at end
 - Agent A path shown as faded green trail dots on previously visited cells
 - Agent B path shown as faded blue trail dots on previously visited cells
 - Current positions shown as solid coloured circles (A=green, B=blue)
-- Turn counter and game state summary (door state, key holder) displayed alongside
-- Data sourced from `game_state_summary.agent_positions` on each event
+- **Agent state panel** (right of grid): scrollable event log showing every event entry with turn, agent, tool, result, position, and inventory. Current event is highlighted. Clicking any row jumps the slider to that event.
+- Game state bar above the log: door state, key holder, progress score
 
 ### View 4: Charts
 

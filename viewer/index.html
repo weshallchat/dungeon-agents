@@ -156,6 +156,19 @@
     .trace-info-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 12px; }
     .trail-A { background: rgba(46, 125, 46, 0.35); }
     .trail-B { background: rgba(46, 74, 138, 0.35); }
+    .event-log { overflow-y: auto; max-height: 520px; border: 1px solid #222; border-radius: 3px; }
+    .event-log-entry {
+      padding: 7px 10px; border-bottom: 1px solid #1a1a1a; cursor: pointer; font-size: 11px;
+    }
+    .event-log-entry:hover { background: #161616; }
+    .event-log-entry.current { background: #1a2a1a; border-left: 3px solid #4ec94e; }
+    .event-log-entry.current-B { background: #1a1a2a; border-left: 3px solid #5585e0; }
+    .event-log-entry.current-DM { background: #1a1e28; border-left: 3px solid #4a7fa5; }
+    .elog-header { display: flex; gap: 8px; align-items: baseline; margin-bottom: 3px; }
+    .elog-turn { color: #555; min-width: 44px; }
+    .elog-tool { color: #c792ea; }
+    .elog-result { }
+    .elog-state { color: #666; font-size: 10px; margin-top: 2px; }
     .flag { display: inline-block; font-size: 11px; margin-right: 4px; }
     .flag-anomaly { color: #e05555; }
     .flag-divergence { color: #c9a227; }
@@ -261,10 +274,10 @@
 <div id="app" style="display:none;">
   <div class="tabs">
     <div class="tab active" data-tab="summary">1. Incident Summary</div>
-    <div class="tab" data-tab="timeline">2. Timeline</div>
-    <div class="tab" data-tab="grids">3. Key Moments</div>
-    <div class="tab" data-tab="messages">4. Message Trace</div>
-    <div class="tab" data-tab="movement">5. Movement</div>
+    <div class="tab" data-tab="movement">2. Movement</div>
+    <div class="tab" data-tab="timeline">3. Timeline</div>
+    <div class="tab" data-tab="grids">4. Key Moments</div>
+    <div class="tab" data-tab="messages">5. Message Trace</div>
     <div class="tab" data-tab="charts">6. Charts</div>
     <div class="tab" data-tab="aggregate">7. Cross-Run</div>
   </div>
@@ -377,6 +390,8 @@
         </div>
         <div class="trace-info">
           <div class="trace-info-row" id="trace-state-info"></div>
+          <h3 style="margin-top:16px;margin-bottom:8px;">Event Log</h3>
+          <div class="event-log" id="trace-event-log"></div>
           <div class="legend" style="margin-top:16px;">
             <div class="legend-item"><div class="legend-rect" style="background:#1a1a1a;"></div>Wall</div>
             <div class="legend-item"><div class="legend-rect" style="background:#2a2a2a;"></div>Empty</div>
@@ -707,6 +722,38 @@ function renderGrids() {
 
 // ─── View 3: Timeline ─────────────────────────────────────────────────────────
 
+function getReasoningText(ev) {
+  const raw = ev.llm?.raw_response || '';
+  const fromRaw = raw.split('\n').map(l => l.trim()).find(l => l.length > 0) || '';
+  if (fromRaw) return fromRaw;
+  // Synthesize from tool + args when raw_response is empty
+  const tool = ev.action?.tool || ev.event_type || '';
+  const args = ev.action?.args || {};
+  const r = ev.action?.result || {};
+  switch (tool) {
+    case 'move':
+      return r.reason === 'spurious_block' ? `Tried moving ${args.direction} — spuriously blocked`
+           : r.reason === 'locked_door'    ? `Tried moving ${args.direction} — hit locked door`
+           : r.reason === 'wall'           ? `Tried moving ${args.direction} — wall`
+           : `Moving ${args.direction || '?'}`;
+    case 'observe':
+      return 'Observing current cell and adjacent cells';
+    case 'pick_up':
+      return r.status === 'success' ? 'Picked up the key' : 'Attempted pick up — nothing here';
+    case 'unlock_door':
+      return r.status === 'success' ? 'Unlocked the door' : `Tried to unlock door — ${r.reason || 'failed'}`;
+    case 'send_message': {
+      const preview = (args.content || '').slice(0, 50);
+      return `Sent message to ${args.to || '?'}: "${preview}${args.content?.length > 50 ? '…' : ''}"`;
+    }
+    case 'respond_to_agent': {
+      const preview = (args.content || '').slice(0, 50);
+      return `Responded to ${args.to || '?'}: "${preview}${args.content?.length > 50 ? '…' : ''}"`;
+    }
+    default: return tool;
+  }
+}
+
 function renderTimeline() {
   const anomalies = getAnomalies(events);
   const divergences = findDivergences(events);
@@ -737,10 +784,8 @@ function renderTimeline() {
     const argsStr = ev.action?.args ? JSON.stringify(ev.action.args).slice(0, 40) : '';
     const { text: resultText, cls: resultCls } = resultSummary(ev.action?.result);
 
-    // Reasoning: first non-empty line from llm.raw_response, truncated to 80 chars
-    const rawResp = ev.llm?.raw_response || '';
-    const firstLine = rawResp.split('\n').map(l => l.trim()).find(l => l.length > 0) || '';
-    const reasoning = firstLine.length > 80 ? firstLine.slice(0, 80) + '…' : firstLine;
+    // Reasoning: llm.raw_response first line, or synthesized from tool+args
+    const firstLine = getReasoningText(ev);
 
     const tr = document.createElement('tr');
     if (rowClass) tr.className = rowClass;
@@ -750,7 +795,7 @@ function renderTimeline() {
       <td class="tool-col">${esc(ev.action?.tool || ev.event_type)}</td>
       <td class="args-col" title="${esc(JSON.stringify(ev.action?.args||{}))}">${esc(argsStr)}</td>
       <td class="result-col ${resultCls}">${esc(resultText)}</td>
-      <td class="reasoning-col" title="${esc(firstLine)}">${esc(reasoning)}</td>
+      <td class="reasoning-col" title="${esc(firstLine)}">${esc(firstLine.length > 80 ? firstLine.slice(0, 80) + '…' : firstLine)}</td>
       <td class="flags-col">${flags}</td>
     `;
     tr.addEventListener('click', () => toggleDetail(tr, ev, isDivergence, divergences));
@@ -1165,10 +1210,11 @@ function initMovementTrace() {
   slider.max = tracePositionHistory.length - 1;
   slider.value = 0;
 
+  buildEventLog();
   renderTraceFrame(0);
 
   slider.oninput = () => {
-    if (traceInterval) { clearInterval(traceInterval); traceInterval = null; document.getElementById('trace-play-btn').textContent = '▶ Play'; }
+    if (traceInterval) { clearInterval(traceInterval); traceInterval = null; document.getElementById('trace-play-btn').textContent = '&#9654; Play'; }
     renderTraceFrame(parseInt(slider.value));
   };
 
@@ -1177,15 +1223,15 @@ function initMovementTrace() {
     if (traceInterval) {
       clearInterval(traceInterval);
       traceInterval = null;
-      playBtn.textContent = '▶ Play';
+      playBtn.textContent = '&#9654; Play';
     } else {
-      playBtn.textContent = '⏸ Pause';
+      playBtn.textContent = '&#9646;&#9646; Pause';
       traceInterval = setInterval(() => {
         const slider = document.getElementById('trace-slider');
         const next = parseInt(slider.value) + 1;
         if (next >= tracePositionHistory.length) {
           clearInterval(traceInterval); traceInterval = null;
-          playBtn.textContent = '▶ Play';
+          playBtn.textContent = '&#9654; Play';
           return;
         }
         slider.value = next;
@@ -1193,6 +1239,46 @@ function initMovementTrace() {
       }, 400);
     }
   };
+}
+
+function buildEventLog() {
+  const logEl = document.getElementById('trace-event-log');
+  if (!logEl) return;
+  logEl.innerHTML = '';
+  tracePositionHistory.forEach((entry, idx) => {
+    const ev = events[entry.evIdx];
+    const tool = ev.action?.tool || ev.event_type || '?';
+    const result = ev.action?.result || {};
+    const status = result.status || '?';
+    const reason = result.reason ? ` (${result.reason})` : '';
+    const pos = entry[entry.agent_id];
+    const posStr = pos ? `[${pos[0]},${pos[1]}]` : '—';
+    const inv = ev.agent_belief?.inventory || [];
+    const invStr = inv.length ? inv.join(', ') : 'empty';
+    const reasoning = getReasoningText(ev);
+    const agentId = ev.agent_id;
+
+    const div = document.createElement('div');
+    div.className = 'event-log-entry';
+    div.dataset.idx = idx;
+    div.innerHTML = `
+      <div class="elog-header">
+        <span class="elog-turn">T${ev.turn}</span>
+        <span class="agent-badge badge-${agentId}" style="font-size:10px;padding:0 5px;">${agentId}</span>
+        <span class="elog-tool">${esc(tool)}</span>
+        <span class="elog-result ${status === 'success' || status === 'sent' ? 'result-success' : status === 'anomaly' ? 'result-anomaly' : 'result-failed'}">${esc(status)}${esc(reason)}</span>
+      </div>
+      <div class="elog-state">pos ${posStr} · inv: ${esc(invStr)}${ev.action?.anomaly ? ' · <span style="color:#e05555">⚠ ' + esc(ev.action.anomaly_reason || '') + '</span>' : ''}</div>
+      <div class="elog-state" style="color:#777;font-style:italic;">${esc(reasoning.length > 70 ? reasoning.slice(0, 70) + '…' : reasoning)}</div>
+    `;
+    div.addEventListener('click', () => {
+      const slider = document.getElementById('trace-slider');
+      slider.value = idx;
+      if (traceInterval) { clearInterval(traceInterval); traceInterval = null; document.getElementById('trace-play-btn').textContent = '&#9654; Play'; }
+      renderTraceFrame(idx);
+    });
+    logEl.appendChild(div);
+  });
 }
 
 function renderTraceFrame(idx) {
@@ -1213,7 +1299,7 @@ function renderTraceFrame(idx) {
   if (entry.A) trailA.delete(`${entry.A[0]},${entry.A[1]}`);
   if (entry.B) trailB.delete(`${entry.B[0]},${entry.B[1]}`);
 
-  const cellPx = 22;
+  const cellPx = 36;
   const wrap = document.getElementById('trace-grid-wrap');
   wrap.innerHTML = '';
 
@@ -1265,6 +1351,21 @@ function renderTraceFrame(idx) {
     <div class="stat"><span class="stat-label">Both at exit</span><span class="stat-value" style="font-size:12px;">${gss.both_at_exit ? '✓' : '—'}</span></div>
     <div class="stat"><span class="stat-label">Agent</span><span class="stat-value" style="font-size:12px;">${entry.agent_id}</span></div>
   `;
+
+  // Highlight current entry in the event log and scroll it into view
+  const logEl = document.getElementById('trace-event-log');
+  if (logEl) {
+    logEl.querySelectorAll('.event-log-entry').forEach(el => {
+      el.classList.remove('current', 'current-B', 'current-DM');
+    });
+    const agentId = entry.agent_id;
+    const cls = agentId === 'B' ? 'current-B' : agentId === 'DM' ? 'current-DM' : 'current';
+    const activeEl = logEl.querySelector(`[data-idx="${idx}"]`);
+    if (activeEl) {
+      activeEl.classList.add(cls);
+      activeEl.scrollIntoView({ block: 'nearest' });
+    }
+  }
 }
 
 function drawAggTurnsChart(runs, avgTurns, outcomes) {
