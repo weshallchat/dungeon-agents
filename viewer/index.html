@@ -128,12 +128,34 @@
     .badge-B { background: #1a1a2e; color: #5585e0; }
     .badge-DM { background: #1e2a35; color: #4a7fa5; }
     td.tool-col { color: #c792ea; width: 110px; }
-    td.args-col { color: #888; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    td.result-col { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.args-col { color: #888; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.result-col { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .result-success { color: #4ec94e; }
     .result-failed  { color: #e05555; }
     .result-anomaly { color: #e08855; }
-    td.flags-col { width: 80px; }
+    td.reasoning-col { color: #555; font-style: italic; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.flags-col { width: 70px; }
+
+    /* Movement trace */
+    .trace-controls {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+      background: #141414; border: 1px solid #222; border-radius: 4px; padding: 12px 16px;
+    }
+    .trace-controls button {
+      background: #252525; border: 1px solid #3a3a3a; color: #ccc;
+      padding: 5px 14px; border-radius: 3px; cursor: pointer;
+      font-family: inherit; font-size: 12px;
+    }
+    .trace-controls button:hover { background: #2e2e2e; }
+    .trace-controls input[type=range] { flex: 1; accent-color: #4a4a4a; cursor: pointer; }
+    .trace-turn-label { color: #888; font-size: 12px; min-width: 60px; }
+    .trace-state { color: #555; font-size: 11px; }
+    .trace-layout { display: flex; gap: 32px; align-items: flex-start; }
+    .trace-grid-wrap { flex-shrink: 0; }
+    .trace-info { flex: 1; }
+    .trace-info-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 12px; }
+    .trail-A { background: rgba(46, 125, 46, 0.35); }
+    .trail-B { background: rgba(46, 74, 138, 0.35); }
     .flag { display: inline-block; font-size: 11px; margin-right: 4px; }
     .flag-anomaly { color: #e05555; }
     .flag-divergence { color: #c9a227; }
@@ -244,6 +266,7 @@
     <div class="tab" data-tab="charts">4. Charts</div>
     <div class="tab" data-tab="messages">5. Message Trace</div>
     <div class="tab" data-tab="aggregate">6. Cross-Run</div>
+    <div class="tab" data-tab="movement">7. Movement</div>
   </div>
 
   <!-- View 1: Incident Summary -->
@@ -288,7 +311,7 @@
         <thead>
           <tr>
             <th>Turn</th><th>Agent</th><th>Tool</th>
-            <th>Args</th><th>Result</th><th>Flags</th>
+            <th>Args</th><th>Result</th><th>Reasoning</th><th>Flags</th>
           </tr>
         </thead>
         <tbody id="timeline-body"></tbody>
@@ -337,6 +360,38 @@
   <div class="tab-content" id="tab-aggregate">
     <div class="section" id="aggregate-content">
       <p class="empty">Load analysis.json to see cross-run aggregate.</p>
+    </div>
+  </div>
+
+  <!-- View 7: Movement Trace -->
+  <div class="tab-content" id="tab-movement">
+    <div class="section">
+      <div class="trace-controls">
+        <button id="trace-play-btn">&#9654; Play</button>
+        <input type="range" id="trace-slider" min="0" max="0" value="0" step="1">
+        <span class="trace-turn-label" id="trace-turn-label">Event —</span>
+      </div>
+      <div class="trace-layout">
+        <div class="trace-grid-wrap" id="trace-grid-wrap">
+          <p class="empty">Load events.jsonl then open this tab.</p>
+        </div>
+        <div class="trace-info">
+          <div class="trace-info-row" id="trace-state-info"></div>
+          <div class="legend" style="margin-top:16px;">
+            <div class="legend-item"><div class="legend-rect" style="background:#1a1a1a;"></div>Wall</div>
+            <div class="legend-item"><div class="legend-rect" style="background:#2a2a2a;"></div>Empty</div>
+            <div class="legend-item"><div class="legend-rect" style="background:#7a5c00;"></div>Key</div>
+            <div class="legend-item"><div class="legend-rect" style="background:#5c0000;"></div>Locked Door</div>
+            <div class="legend-item"><div class="legend-rect" style="background:#1a4a1a;"></div>Open Door</div>
+            <div class="legend-item"><div class="legend-rect" style="background:#1a6a1a;"></div>Exit</div>
+            <div class="legend-item"><div class="legend-rect" style="background:#111;border:1px solid #222;"></div>Fog</div>
+            <div class="legend-item"><div class="legend-dot agent-A"></div>Agent A (current)</div>
+            <div class="legend-item"><div class="legend-dot agent-B"></div>Agent B (current)</div>
+            <div class="legend-item"><div class="legend-rect" style="background:rgba(46,125,46,0.35);border:1px solid #2e7d2e;"></div>A trail</div>
+            <div class="legend-item"><div class="legend-rect" style="background:rgba(46,74,138,0.35);border:1px solid #2e4a8a;"></div>B trail</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -402,6 +457,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
     if (tab.dataset.tab === 'charts' && events.length) renderCharts();
+    if (tab.dataset.tab === 'movement' && events.length) initMovementTrace();
   });
 });
 
@@ -681,6 +737,11 @@ function renderTimeline() {
     const argsStr = ev.action?.args ? JSON.stringify(ev.action.args).slice(0, 40) : '';
     const { text: resultText, cls: resultCls } = resultSummary(ev.action?.result);
 
+    // Reasoning: first non-empty line from llm.raw_response, truncated to 80 chars
+    const rawResp = ev.llm?.raw_response || '';
+    const firstLine = rawResp.split('\n').map(l => l.trim()).find(l => l.length > 0) || '';
+    const reasoning = firstLine.length > 80 ? firstLine.slice(0, 80) + '…' : firstLine;
+
     const tr = document.createElement('tr');
     if (rowClass) tr.className = rowClass;
     tr.innerHTML = `
@@ -689,6 +750,7 @@ function renderTimeline() {
       <td class="tool-col">${esc(ev.action?.tool || ev.event_type)}</td>
       <td class="args-col" title="${esc(JSON.stringify(ev.action?.args||{}))}">${esc(argsStr)}</td>
       <td class="result-col ${resultCls}">${esc(resultText)}</td>
+      <td class="reasoning-col" title="${esc(firstLine)}">${esc(reasoning)}</td>
       <td class="flags-col">${flags}</td>
     `;
     tr.addEventListener('click', () => toggleDetail(tr, ev, isDivergence, divergences));
@@ -718,7 +780,7 @@ function toggleDetail(tr, ev, isDivergence, divergences) {
 
   const detailRow = document.createElement('tr');
   detailRow.className = 'detail-row';
-  detailRow.innerHTML = `<td colspan="6">
+  detailRow.innerHTML = `<td colspan="7">
     <div class="detail-inner">
       <div class="detail-panel">
         <h4>Agent Belief</h4>
@@ -1068,6 +1130,141 @@ function drawAggAnomalyChart(runs) {
     ctx.fillStyle = OUTCOME_COLORS[r.outcome] || '#444';
     ctx.fillRect(xx, y0 + ch - h, barW, h);
   }
+}
+
+// ─── View 7: Movement Trace ──────────────────────────────────────────────────
+
+let traceInterval = null;
+let tracePositionHistory = [];
+
+function buildPositionHistory(evs) {
+  const history = [];
+  for (let i = 0; i < evs.length; i++) {
+    const ev = evs[i];
+    if (!ev.game_state_summary?.agent_positions) continue;
+    history.push({
+      turn: ev.turn,
+      agent_id: ev.agent_id,
+      A: ev.game_state_summary.agent_positions['A'],
+      B: ev.game_state_summary.agent_positions['B'],
+      gss: ev.game_state_summary,
+      evIdx: i,
+    });
+  }
+  return history;
+}
+
+function initMovementTrace() {
+  tracePositionHistory = buildPositionHistory(events);
+  if (tracePositionHistory.length === 0) {
+    document.getElementById('trace-grid-wrap').innerHTML = '<p class="empty">No position data in events.</p>';
+    return;
+  }
+
+  const slider = document.getElementById('trace-slider');
+  slider.max = tracePositionHistory.length - 1;
+  slider.value = 0;
+
+  renderTraceFrame(0);
+
+  slider.oninput = () => {
+    if (traceInterval) { clearInterval(traceInterval); traceInterval = null; document.getElementById('trace-play-btn').textContent = '▶ Play'; }
+    renderTraceFrame(parseInt(slider.value));
+  };
+
+  const playBtn = document.getElementById('trace-play-btn');
+  playBtn.onclick = () => {
+    if (traceInterval) {
+      clearInterval(traceInterval);
+      traceInterval = null;
+      playBtn.textContent = '▶ Play';
+    } else {
+      playBtn.textContent = '⏸ Pause';
+      traceInterval = setInterval(() => {
+        const slider = document.getElementById('trace-slider');
+        const next = parseInt(slider.value) + 1;
+        if (next >= tracePositionHistory.length) {
+          clearInterval(traceInterval); traceInterval = null;
+          playBtn.textContent = '▶ Play';
+          return;
+        }
+        slider.value = next;
+        renderTraceFrame(next);
+      }, 400);
+    }
+  };
+}
+
+function renderTraceFrame(idx) {
+  const posHistory = tracePositionHistory;
+  if (!posHistory.length) return;
+  const entry = posHistory[idx];
+  const revealed = buildRevealedMap(events, entry.evIdx);
+
+  // Accumulate trails: all past A and B positions (not current)
+  const trailA = new Map(); // key -> count (darker if more visits)
+  const trailB = new Map();
+  for (let i = 0; i < idx; i++) {
+    const e = posHistory[i];
+    if (e.A) { const k = `${e.A[0]},${e.A[1]}`; trailA.set(k, (trailA.get(k)||0)+1); }
+    if (e.B) { const k = `${e.B[0]},${e.B[1]}`; trailB.set(k, (trailB.get(k)||0)+1); }
+  }
+  // Current positions not shown as trail
+  if (entry.A) trailA.delete(`${entry.A[0]},${entry.A[1]}`);
+  if (entry.B) trailB.delete(`${entry.B[0]},${entry.B[1]}`);
+
+  const cellPx = 22;
+  const wrap = document.getElementById('trace-grid-wrap');
+  wrap.innerHTML = '';
+
+  const gridEl = document.createElement('div');
+  gridEl.className = 'dungeon-grid';
+  gridEl.style.gridTemplateColumns = `repeat(${gridSize}, ${cellPx}px)`;
+  gridEl.style.gridTemplateRows = `repeat(${gridSize}, ${cellPx}px)`;
+
+  for (let r = 0; r < gridSize; r++) {
+    for (let c = 0; c < gridSize; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-cell';
+      cell.style.width = cellPx + 'px';
+      cell.style.height = cellPx + 'px';
+      const key = `${r},${c}`;
+      const cellType = revealed.get(key);
+      cell.classList.add(cellType ? `cell-${cellType}` : 'cell-FOG');
+
+      if (trailA.has(key)) cell.classList.add('trail-A');
+      if (trailB.has(key)) cell.classList.add('trail-B');
+
+      const atA = entry.A && entry.A[0] === r && entry.A[1] === c;
+      const atB = entry.B && entry.B[0] === r && entry.B[1] === c;
+      if (atA) {
+        const dot = document.createElement('div');
+        dot.className = 'agent-dot agent-A';
+        dot.textContent = 'A';
+        cell.appendChild(dot);
+      }
+      if (atB) {
+        const dot = document.createElement('div');
+        dot.className = 'agent-dot agent-B';
+        dot.textContent = 'B';
+        if (atA) dot.style.left = '70%';
+        cell.appendChild(dot);
+      }
+
+      gridEl.appendChild(cell);
+    }
+  }
+  wrap.appendChild(gridEl);
+
+  const gss = entry.gss;
+  document.getElementById('trace-turn-label').textContent = `Turn ${entry.turn} · event ${idx+1}/${posHistory.length}`;
+  document.getElementById('trace-state-info').innerHTML = `
+    <div class="stat"><span class="stat-label">Door</span><span class="stat-value" style="font-size:12px;">${gss.door_state ?? '—'}</span></div>
+    <div class="stat"><span class="stat-label">Key held by</span><span class="stat-value" style="font-size:12px;">${gss.key_held_by ?? 'none'}</span></div>
+    <div class="stat"><span class="stat-label">Progress</span><span class="stat-value" style="font-size:12px;">${((gss.progress_score||0)*100).toFixed(0)}%</span></div>
+    <div class="stat"><span class="stat-label">Both at exit</span><span class="stat-value" style="font-size:12px;">${gss.both_at_exit ? '✓' : '—'}</span></div>
+    <div class="stat"><span class="stat-label">Agent</span><span class="stat-value" style="font-size:12px;">${entry.agent_id}</span></div>
+  `;
 }
 
 function drawAggTurnsChart(runs, avgTurns, outcomes) {

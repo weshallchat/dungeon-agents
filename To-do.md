@@ -173,6 +173,7 @@ Rewrite the viewer to support all 6 views. Keep it a single HTML file with no bu
 - [ ] Update args/result display to read from structured `action.result` object
 - [ ] Update divergence detection to use `action.result.status === "anomaly"` for spurious blocks
 - [ ] Keep expand-on-click with belief/truth side-by-side
+- [ ] **Add Reasoning column**: show first line of `ev.llm.raw_response` truncated to ~80 chars, italic grey. Empty for DM events with no text output.
 
 ### 10.5 View 4 — Charts (plain canvas, no library)
 
@@ -198,6 +199,27 @@ Implement three `<canvas>` charts sharing the same x-axis (turn number):
 - [ ] **Run selection table**: list all 50 runs with columns: seed, outcome, anomalies, distinct_event_types (as badges), selected (✓/—)
 
 - [ ] **Done condition**: Open `viewer/index.html`. Load seed-999 `events.jsonl` — see incident report (or placeholder), key-moment grids, timeline, all 3 charts populated with real data. Load `analysis.json` — see cross-run charts and selection table.
+
+---
+
+## Phase 12: Viewer — Agent Reasoning + Movement Trace
+
+### 12.1 View 3 — Reasoning column
+- [ ] Add `Reasoning` column to timeline table
+- [ ] Source from `ev.llm.raw_response` — take first non-empty line, truncate to 80 chars
+- [ ] Style: italic, `color: #666`, max-width constrained
+
+### 12.2 View 7 — Agent Movement Trace
+- [ ] Add 7th tab: "7. Movement"
+- [ ] Build `buildPositionHistory(events)` → array of `{turn, A: [r,c], B: [r,c], gss}` indexed by event
+- [ ] Build full revealed map from all events (same `buildRevealedMap` as View 2)
+- [ ] Render full-size CSS dungeon grid (same cell colours as View 2)
+- [ ] Overlay trail dots: A's past positions (faded green), B's past positions (faded blue)
+- [ ] Overlay current position circles (solid A=green, B=blue) at slider turn
+- [ ] **Slider**: `<input type="range">` from event 0 to events.length-1; updates grid on input
+- [ ] **Play/Pause button**: steps slider forward every 400ms; stops at end
+- [ ] Turn counter label and game state line (door state, key holder, progress score)
+- [ ] **Done condition**: load any events.jsonl, scrub slider — grid animates agent paths correctly
 
 ---
 

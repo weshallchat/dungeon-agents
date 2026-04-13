@@ -191,10 +191,24 @@ Each grid is:
 
 ### View 3: Timeline Table
 
-Table: `Turn | Agent | Tool | Args | Result | Flags`
+Table: `Turn | Agent | Tool | Args | Result | Reasoning | Flags`
+- **Reasoning column**: one-line truncated text from `llm.raw_response` — the agent's stated reason for choosing that tool. Shown as italic grey text, truncated to ~80 chars.
 - Flag icons: ⚠ anomaly, ◆ belief divergence, ⧗ message delay
 - Anomaly rows: red left border. Divergence rows: yellow left border. DM rows: blue left border.
 - Clicking a row expands it inline to show `agent_belief` and `world_truth` JSON side-by-side, with diverging fields highlighted.
+
+### View 7: Agent Movement Trace
+
+Interactive grid showing both agents' movement paths through the dungeon over all turns.
+
+- Full revealed map built from all events (fog-of-war cleared progressively)
+- **Slider**: scrub to any turn — grid updates to show agent positions at that turn
+- **Play/Pause button**: auto-steps through turns at a fixed interval (~400ms/turn)
+- Agent A path shown as faded green trail dots on previously visited cells
+- Agent B path shown as faded blue trail dots on previously visited cells
+- Current positions shown as solid coloured circles (A=green, B=blue)
+- Turn counter and game state summary (door state, key holder) displayed alongside
+- Data sourced from `game_state_summary.agent_positions` on each event
 
 ### View 4: Charts
 
