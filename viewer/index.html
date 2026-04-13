@@ -133,7 +133,7 @@
     .result-success { color: #4ec94e; }
     .result-failed  { color: #e05555; }
     .result-anomaly { color: #e08855; }
-    td.reasoning-col { color: #555; font-style: italic; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    td.reasoning-col { color: #999; font-style: italic; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     td.flags-col { width: 70px; }
 
     /* Movement trace */
@@ -261,12 +261,12 @@
 <div id="app" style="display:none;">
   <div class="tabs">
     <div class="tab active" data-tab="summary">1. Incident Summary</div>
-    <div class="tab" data-tab="grids">2. Key Moments</div>
-    <div class="tab" data-tab="timeline">3. Timeline</div>
-    <div class="tab" data-tab="charts">4. Charts</div>
-    <div class="tab" data-tab="messages">5. Message Trace</div>
-    <div class="tab" data-tab="aggregate">6. Cross-Run</div>
-    <div class="tab" data-tab="movement">7. Movement</div>
+    <div class="tab" data-tab="timeline">2. Timeline</div>
+    <div class="tab" data-tab="grids">3. Key Moments</div>
+    <div class="tab" data-tab="messages">4. Message Trace</div>
+    <div class="tab" data-tab="movement">5. Movement</div>
+    <div class="tab" data-tab="charts">6. Charts</div>
+    <div class="tab" data-tab="aggregate">7. Cross-Run</div>
   </div>
 
   <!-- View 1: Incident Summary -->
@@ -564,9 +564,9 @@ function renderSummary() {
     <div class="stat"><span class="stat-label">DM Interactions</span><span class="stat-value">${dmCount}</span></div>
     <div class="stat"><span class="stat-label">Progress</span><span class="stat-value">${(progressScore * 100).toFixed(0)}%</span></div>
     <div class="stat"><span class="stat-label">Milestone</span><span class="stat-value" style="font-size:12px;">${milestone}</span></div>
-    <div class="stat"><span class="stat-label">Key pickup</span><span class="stat-value" style="font-size:12px;">turn ${keyTurn}</span></div>
-    <div class="stat"><span class="stat-label">Door encounter</span><span class="stat-value" style="font-size:12px;">turn ${doorTurn}</span></div>
-    <div class="stat"><span class="stat-label">Door unlocked</span><span class="stat-value" style="font-size:12px;">turn ${unlockTurn}</span></div>
+    <div class="stat"><span class="stat-label">Key pickup</span><span class="stat-value" style="font-size:12px;">${keyTurn === '—' ? 'key never picked up' : 'turn ' + keyTurn}</span></div>
+    <div class="stat"><span class="stat-label">Door encounter</span><span class="stat-value" style="font-size:12px;">${doorTurn === '—' ? 'door never reached' : 'turn ' + doorTurn}</span></div>
+    <div class="stat"><span class="stat-label">Door unlocked</span><span class="stat-value" style="font-size:12px;">${unlockTurn === '—' ? 'door still locked' : 'turn ' + unlockTurn}</span></div>
   `;
 
   // Anomalies list
