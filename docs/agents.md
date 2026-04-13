@@ -36,7 +36,7 @@ messages. You must use exactly one tool per turn.
 
 **API call parameters**:
 - `model`: `claude-haiku-4-5-20251001`
-- `tools`: all 5 explorer tools (see `skills.md`)
+- `tools`: all 5 explorer tools (see `docs/skills.md`)
 - `tool_choice`: `{"type": "any"}` — forces exactly one tool call per turn
 - User message: the observable state as a JSON block
 
@@ -79,7 +79,7 @@ to reply.
 
 **API call parameters**:
 - `model`: `claude-haiku-4-5-20251001`
-- `tools`: `[respond_to_agent]` only (see `skills.md`)
+- `tools`: `[respond_to_agent]` only (see `docs/skills.md`)
 - `tool_choice`: `{"type": "any"}`
 
 **When DM is called**:

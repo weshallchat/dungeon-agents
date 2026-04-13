@@ -54,13 +54,15 @@ Three runs are committed under `runs/` for immediate inspection:
 ## Architecture
 
 ```
-dungeon.py   — grid generation, world state, fog-of-war, tool execution, termination
-agents.py    — Anthropic API calls, Langfuse v3 tracing (context managers), DM handler
-tracer.py    — events.jsonl writer, Langfuse client, summary/export helpers
-run.py       — game loop (plain while loop), CLI entry point
-viewer/      — single index.html, loads .jsonl client-side, no build step
-agents.md    — agent design reference
-skills.md    — tool schemas and failure injection rules
+dungeon.py       — grid generation, world state, fog-of-war, tool execution, termination
+agents.py        — Anthropic API calls, Langfuse v3 tracing (context managers), DM handler
+tracer.py        — events.jsonl writer, Langfuse client, summary/export helpers
+run.py           — game loop (plain while loop), CLI entry point
+viewer/          — single index.html, loads .jsonl client-side, no build step
+docs/agents.md   — agent design reference
+docs/skills.md   — tool schemas and failure injection rules
+docs/prompt.md   — full build spec
+docs/To-do.md    — implementation checklist
 ```
 
 ## What the traces show

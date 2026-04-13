@@ -19,7 +19,7 @@ There are three agents:
 
 **Explorer Agents (Agent A and Agent B)**
 - Each is backed by an LLM (`claude-haiku-4-5-20251001`).
-- Each has a tool set (see `skills.md`): move, observe, pick_up, send_message, unlock_door.
+- Each has a tool set (see `docs/skills.md`): move, observe, pick_up, send_message, unlock_door.
 - Agents receive their observable state at the start of each turn. They make one tool call per turn.
 - Agents can send messages to each other or to the Dungeon Master.
 
@@ -307,7 +307,7 @@ Commit to repo:
 - Langfuse v3 context manager API throughout — no `.trace()` method.
 - Game loop is a plain Python `while` loop. No graph framework.
 - Load credentials from `.env` via `python-dotenv`.
-- Refer to `agents.md` for agent design and `skills.md` for tool schemas.
+- Refer to `docs/agents.md` for agent design and `docs/skills.md` for tool schemas.
 
 ```
 /
@@ -319,8 +319,11 @@ Commit to repo:
 ├── viewer/index.html   # legibility layer — all 6 views
 ├── runs/               # only 10 selected runs committed
 ├── analysis.json       # aggregate data across all 50 runs
-├── agents.md
-├── skills.md
+├── docs/
+│   ├── agents.md
+│   ├── skills.md
+│   ├── prompt.md
+│   └── To-do.md
 ├── .env.example
 └── requirements.txt
 ```
