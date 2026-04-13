@@ -1,0 +1,324 @@
+{
+  "description": "Top 10 selected runs ranked by distinct event type coverage",
+  "selection_criteria": "Ranked by len(distinct_event_types) desc, ties broken by anomaly_count desc",
+  "generated_at": "2026-04-13T02:37:12.427716+00:00",
+  "runs": [
+    {
+      "run_id": "20260412_215157_eb6647",
+      "seed": 3,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "dm_response",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 14,
+      "dm_interactions": 6,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 3)\n\n**Summary:**\nAgents A and B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress. The run was severely hampered by frequent spurious_block anomalies (10 movement failures across both agents) and pervasive communication delays that prevented coordinated action.\n\n**Root Cause of Failure:**\nThe mission collapsed due to a combination of environmental obstruction and information decay. Agent A successfully located the EXIT by turn 10, communicating its position to the DM multiple times (turns 10, 11, 16, 20, 27), yet never acquired the KEY or unlocked the LOCKED_DOOR. Agent B received inconsistent intel about the KEY's location (initially [7, 4] per turn 23, later [4, 4] per turn 32) but made no documented progress toward retrieving it. The stale DM board information (always 3-5 turns behind current state) proved insufficient for coordinating the two-objective solution.\n\n**Critical Decision Points:**\nThe first major failure was turns 3-4, when both agents encountered spurious_block anomalies during initial exploration, immediately degrading movement reliability. The pivotal communication window occurred at turn 23, where Agent B acknowledged the EXIT location but committed to",
+      "final_positions": {
+        "A": [
+          1,
+          1
+        ],
+        "B": [
+          1,
+          6
+        ]
+      }
+    },
+    {
+      "run_id": "20260412_215704_ee36c4",
+      "seed": 5,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 13,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 12,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 2,
+      "dm_interactions": 2,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Seed 5 Dungeon Run\n\n**Summary:** Agents A and B failed to complete the dungeon within the 50-turn limit, reaching turn 51 with only 33% progress. Agent B successfully located and picked up the key at turn 12, but the agents never managed to unlock the door or reach the exit together, ultimately timing out.\n\n**Critical Failure Points:** The run was severely hampered by 13 spurious_block anomalies scattered throughout the execution (turns 4, 9, 14, 24, 25, 30-31, 32, 34-35, 43-44, 49), which repeatedly blocked agent movement and consumed valuable turns. Agent A identified the exit location at position [1,5] by turn 22 and re-confirmed it at turn 40, but these discoveries came too late in the run and didn't translate into coordinated progress toward the goal.\n\n**Notable Decision Points:** The key pickup at turn 12 (Agent B) should have been a catalyst for immediate door unlocking, but no subsequent unlock event was recorded, suggesting either the agents failed to navigate to the door or the coordination between agents broke down. The DM interactions at turns 23 and 41, while providing location confirmation, operated on stale board views and consumed turns without accelerating problem-solving. The persistent movement failures",
+      "final_positions": {
+        "A": [
+          0,
+          7
+        ],
+        "B": [
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "run_id": "20260412_221157_f66a89",
+      "seed": 11,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 12,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 21,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 26,
+      "dm_interactions": 2,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Seed 11 Dungeon Agent Run\n\n**Summary:** This run failed to achieve mission completion within the 50-turn limit, reaching only 0.33 progress despite Agent A successfully locating and collecting the key by turn 21. The critical failure was the inability to locate and unlock the locked door\u2014Agent A found the EXIT at position [1,3] early but never discovered the locked door's location, which appears to have been the actual blocking objective preventing mission completion.\n\n**Key Issues:** Agent A encountered repeated spurious_block anomalies during movement (turns 6, 7, 13, 28, 37), and both agents were hampered by extensive communication overhead. While Agent A invested 26 messages attempting to coordinate with Agent B and report findings to the DM (turns 14-51), these communications did not translate into progress toward the locked door. The DM provided only two interactions (turns 15, 17) based on stale board state information, limiting usefulness. A message_delayed anomaly also struck on turn 31 and 48.\n\n**Decision Point Analysis:** The critical decision point was around turns 14-17 when Agent A first reported finding the EXIT and should have immediately pivoted to systematically searching for the locked door instead of repeatedly messaging Agent B about EXIT coordinates. Instead, the run devolved into excessive inter-agent coordination messaging without",
+      "final_positions": {
+        "A": [
+          1,
+          3
+        ],
+        "B": [
+          0,
+          6
+        ]
+      }
+    },
+    {
+      "run_id": "20260412_222029_37217a",
+      "seed": 15,
+      "outcome": "success",
+      "total_turns": 30,
+      "anomaly_count": 7,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 13,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 2,
+      "dm_interactions": 1,
+      "progress_score_final": 1.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 15)\n\n**Summary:** Both agents successfully reached the exit within 30 turns despite encountering 7 anomalies, primarily spurious block detections. Agent B located and retrieved the key on turn 13, while Agent A engaged the Dungeon Master on turn 27 to clarify exit location coordinates. The critical decision point occurred at turn 13 when Agent B secured the key\u2014this enabled the final objective completion despite no explicit door-unlock event being recorded.\n\n**Anomaly Impact:** Agent B experienced spurious block anomalies on turns 1, 3, 19, 24, and 25, suggesting either environmental instability or pathfinding issues in certain dungeon sectors. Agent A encountered one spurious block on turn 14 and a message delay anomaly on turn 25. These seven anomalies collectively added overhead but did not prevent task completion, indicating the agents' movement strategies were robust enough to work around false obstruction reports.\n\n**Key Decision Points:** The turn 13 key pickup was foundational to success. The turn 27 DM interaction proved valuable, as Agent A proactively sought clarification on exit coordinates from the Dungeon Master, which likely informed Agent B's subsequent navigation to [1,7]. Agent B's turn 29 message confirmed final positioning and key possession, demonstrating effective",
+      "final_positions": {
+        "A": [
+          1,
+          7
+        ],
+        "B": [
+          1,
+          7
+        ]
+      }
+    },
+    {
+      "run_id": "20260412_223700_8bee4a",
+      "seed": 22,
+      "outcome": "stuck",
+      "total_turns": 14,
+      "anomaly_count": 2,
+      "distinct_event_types": [
+        "door_encounter",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 5,
+      "door_encounter_turn": 13,
+      "door_unlocked_turn": null,
+      "messages_sent": 9,
+      "dm_interactions": 0,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 22)\n\n**Summary:** Agents A and B became stuck in a deadlock situation despite successfully locating critical objectives. Agent B retrieved the key on turn 5 and identified the exit at [5,7], but the agents failed to coordinate effective door-unlocking procedures, resulting in zero progress toward the ultimate goal by turn 14.\n\n**Root Cause:** The primary failure was a critical miscommunication loop. Agent B discovered both the key and exit but remained at the exit location rather than moving to the locked door at [5,1] where Agent A was positioned. Agent A reached the locked door by turn 13 but lacked the key, while Agent B\u2014who held the key\u2014never navigated back to unlock it. Messages were sent frequently (9 total) but conveyed location information without clear action directives, creating confusion about whose responsibility it was to move where.\n\n**Notable Decision Points:** Turn 5 marked the key pickup, establishing the prerequisite for progression. Turn 8-11 represented critical coordination moments where Agent B had the key but chose to remain at the exit rather than backtrack to meet Agent A at the locked door. The anomalies on turns 2 (spurious block) and 12 (message delay) added friction but were not the primary blockers\u2014the agents' failure to execute a coherent spatial",
+      "final_positions": {
+        "A": [
+          4,
+          1
+        ],
+        "B": [
+          5,
+          7
+        ]
+      }
+    },
+    {
+      "run_id": "20260412_224513_0dbb92",
+      "seed": 26,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 21,
+      "distinct_event_types": [
+        "dm_response",
+        "door_encounter",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": 25,
+      "door_unlocked_turn": null,
+      "messages_sent": 31,
+      "dm_interactions": 14,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Dungeon Agent Run (Seed 26)\n\n**Summary:** Agents A and B failed to complete the dungeon objective within the 50-turn limit, reaching turn 51 with zero progress toward unlocking the door and reaching the exit. Agent A successfully located the EXIT at position [1,4] and identified a LOCKED_DOOR at [1,6], but never acquired the KEY needed to proceed, while Agent B remained largely ineffective throughout the run.\n\n**Critical Failures:** The mission was severely hampered by 21 anomalies, including persistent spurious_block errors affecting both agents (turns 3-4, 9, 14, 17, 26, 29, 31, 35-36) and repeated message_delayed anomalies (turns 11, 17-18, 26) that disrupted communication. More problematically, the DM provided consistently stale board information\u2014repeatedly citing views from 3 turns prior (turns 11, 14, 17, 19, 25)\u2014giving Agent A conflicting KEY location coordinates ([5,0] vs. [0,5]) that created confusion and wasted turns on misdirected search efforts.\n\n**Key Decision Points:** Agent A's critical error occurred around turn 25 when it became blocked at the locked door without possessing the KEY. Rather",
+      "final_positions": {
+        "A": [
+          1,
+          5
+        ],
+        "B": [
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "run_id": "20260412_230118_ccf53b",
+      "seed": 33,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 11,
+      "distinct_event_types": [
+        "dm_response",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 6,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 11,
+      "dm_interactions": 1,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "# Incident Report: Seed 33 Dungeon Run\n\n**Summary:**\nAgents A and B failed to complete the dungeon objective within the 50-turn limit, achieving only 0.33 progress despite successfully locating the exit at [4,5] by turn 6 and identifying the key's location. Agent B retrieved the key on turn 6, and both agents communicated their discoveries, but the run ultimately stalled due to movement anomalies and coordination failures.\n\n**Critical Failure Points:**\nThe primary issue was a cascade of spurious_block anomalies beginning at turn 12 and recurring frequently (turns 12, 27, 31, 37, 40, 44, 45, 50), which prevented agents from reaching their objectives despite clear communication about positions and goals. Additionally, message_delayed anomalies on turns 17, 21, and 24 fragmented the agents' real-time coordination, causing duplicate and partially-truncated messages that may have obscured actionable information.\n\n**Notable Decision Points:**\nAgent A's early strategy (turn 6) to position itself at the exit while waiting for Agent B was sound, but the lack of a concrete rendezvous plan for the locked door proved costly\u2014the agents never confirmed the door's location or synchronized a meeting point. The DM interaction on turn 26 acknowledged stale information",
+      "final_positions": {
+        "A": [
+          4,
+          5
+        ],
+        "B": [
+          0,
+          7
+        ]
+      }
+    },
+    {
+      "run_id": "20260413_020034_676870",
+      "seed": 44,
+      "outcome": "stuck",
+      "total_turns": 37,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "dm_response",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 14,
+      "dm_interactions": 2,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "",
+      "final_positions": {
+        "A": [
+          7,
+          3
+        ],
+        "B": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "run_id": "20260413_020336_5e9e56",
+      "seed": 46,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "dm_response",
+        "door_encounter",
+        "key_pickup",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": 24,
+      "door_encounter_turn": 11,
+      "door_unlocked_turn": null,
+      "messages_sent": 8,
+      "dm_interactions": 2,
+      "progress_score_final": 0.33,
+      "selected_for_repo": true,
+      "incident_report": "",
+      "final_positions": {
+        "A": [
+          0,
+          5
+        ],
+        "B": [
+          6,
+          7
+        ]
+      }
+    },
+    {
+      "run_id": "20260413_020405_61991a",
+      "seed": 46,
+      "outcome": "turn_limit",
+      "total_turns": 51,
+      "anomaly_count": 14,
+      "distinct_event_types": [
+        "dm_response",
+        "message_delayed",
+        "message_sent",
+        "spurious_block"
+      ],
+      "key_pickup_turn": null,
+      "door_encounter_turn": null,
+      "door_unlocked_turn": null,
+      "messages_sent": 3,
+      "dm_interactions": 1,
+      "progress_score_final": 0.0,
+      "selected_for_repo": true,
+      "incident_report": "",
+      "final_positions": {
+        "A": [
+          1,
+          1
+        ],
+        "B": [
+          0,
+          6
+        ]
+      }
+    }
+  ]
+}

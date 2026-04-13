@@ -43,13 +43,20 @@ The viewer shows:
 
 ## Committed runs
 
-Three runs are committed under `runs/` for immediate inspection:
+Ten runs are committed under `runs/`, selected from 68 total simulations by distinct event type coverage. Full structured records are in [`submission/best_runs.json`](submission/best_runs.json).
 
-| Run ID | Seed | Outcome | Anomalies | Notable |
+| Run ID | Seed | Outcome | Anomalies | Distinct event types |
 |---|---|---|---|---|
-| `20260412_184206_eef061` | 42 | turn_limit | 13 | Multiple spurious blocks both agents |
-| `20260412_184710_d4be6c` | 7 | turn_limit | 13 | Agents oscillate, high block rate |
-| `20260412_185253_d161f1` | 999 | turn_limit | 12 | Agent B picks up key turn 3; key held but never used |
+| `20260412_215157_eb6647` | 3 | turn_limit | — | dm_response, message_delayed, message_sent, spurious_block |
+| `20260412_215704_ee36c4` | 5 | turn_limit | — | dm_response, key_pickup, message_sent, spurious_block |
+| `20260412_221157_f66a89` | 11 | turn_limit | — | dm_response, key_pickup, message_delayed, message_sent, spurious_block |
+| `20260412_222029_37217a` | 15 | **success** | — | dm_response, key_pickup, message_delayed, message_sent, spurious_block |
+| `20260412_223700_8bee4a` | 22 | stuck | — | door_encounter, key_pickup, message_delayed, message_sent, spurious_block |
+| `20260412_224513_0dbb92` | 26 | turn_limit | — | dm_response, door_encounter, message_delayed, message_sent, spurious_block |
+| `20260412_230118_ccf53b` | 33 | turn_limit | — | dm_response, key_pickup, message_delayed, message_sent, spurious_block |
+| `20260413_020034_676870` | 44 | stuck | — | dm_response, message_delayed, message_sent, spurious_block |
+| `20260413_020336_5e9e56` | 46 | turn_limit | — | **all 6**: dm_response, door_encounter, key_pickup, message_delayed, message_sent, spurious_block |
+| `20260413_020405_61991a` | 46 | turn_limit | — | dm_response, message_delayed, message_sent, spurious_block |
 
 ## Architecture
 
